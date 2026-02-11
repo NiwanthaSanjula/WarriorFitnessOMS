@@ -16,7 +16,7 @@ const startServer = async () => {
         console.log('✅ Connected to MongoDB : Warrior Fitness Database');
 
         app.listen(PORT, () => {
-            console.log(`🚀 Server runing in ${process.env.NODE_ENV} mod on port ${PORT}`);
+            console.log(`🚀 Server runing in ${process.env.NODE_ENV} mod on http://localhost:${PORT}`);
             
         })
         
