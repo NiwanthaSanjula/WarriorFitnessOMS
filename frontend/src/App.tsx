@@ -2,11 +2,11 @@ import { Route, Routes } from "react-router-dom"
 import PublicLayout from "./layouts/PublicLayout"
 import ProtectedRoute from "./components/ProtectedRoute"
 import PortalLayout from "./layouts/PortalLayout"
+import Login from "./pages/public/Login"
 
 
 // Simple placeholder pages for now
 const Home = () => <div>Landing page</div>
-const Login = () => <div>Login page</div>
 const Dashboard = () => <div>User Dashboard</div>
 
 const App = () => {
