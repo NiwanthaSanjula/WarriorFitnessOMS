@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
+import { CustomRequest } from "../types.js";
 import jwt from 'jsonwebtoken';
 import { AppError } from "../utils/appError.js";
 import User from "../models/User.js";
@@ -7,7 +8,7 @@ interface JwtPayload {
     id: string;
 }
 
-export const protect =  async ( req: Request, res: Response, next: NextFunction) => {
+export const protect =  async ( req: CustomRequest, res: Response, next: NextFunction) => {
     try {
         let token;
 
@@ -26,11 +27,11 @@ export const protect =  async ( req: Request, res: Response, next: NextFunction)
         // Check user still exists
         const currentUser = await User.findById(decoded.id);
         if (!currentUser) {
-            return next(new AppError('The user belonging to this token does no longer exist.', 401));
+            return next(new AppError('User no longer exist.', 401));
         }
 
         // Grant access to protected route
-        (req as any).user = currentUser;
+        req.user = currentUser;
         next();
 
     } catch (error) {
@@ -39,10 +40,10 @@ export const protect =  async ( req: Request, res: Response, next: NextFunction)
 };
 
 export const restrictTo = (...roles: string[]) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        const user = (req as any).user;
+    return (req: CustomRequest, res: Response, next: NextFunction) => {
+        const user = req.user;
 
-        if (!roles.includes(user.role)) {
+        if (!user || !roles.includes(user.role)) {
             return next(new AppError('You do not have permission to perform this action', 400))
         }
 

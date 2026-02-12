@@ -9,9 +9,5 @@ authRouter.post('/register', register);
 authRouter.post('/login', login);
 authRouter.post('/logout', logout);
 
-// Only logged user can access
-authRouter.get('/me', protect,getMe);
-
-
 
 export default authRouter;
