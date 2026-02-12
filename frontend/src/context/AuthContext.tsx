@@ -1,14 +1,7 @@
 import React, { createContext, useContext, useState, useEffect} from 'react';
 import { authService } from '../services/authService';
-import type { loginData, User } from '../types/auth';
+import type { AuthContextType, loginData } from '../types/auth';
 
-//TypeScript’s way of defining the shape of the context.
-interface AuthContextType {
-    user: User | null;
-    loading: boolean;
-    login: (data: loginData) => Promise<void>;
-    logout: () => void;
-}
 
 // Context default is undefined because it will only get a real value inside <AuthProvider>.
 // If someone uses useAuth() outside the provider, we can detect it and throw an error.
@@ -58,4 +51,6 @@ export const AuthProvider = ({ children}: { children: React.ReactNode }) => {
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) throw new Error("useAuth must be used within an AuthProvider"); 
+
+    return context
 }

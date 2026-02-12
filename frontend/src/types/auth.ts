@@ -17,3 +17,10 @@ export interface AuthResponse {
         user: User;
     };
 };
+
+export interface AuthContextType {
+    user: User | null;
+    loading: boolean;
+    login: (data: loginData) => Promise<void>;
+    logout: () => void;
+}
