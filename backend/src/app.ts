@@ -5,6 +5,7 @@
 import { globalErrorHandler } from './middleware/errorMiddleware.js';
 import authRouter from './routes/authRoutes.js';
 import userRouter from './routes/userRoutes.js';
+import exerciseRouter from './routes/exerciseRoutes.js';
 
 
  dotenv.config();
@@ -22,6 +23,8 @@ import userRouter from './routes/userRoutes.js';
  // Routes
  app.use('/api/v1/auth', authRouter);
  app.use('/api/v1/users', userRouter)
+ app.use('/api/v1/exercises', exerciseRouter)
+
 
  // Health Check Endpoint
  app.get('/health', (req : Request, res : Response) => {
