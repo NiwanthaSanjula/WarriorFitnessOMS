@@ -3,11 +3,11 @@ import PublicLayout from "./layouts/PublicLayout"
 import ProtectedRoute from "./components/ProtectedRoute"
 import PortalLayout from "./layouts/PortalLayout"
 import Login from "./pages/public/Login"
+import Dashboard from "./pages/Dashboard"
 
 
 // Simple placeholder pages for now
 const Home = () => <div>Landing page</div>
-const Dashboard = () => <div>User Dashboard</div>
 
 const App = () => {
   return (
