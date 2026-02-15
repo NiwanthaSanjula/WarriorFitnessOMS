@@ -41,11 +41,12 @@ const PortalLayout = () => {
                 </button>
 
                 <div>
-                  <h2 className="text-base md:text-xl font-bold uppercase tracking-tight text-gray-400">
-                    Welcome Back, <span className="text-warrior-orange">{user?.name}</span>
-                  </h2>
+                  <div className="text-sm md:text-xl font-bold uppercase tracking-tight flex flex-col md:flex-row md:gap-2">
+                    <h2 className=" text-gray-400">Welcome Back,</h2>
+                    <h2 className="text-warrior-orange">{user?.name}</h2>
+                  </div>
                   <p className="text-gray-500 text-sm">
-                    {user?.role} Portal
+                    {user?.role} portal
                   </p>
                 </div>
               </div>

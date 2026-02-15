@@ -42,6 +42,26 @@ export const getAllMembers = async (req: Request, res: Response, next: NextFunct
     }
 }
 
+export const getUserbyId = async (req: Request, res: Response, next:NextFunction) => {
+    try {
+        const user = await userServices.getUserbyId(req.params.id as string);
+
+        if (!user) {
+            return next(new AppError('No user found with that ID', 404))
+        }
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                user
+            }
+        });
+
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const updateMe = async( req: CustomRequest, res: Response, next: NextFunction) => {
     try {
         // Create error if user POSTs password data ( we have a separate route for that)

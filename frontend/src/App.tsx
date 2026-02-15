@@ -4,6 +4,8 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import PortalLayout from "./layouts/PortalLayout"
 import Login from "./pages/public/Login"
 import Dashboard from "./pages/Dashboard"
+import ManageUsers from "./pages/admin/ManageUsers"
+import UserDetails from "./pages/admin/UserDetails"
 
 
 // Simple placeholder pages for now
@@ -25,7 +27,9 @@ const App = () => {
 
           {/* ADMIN ONLY ROUTES */}
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-            <Route path="/admin" element={ <div>Admin Panel</div> } />
+            <Route path="/users" element={ <ManageUsers/> } />
+            <Route path="/users/:id" element={ <UserDetails/> } />
+            
           </Route>
         </Route>
       </Route>

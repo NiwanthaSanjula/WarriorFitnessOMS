@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import axios from "axios";
+import { assets } from "../../assets/assets";
 
 const Login = () => {
 
@@ -41,14 +42,18 @@ const Login = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center px-4 bg-warrior-dark">
-            <div className="max-w-md border border-neutral-700 w-full space-y-8 p-8 bg-warrior-grey rounded-xl">
-                <h2 className="text-3xl text-warrior-orange font-bold text-center">
-                    WARRIOR FITENSS
+            <div className="max-w-md border border-neutral-700 w-full space-y-4 p-8 bg-warrior-grey rounded-xl">
+                <div className="w-full flex items-center justify-center">
+                    <img src={assets.LOGO} alt="" className="w-20" />
+                </div>
+
+                <h2 className="text-3xl text-white italic font-bold text-center">
+                    <span className="text-warrior-red">WARRIOR </span>FITENSS
                 </h2>
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     {error && (
-                        <div className="bg-red-500 border border-red-500 text-red-500 p-3 rounded text-sm">
+                        <div className="bg-red-500/20 border border-red-500/75 text-red-600 p-3 rounded text-sm text-center">
                             {error}
                         </div>
                     )}
