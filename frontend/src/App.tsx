@@ -27,7 +27,8 @@ const App = () => {
 
           {/* ADMIN ONLY ROUTES */}
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-            <Route path="/users" element={ <ManageUsers/> } />
+            <Route path="/admin/members" element={ <ManageUsers roleFilter="member"/> } />
+            <Route path="/admin/coaches" element={ <ManageUsers roleFilter="coach"/> } />
             <Route path="/users/:id" element={ <UserDetails/> } />
             
           </Route>
