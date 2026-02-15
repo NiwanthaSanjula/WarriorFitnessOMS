@@ -50,5 +50,16 @@ export const getAllUsers = async () => {
 // Get single user by ID
 export const getUserbyId = async (userId: string) => {
     // Fetch the user by ID and exclude the passwordHash
-    return await User.findById(userId);
+    return await User.findById(userId).populate('coach', '_id name email');
+}
+
+// Assign coach to a member
+export const assignCoach = async (memberId: string, coachId: string) => {
+    // Update the member's coach filed and return the new doc.
+    // .populate allows us to return the full coach object instead of just the ID
+    return await User.findByIdAndUpdate(
+        memberId,
+        { coach: coachId},
+        { new: true, runValidators: true }
+    ).populate('coach', '_id name email ');
 }

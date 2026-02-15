@@ -14,6 +14,7 @@ export interface IUser extends Document {
     passwordHash : string;
     role : USerRole;
     status : 'active' | 'blocked';
+    coach : mongoose.Types.ObjectId | IUser | null;
     createdAt : Date;
     updatedAt : Date;
 }
@@ -48,6 +49,11 @@ const userSchema = new Schema<IUser>(
             enum: ['active', 'blocked'],
             default: 'active'
         },
+        coach: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            default: null
+        }
 
     }, { timestamps: true},
 );

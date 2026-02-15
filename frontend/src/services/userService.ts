@@ -11,7 +11,7 @@ export const userService = {
     // Standard REST: GET request to the ID
     getUserById: async (userId: string): Promise<User> => {
         const response = await api.get(`/users/${userId}`);
-        return response.data.data.user
+        return response.data
     },
 
     // Standard REST: PATCH request to the ID (Recommended over /role)
@@ -25,6 +25,10 @@ export const userService = {
         await api.delete(`/users/${userId}`)
     },
 
+    assignCoach: async (memberId: string, coachId: string): Promise<User> => {
+        const response = await api.patch('/users/assign-coach', { memberId, coachId});
+        return response.data;
+    }
    
 
 }

@@ -4,6 +4,7 @@ import { CustomRequest } from '../types.js';
 import { AppError } from '../utils/appError.js';
 import { filterObj } from '../utils/filterObj.js';
 import User from '../models/User.js';
+import * as attendanceService from '../services/attendanceService.js';
 
 export const getMe = ( req: CustomRequest, res: Response, next: NextFunction) => {
 
@@ -50,10 +51,17 @@ export const getUserbyId = async (req: Request, res: Response, next:NextFunction
             return next(new AppError('No user found with that ID', 404))
         }
 
+        // Get detailed attendance for the calendar
+        const attendanceHistory = await attendanceService.getMemberAttendanceHistory(req.params.id as string);
+
+        // Get list of all coaches for the "Assign Coach" dropdown
+        const coaches = await User.find({ role: 'coach'}).select('name _id');
         res.status(200).json({
             status: 'success',
             data: {
-                user
+                user,
+                attendanceHistory,
+                coaches
             }
         });
 
@@ -87,6 +95,32 @@ export const updateMe = async( req: CustomRequest, res: Response, next: NextFunc
 
     } catch(error) {
         next(error);
+    }
+}
+
+export const assignCoach = async ( req: CustomRequest, res: Response, next: NextFunction ) => {
+    try {
+        const { memberId, coachId } = req.body;
+
+        if (!memberId || !coachId) {
+            return next(new AppError("Member ID and Coach ID are required", 400));
+        }
+        
+        const updatedMember = await userServices.assignCoach(memberId, coachId);
+
+        if (!updatedMember) {
+            return next(new AppError('No member found with that ID', 404));
+        }
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                member: updatedMember
+            }
+        });
+
+    } catch (error) {
+        next(error)
     }
 }
 

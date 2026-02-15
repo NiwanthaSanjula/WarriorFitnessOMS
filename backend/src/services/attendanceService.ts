@@ -13,3 +13,15 @@ export const createAttendanceRecord =  async ( userId: string): Promise<IAttenda
         date: today
     });
 }
+
+export const getMemberAttendanceHistory = async (userId: string) => {
+    const now = new Date();
+
+    // Get start off the current month
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    return await Attendance.find({
+        user: userId,
+        date: { $gte : startOfMonth } 
+    }).select('date status')
+}
