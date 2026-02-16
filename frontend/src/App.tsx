@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard"
 import ManageUsers from "./pages/admin/ManageUsers"
 import UserDetails from "./pages/UserDetails"
 import MyClients from "./pages/coach/MyClients"
+import ManagePlans from "./pages/admin/ManagePlans"
 
 
 // Simple placeholder pages for now
@@ -36,6 +37,7 @@ const App = () => {
             <Route path="/admin/members" element={ <ManageUsers roleFilter="member"/> } />
             <Route path="/admin/coaches" element={ <ManageUsers roleFilter="coach"/> } />
             <Route path="/users/:id" element={ <UserDetails/> } />
+            <Route path="/admin/plans" element={ <ManagePlans/> } />
           </Route>
         </Route>
       </Route>

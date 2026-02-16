@@ -1,3 +1,4 @@
+import Subscription from "../models/Subscription.js";
 import User from "../models/User.js"
 
 // Get all users from the database wwith today's attendance status
@@ -50,7 +51,16 @@ export const getAllUsers = async () => {
 // Get single user by ID
 export const getUserbyId = async (userId: string) => {
     // Fetch the user by ID and exclude the passwordHash
-    return await User.findById(userId).populate('coach', '_id name email');
+    const user = await User.findById(userId).populate('coach', '_id name email');
+
+    const subscription = await Subscription.findOne({ member: userId })
+        .populate('plan', 'name price durationDays')
+        .sort({ createdAt: -1 }); // Get the newset one first
+
+    return {
+        user,
+        subscription
+    }
 }
 
 // Assign coach to a member

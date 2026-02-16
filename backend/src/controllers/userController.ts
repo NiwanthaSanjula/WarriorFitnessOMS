@@ -45,9 +45,9 @@ export const getAllMembers = async (req: Request, res: Response, next: NextFunct
 
 export const getUserbyId = async (req: Request, res: Response, next:NextFunction) => {
     try {
-        const user = await userServices.getUserbyId(req.params.id as string);
+        const details = await userServices.getUserbyId(req.params.id as string);
 
-        if (!user) {
+        if (!details.user) {
             return next(new AppError('No user found with that ID', 404))
         }
 
@@ -56,10 +56,12 @@ export const getUserbyId = async (req: Request, res: Response, next:NextFunction
 
         // Get list of all coaches for the "Assign Coach" dropdown
         const coaches = await User.find({ role: 'coach'}).select('name _id');
+
         res.status(200).json({
             status: 'success',
             data: {
-                user,
+                user: details.user,
+                subscription: details.subscription,
                 attendanceHistory,
                 coaches
             }
@@ -144,4 +146,5 @@ export const getMyStudents = async ( req: CustomRequest, res: Response, next: Ne
         next(error)
     }
 }
+
 

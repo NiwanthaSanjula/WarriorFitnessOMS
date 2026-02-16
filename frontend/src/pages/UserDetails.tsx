@@ -11,6 +11,9 @@ import { ProfileHeader } from "../components/userDetails/ProfileHeader";
 import { UserInfoCard } from "../components/userDetails/UserInfoCard";
 import { AttendanceCalener } from "../components/userDetails/AttendanceCalendar";
 import { AssignCoachModel } from "../components/userDetails/AssignCoachModel";
+import { SubscriptionCard } from "../components/userDetails/SubscriptionCard";
+import { membershipService, type MembershipPlan } from "../services/membershipService";
+import { AssignPlanModal } from "../components/userDetails/AssignPlanModal";
 
 
 
@@ -24,6 +27,8 @@ const UserDetails = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCoach, setSelectedCoach] = useState("");
+    const [allPlans, setAllPlans] = useState<MembershipPlan[]>([]);
+    const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
 
     const fetchUser = async () => {
         if (!id) return
@@ -39,8 +44,16 @@ const UserDetails = () => {
         }
     }
 
+    //  Fetch all membership plans
+    const fetchPlans = async () => {
+        const plans = await membershipService.getPlans();
+        setAllPlans(plans);
+    };
+    fetchPlans();
+
     useEffect(() => {
       fetchUser();
+      fetchPlans();
     }, [id])
 
     const handleAssignCoach = async () => {
@@ -58,10 +71,24 @@ const UserDetails = () => {
         }
     }
 
+    const handleAssignPlan = async (planId: string) => {
+        try {
+            if (!id) return;
+            await membershipService.subscribeMember(id, planId);
+            await fetchUser();
+            setIsModalOpen(false);
+            alert("Warrior Membership Activated!")
+
+        } catch (error) {
+            alert("Failed on assign plan");
+            console.log(error);
+        }
+    }
+
     if (loading) return <Spinner/>
     if (!data) return <div className='text-warrior-orange w-full h-full flex items-center justify-center'>Member not found..</div>
 
-    const { user, attendanceHistory, coaches } = data.data
+    const { user, attendanceHistory, coaches, subscription } = data.data
 
     const isViewinMember = user.role === 'member';
     const isAdmin = loggedInUser?.role === 'admin';
@@ -83,6 +110,29 @@ const UserDetails = () => {
                 isMember={isViewinMember}
                 onAssignClick={isAdmin ? () => setIsModalOpen(true) : null}
             />
+
+            { isViewinMember && subscription ? (
+                <SubscriptionCard
+                    planName={subscription.plan.name}
+                    startDate={subscription.startDate}
+                    endDate={subscription.endDate}
+                    price={subscription.plan.price}
+                />
+            ) : isViewinMember && !subscription && isAdmin && (
+                <div className="bg-warrior-grey p-6 border border-neutral-600 rounded-2xl flex flex-col items-center justify-center text-gray-400">
+                    <p className="italic mb-4">No active membership found</p>
+                    {isAdmin && (
+                        <button
+                            onClick={() => setIsPlanModalOpen(true)}
+                            className="text-warrior-orange hover:text-white text-xs font-bold uppercase border border-warrior-orange px-4 py-2 rounded-lg hover:bg-warrior-orange transition-all duration-200 cursor-pointer"
+                        >
+                            Assign Plan
+                        </button>
+                    )}
+                </div>
+            ) }
+
+            
 
             {/* Account Details */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -106,6 +156,13 @@ const UserDetails = () => {
                 selectedCoach={selectedCoach}
                 setSelectedCoach={setSelectedCoach}
                 onConfirm={handleAssignCoach}
+            />
+
+            <AssignPlanModal
+                isOpen={isPlanModalOpen}
+                onClose={() => setIsPlanModalOpen(false)}
+                plans={allPlans}
+                onConfirm={handleAssignPlan}
             />
 
             
