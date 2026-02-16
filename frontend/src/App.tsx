@@ -5,7 +5,8 @@ import PortalLayout from "./layouts/PortalLayout"
 import Login from "./pages/public/Login"
 import Dashboard from "./pages/Dashboard"
 import ManageUsers from "./pages/admin/ManageUsers"
-import UserDetails from "./pages/admin/UserDetails"
+import UserDetails from "./pages/UserDetails"
+import MyClients from "./pages/coach/MyClients"
 
 
 // Simple placeholder pages for now
@@ -25,12 +26,16 @@ const App = () => {
         <Route element={<PortalLayout/>}>
           <Route path="/dashboard" element={<Dashboard/>}/>
 
-          {/* ADMIN ONLY ROUTES */}
+          {/* COACH ROUTES */}
+          <Route element={<ProtectedRoute allowedRoles={['coach']}/>}>
+              <Route path="/coach/my-clients"  element={<MyClients/>} />
+          </Route>
+
+          {/* ADMIN ROUTES */}
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/admin/members" element={ <ManageUsers roleFilter="member"/> } />
             <Route path="/admin/coaches" element={ <ManageUsers roleFilter="coach"/> } />
             <Route path="/users/:id" element={ <UserDetails/> } />
-            
           </Route>
         </Route>
       </Route>

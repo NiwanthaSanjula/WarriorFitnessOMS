@@ -6,6 +6,7 @@ import { MdCheckCircleOutline, MdDelete, MdEdit, MdSearch } from 'react-icons/md
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../../assets/assets';
 import { attendanceService } from '../../services/attendanceService';
+import Spinner from '../../components/ui/Spinner';
 
 // Props to accespt the rolee filter
 interface ManageUserProps {
@@ -65,7 +66,7 @@ const ManageUsers = ({ roleFilter } : ManageUserProps ) => {
         }
     };
 
-    if (loading) return <div className='text-warrior-orange w-full h-full flex items-center justify-center'>Loading Users...</div>
+    if (loading) return <Spinner/>
 
     return (
         <div className='space-y-6'>

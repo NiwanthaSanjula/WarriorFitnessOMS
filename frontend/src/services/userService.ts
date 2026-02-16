@@ -28,6 +28,11 @@ export const userService = {
     assignCoach: async (memberId: string, coachId: string): Promise<User> => {
         const response = await api.patch('/users/assign-coach', { memberId, coachId});
         return response.data;
+    },
+
+    getMyClients: async (): Promise<User[]> => {
+        const response = await api.get('/users/my-clients');
+        return response.data.data.clients
     }
    
 

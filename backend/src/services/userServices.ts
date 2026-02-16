@@ -63,3 +63,8 @@ export const assignCoach = async (memberId: string, coachId: string) => {
         { new: true, runValidators: true }
     ).populate('coach', '_id name email ');
 }
+
+export const getMembersByCoach = async ( coachId: string ) => {
+    // Find all members assigned to the specified coach
+    return (await User.find({ coach: coachId}).select('name email isCheckedIn')).toSorted((a, b) => a.name.localeCompare(b.name));
+}

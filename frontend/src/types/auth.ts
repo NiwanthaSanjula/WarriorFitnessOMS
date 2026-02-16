@@ -4,6 +4,12 @@ export interface User {
     email: string;
     role: 'admin' | 'coach' | 'member';
     isCheckedIn?: boolean;
+    createdAt: string;
+    coach?: {
+        _id: string;
+        name: string;
+        email: string;
+    } | string
 }
 
 export interface loginData {

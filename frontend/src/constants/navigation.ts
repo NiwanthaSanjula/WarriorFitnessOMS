@@ -17,4 +17,7 @@ export const SIDEBAR_LINKS: NavItem[] = [
     { name: 'Manage Members', path: '/admin/members', icon: MdPeople, roles: ['admin']},
     { name: 'Manage Coaches', path: '/admin/coaches', icon: MdPeople, roles: ['admin']},
 
+    { name: 'My Clients', path: '/coach/my-clients', icon: MdPeople, roles: ['coach']},
+
+
 ]

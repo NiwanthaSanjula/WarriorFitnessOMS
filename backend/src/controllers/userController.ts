@@ -124,3 +124,24 @@ export const assignCoach = async ( req: CustomRequest, res: Response, next: Next
     }
 }
 
+export const getMyStudents = async ( req: CustomRequest, res: Response, next: NextFunction) => {
+
+    try {
+        const coachId = req.user?._id
+
+        if (!coachId) {
+            return next(new AppError('No coach found', 404))
+        }
+        const clients = await userServices.getMembersByCoach(coachId.toString());
+
+        res.status(200).json({
+            status: 'success',
+            results: clients.length,
+            data: { clients }
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
