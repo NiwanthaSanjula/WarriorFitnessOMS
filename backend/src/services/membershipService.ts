@@ -18,6 +18,14 @@ export const subscribeMember = async (memberId: string, planId: string) => {
     const endDate = new Date();
     endDate.setDate(startDate.getDate() + plan.durationDays);
 
+    //  Clean up old active subscriptions first
+    //  This ensures a member only has ONE active plan at a time.
+    await Subscription.updateMany(
+        { member: memberId, status: 'active'},
+        { status: 'expired'}
+    )
+
+
     //  Create the subscription record [ cite: 266, 267]
     const subscription =  await Subscription.create({
         member:memberId,
@@ -27,6 +35,7 @@ export const subscribeMember = async (memberId: string, planId: string) => {
         status: 'active'
     })
 
+    // Update user status
     await User.findByIdAndUpdate(memberId, { status: 'active' });
 
     return subscription

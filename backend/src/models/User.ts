@@ -11,7 +11,9 @@ export enum USerRole {
 export interface IUser extends Document {
     name : string;
     email : string;
+    nic : string;
     passwordHash : string;
+    phone: string;
     role : USerRole;
     status : 'active' | 'blocked' | 'pending-payment';
     coach : mongoose.Types.ObjectId | IUser | null;
@@ -32,6 +34,17 @@ const userSchema = new Schema<IUser>(
             required: [true, 'please provide you email'],
             unique: true,
             lowercase: true,
+            trim: true
+        },
+        nic: {
+            type: String,
+            required: [true, 'please provide your NIC'],
+            unique: true,
+            trim: true
+        },
+        phone: {
+            type: String,
+            required: [true, 'Please provide a contact number'],
             trim: true
         },
         passwordHash: {

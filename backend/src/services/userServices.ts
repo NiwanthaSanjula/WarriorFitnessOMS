@@ -1,5 +1,31 @@
+import bcrypt from "bcryptjs";
 import Subscription from "../models/Subscription.js";
 import User from "../models/User.js"
+
+//  Manual Register new user
+export const createManualUser = async ( userData: any ) => {
+    const { email, nic, name } = userData;
+
+    //  Check if email or nic already exist
+    const existing = await User.findOne({ $or: [{ email }, { nic }] } );
+    if(existing) throw new Error("User with this email or NIC is already exists");
+
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(nic, salt)
+
+    return await User.create({
+        ...userData,
+        status: 'active',
+        passwordHash: hashedPassword
+    });
+};
+
+
+//  Update Existing USer
+export const updateUser = async ( userId: string, updateData: any ) => {
+    // If updating email/NIC, Mongoose 'unique' validator will handle errors
+    return await User.findByIdAndUpdate(userId, updateData, { new: true, runValidators: true})
+}
 
 // Get all users from the database wwith today's attendance status
 export const getAllUsers = async () => {

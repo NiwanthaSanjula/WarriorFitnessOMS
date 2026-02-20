@@ -88,7 +88,7 @@ const UserDetails = () => {
     if (loading) return <Spinner/>
     if (!data) return <div className='text-warrior-orange w-full h-full flex items-center justify-center'>Member not found..</div>
 
-    const { user, attendanceHistory, coaches, subscription } = data.data
+    const { user, attendanceHistory, coaches, subscription } = data
 
     const isViewinMember = user.role === 'member';
     const isAdmin = loggedInUser?.role === 'admin';

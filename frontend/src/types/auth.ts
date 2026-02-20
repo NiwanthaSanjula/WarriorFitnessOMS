@@ -1,7 +1,9 @@
 export interface User {
     _id: string;
     name: string;
+    nic: string;
     email: string;
+    phone: string;
     role: 'admin' | 'coach' | 'member';
     status: string
     isCheckedIn?: boolean;

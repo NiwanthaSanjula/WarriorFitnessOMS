@@ -6,6 +6,52 @@ import { filterObj } from '../utils/filterObj.js';
 import User from '../models/User.js';
 import * as attendanceService from '../services/attendanceService.js';
 
+export const createUser  = async ( req: Request, res: Response, next: NextFunction) => {
+    try {
+        const newUser = await userServices.createManualUser(req.body);
+
+        res.status(201).json({
+            status: 'success',
+            message: 'User created successfully',
+            data: {
+                user: newUser
+            }
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        
+        // Prevent the admin from changing passwords through this route
+        if (req.body.password || req.body.confirmPassword) {
+            return next(new AppError('This route is not for password updates', 400))
+        }
+
+        const updatedUser = await userServices.updateUser(req.params.id as string, req.body )
+
+        if (!updatedUser) {
+            return next(new AppError('No user found with that ID', 404))
+        }
+
+        res.status(200).json({
+            status: 'success',
+            message: 'User updated successfully',
+            data: {
+                user: updatedUser
+            }
+        })
+
+    } catch (error) {
+        console.log(error);
+        next(error)
+        
+    }
+}
+
 export const getMe = ( req: CustomRequest, res: Response, next: NextFunction) => {
 
     //the 'protect' middleware already found the user and attached it to req.user

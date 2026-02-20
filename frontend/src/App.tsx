@@ -9,6 +9,7 @@ import UserDetails from "./pages/UserDetails"
 import MyClients from "./pages/coach/MyClients"
 import ManagePlans from "./pages/admin/ManagePlans"
 import Home from "./pages/public/Home"
+import AddNewMember from "./pages/admin/AddNewMember"
 
 
 
@@ -35,8 +36,11 @@ const App = () => {
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/admin/members" element={ <ManageUsers roleFilter="member"/> } />
             <Route path="/admin/coaches" element={ <ManageUsers roleFilter="coach"/> } />
-            <Route path="/users/:id" element={ <UserDetails/> } />
+            <Route path="/admin/members/:id" element={ <UserDetails/> } />
             <Route path="/admin/plans" element={ <ManagePlans/> } />
+            <Route path="/admin/add-member" element={ <AddNewMember/> } />
+            <Route path="/admin/members/edit/:id" element={ <AddNewMember/> } />
+
           </Route>
         </Route>
       </Route>

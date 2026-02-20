@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import type { User } from '../../types/auth'
 import { userService } from '../../services/userService';
-import { MdCheckCircleOutline, MdDelete, MdEdit, MdSearch } from 'react-icons/md';
+import { MdCheckCircleOutline, MdEdit, MdSearch } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../../assets/assets';
 import { attendanceService } from '../../services/attendanceService';
@@ -91,7 +91,7 @@ const ManageUsers = ({ roleFilter } : ManageUserProps ) => {
                 {filteredUsers.map((user) => (
                     <div 
                         key={user._id}
-                        onClick={() => navigate(`/users/${user._id}`)}
+                        onClick={() => navigate(`/admin/members/${user._id}`)}
                         className='bg-neutral-900 border border-neutral-800 rounded-lg p-3 transition-all duration-300 hover:border-warrior-orange/75 flex flex-col justify-between cursor-pointer hover:-translate-y-2'
                     >
                         {/*  Image*/}
@@ -153,18 +153,17 @@ const ManageUsers = ({ roleFilter } : ManageUserProps ) => {
 
                         {/* Actions Footer */}
                         <div className='flex gap-2 pt-2 border-t border-neutral-800'>
-                            <button 
-                                className='flex-1 flex items-center justify-center py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-gray-300 hover:text-warrior-orange transition-colors duration-200 group'
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation(); //Stop from navigating to Details page
+                                    navigate(`/admin/members/edit/${user._id}`)
+                                }}
+                                className='flex-1 gap-2 flex items-center justify-center py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-gray-300 hover:text-warrior-orange transition-colors duration-200 group'
                                 title='Edit user'
                             >
-                                <MdEdit size={14} className='group-hover:scale-110 transition-transform' />
+                                <MdEdit size={14} className='group-hover:scale-110 transition-transform' /> Edit User
                             </button>
-                            <button 
-                                className='flex-1 flex items-center justify-center py-1 rounded bg-neutral-800 hover:bg-red-500/10 text-gray-300 hover:text-warrior-red transition-colors duration-200 group'
-                                title='Delete user'
-                            >
-                                <MdDelete size={14} className='group-hover:scale-110 transition-transform' />
-                            </button>
+
                         </div>
                     </div>
                 ))}

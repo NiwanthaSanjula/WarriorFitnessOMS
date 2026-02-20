@@ -1,7 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import api from "../api/axios";
 import type { User } from "../types/auth"
 
 export const userService = {
+
+    //  Create new user (Admin)
+    createNewUser : async (userData: any): Promise<User> => {
+        const response = await api.post('/users/create-user', userData);
+        return response.data.data.user
+    },
+
+    //  Update User
+    updateUser : async (userId: string, updateData: any ): Promise<User> => {
+        const response = await api.patch(`/users/${userId}`, updateData);
+        return response.data.data.user
+    },
+
     //  Fetch all users (Admin Only)
     getAllUsers: async (): Promise<User[]> => {
         const response = await api.get('/users/all-users');
@@ -9,9 +23,9 @@ export const userService = {
     },
 
     // Standard REST: GET request to the ID
-    getUserById: async (userId: string): Promise<User> => {
+    getUserById: async (userId: string): Promise<any> => {
         const response = await api.get(`/users/${userId}`);
-        return response.data
+        return response.data.data
     },
 
     // Standard REST: PATCH request to the ID (Recommended over /role)

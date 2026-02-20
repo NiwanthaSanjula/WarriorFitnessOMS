@@ -1,5 +1,5 @@
 import type { IconType } from "react-icons";
-import { MdDashboard, MdFitnessCenter, MdPeople, MdPerson, MdRestaurantMenu } from "react-icons/md";
+import { MdAdd, MdDashboard, MdFitnessCenter, MdPeople, MdPerson, MdRestaurantMenu } from "react-icons/md";
 import { HiMiniDocumentCurrencyDollar } from "react-icons/hi2";
 
 export interface NavItem {
@@ -18,6 +18,8 @@ export const SIDEBAR_LINKS: NavItem[] = [
     { name: 'Manage Members', path: '/admin/members', icon: MdPeople, roles: ['admin']},
     { name: 'Manage Coaches', path: '/admin/coaches', icon: MdPeople, roles: ['admin']},
     { name: 'Membership Plans', path: '/admin/plans', icon:  HiMiniDocumentCurrencyDollar, roles: ['admin']},
+    { name: 'Add Member', path: '/admin/add-member', icon: MdAdd , roles: ['admin']},
+
 
     { name: 'My Clients', path: '/coach/my-clients', icon: MdPeople, roles: ['coach']},
 
