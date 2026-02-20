@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { SIDEBAR_LINKS } from "../../constants/navigation";
 import { useAuth } from "../../context/AuthContext"
 import { MdClose, MdLogout } from "react-icons/md";
@@ -28,7 +28,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
             </div>
 
             
-            <div className="p-4 mb-4 flex items-center justify-start gap-3">
+            <Link to="/" className="p-4 mb-4 flex items-center justify-start gap-3">
                 <div className="w-14">
                     <img src={assets.LOGO} alt="" className="w-full h-full object-cover" />
                 </div>
@@ -36,7 +36,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                 <h1 className="text-warrior-red text-3xl font-bold italic">
                     WARRIOR <br /> <span className="text-white">FITNESS</span>
                 </h1>
-            </div>
+            </Link>
 
             <nav className="flex-1 px-4 space-y-1">
                 {filteredLinks.map((link) => (

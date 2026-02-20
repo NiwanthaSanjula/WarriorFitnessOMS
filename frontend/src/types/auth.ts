@@ -3,6 +3,7 @@ export interface User {
     name: string;
     email: string;
     role: 'admin' | 'coach' | 'member';
+    status: string
     isCheckedIn?: boolean;
     createdAt: string;
     coach?: {

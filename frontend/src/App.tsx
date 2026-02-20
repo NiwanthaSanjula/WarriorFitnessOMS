@@ -8,11 +8,9 @@ import ManageUsers from "./pages/admin/ManageUsers"
 import UserDetails from "./pages/UserDetails"
 import MyClients from "./pages/coach/MyClients"
 import ManagePlans from "./pages/admin/ManagePlans"
-import MembershipRequests from "./pages/admin/MembershipRequests"
+import Home from "./pages/public/Home"
 
 
-// Simple placeholder pages for now
-const Home = () => <div>Landing page</div>
 
 const App = () => {
   return (
@@ -39,7 +37,6 @@ const App = () => {
             <Route path="/admin/coaches" element={ <ManageUsers roleFilter="coach"/> } />
             <Route path="/users/:id" element={ <UserDetails/> } />
             <Route path="/admin/plans" element={ <ManagePlans/> } />
-            <Route path="/admin/membership-request" element={ <MembershipRequests/> } />
           </Route>
         </Route>
       </Route>

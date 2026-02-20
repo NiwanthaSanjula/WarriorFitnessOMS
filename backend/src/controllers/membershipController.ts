@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as membershipService from '../services/membershipService.js'
 import { AppError } from "../utils/appError.js";
-import { stat } from "fs";
+
 
 //  Create a new membership Plan
 export const createPlan = async ( req: Request, res: Response, next: NextFunction ) => {

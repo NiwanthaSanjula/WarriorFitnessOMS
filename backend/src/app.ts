@@ -8,7 +8,7 @@ import userRouter from './routes/userRoutes.js';
 import exerciseRouter from './routes/exerciseRoutes.js';
 import attendanceRouter from './routes/attendanceRoutes.js';
 import membershipRouter from './routes/mermbershipRoutes.js';
-import membershipRequestRouter from './routes/membershipRequestRouter.js';
+
 
 
  dotenv.config();
@@ -29,7 +29,7 @@ import membershipRequestRouter from './routes/membershipRequestRouter.js';
  app.use('/api/v1/exercises', exerciseRouter);
  app.use('/api/v1/attendance', attendanceRouter);
  app.use('/api/v1/membership', membershipRouter);
- app.use('/api/v1/membership-requests', membershipRequestRouter);
+
 
 
  // Health Check Endpoint

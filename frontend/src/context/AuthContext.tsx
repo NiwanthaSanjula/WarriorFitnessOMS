@@ -28,7 +28,7 @@ export const AuthProvider = ({ children}: { children: React.ReactNode }) => {
       };
       checkUser();
 
-    }, []);
+    }, [user]);
 
     const login = async (data: loginData) => {
         const res = await authService.login(data);

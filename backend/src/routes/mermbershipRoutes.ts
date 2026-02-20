@@ -4,6 +4,8 @@ import { protect, restrictTo } from '../middleware/authMiddleware.js';
 
 const membershipRouter = express.Router();
 
+membershipRouter.get('/plans', membershipController.getAllPlans )
+
 //  All membership routes required being logged in
 membershipRouter.use(protect)
 
@@ -11,6 +13,5 @@ membershipRouter.use(protect)
 membershipRouter.post('/create-plan', restrictTo('admin'), membershipController.createPlan );
 membershipRouter.post('/subscribe', restrictTo('admin'), membershipController.subscribeMember );
 
-membershipRouter.get('/plans', membershipController.getAllPlans )
 
 export default membershipRouter;

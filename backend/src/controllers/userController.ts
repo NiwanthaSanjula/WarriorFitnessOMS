@@ -23,6 +23,7 @@ export const getMe = ( req: CustomRequest, res: Response, next: NextFunction) =>
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                status: user.status
             },
         },
     });
