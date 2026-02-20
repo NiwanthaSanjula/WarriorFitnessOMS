@@ -10,6 +10,7 @@ import MyClients from "./pages/coach/MyClients"
 import ManagePlans from "./pages/admin/ManagePlans"
 import Home from "./pages/public/Home"
 import AddNewMember from "./pages/admin/AddNewMember"
+import Profile from "./pages/Profile"
 
 
 
@@ -26,6 +27,7 @@ const App = () => {
       <Route element={<ProtectedRoute/>}>
         <Route element={<PortalLayout/>}>
           <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/profile" element={<Profile/>}/>
 
           {/* COACH ROUTES */}
           <Route element={<ProtectedRoute allowedRoles={['coach']}/>}>

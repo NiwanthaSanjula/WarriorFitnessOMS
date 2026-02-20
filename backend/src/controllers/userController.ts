@@ -68,8 +68,11 @@ export const getMe = ( req: CustomRequest, res: Response, next: NextFunction) =>
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                nic: user.nic,
+                phone: user.phone,
                 role: user.role,
-                status: user.status
+                status: user.status,
+                createdAt: user.createdAt
             },
         },
     });
