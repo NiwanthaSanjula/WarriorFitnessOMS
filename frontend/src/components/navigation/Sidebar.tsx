@@ -15,7 +15,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
     const filteredLinks = SIDEBAR_LINKS.filter(link => user?.role && link.roles.includes(user.role));
     
     return (
-        <aside className="w-64 bg-warrior-grey h-full flex flex-col border-r border-warrior-orange/50  shadow-lg md:shadow-none shadow-warrior-orange/90">
+        <aside className="w-72 bg-warrior-grey h-full flex flex-col border-r border-warrior-orange/50  shadow-lg md:shadow-none shadow-warrior-orange/90">
             
             {/* Mobile close button */}
             <div className="p-4 flex justify-end md:hidden">

@@ -1,5 +1,6 @@
 import MembershipPlan, { IMembershipPlan } from "../models/MembershipPlan.js";
 import Subscription from "../models/Subscription.js";
+import User from "../models/User.js";
 
 export const createPlan = async (planData: Partial<IMembershipPlan>) => {
     return await MembershipPlan.create(planData);
@@ -18,11 +19,15 @@ export const subscribeMember = async (memberId: string, planId: string) => {
     endDate.setDate(startDate.getDate() + plan.durationDays);
 
     //  Create the subscription record [ cite: 266, 267]
-    return await Subscription.create({
+    const subscription =  await Subscription.create({
         member:memberId,
         plan: planId,
         startDate,
         endDate,
         status: 'active'
     })
+
+    await User.findByIdAndUpdate(memberId, { status: 'active' });
+
+    return subscription
 }

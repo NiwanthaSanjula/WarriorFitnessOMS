@@ -13,7 +13,7 @@ export interface IUser extends Document {
     email : string;
     passwordHash : string;
     role : USerRole;
-    status : 'active' | 'blocked';
+    status : 'active' | 'blocked' | 'pending-payment';
     coach : mongoose.Types.ObjectId | IUser | null;
     createdAt : Date;
     updatedAt : Date;
@@ -46,8 +46,8 @@ const userSchema = new Schema<IUser>(
         },
         status: {
             type: String,
-            enum: ['active', 'blocked'],
-            default: 'active'
+            enum: ['active', 'blocked', 'pending-payment'],
+            default: 'pending-payment'
         },
         coach: {
             type: mongoose.Schema.Types.ObjectId,
