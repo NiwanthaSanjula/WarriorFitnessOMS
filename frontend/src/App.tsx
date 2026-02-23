@@ -11,6 +11,7 @@ import ManagePlans from "./pages/admin/ManagePlans"
 import Home from "./pages/public/Home"
 import AddNewMember from "./pages/admin/AddNewMember"
 import Profile from "./pages/Profile"
+import PaymentsHistory from "./pages/admin/PaymentsHistory"
 
 
 
@@ -42,6 +43,7 @@ const App = () => {
             <Route path="/admin/plans" element={ <ManagePlans/> } />
             <Route path="/admin/add-member" element={ <AddNewMember/> } />
             <Route path="/admin/members/edit/:id" element={ <AddNewMember/> } />
+            <Route path="//admin/payments-history" element={ <PaymentsHistory/> } />
 
           </Route>
         </Route>

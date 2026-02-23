@@ -6,6 +6,7 @@ import Spinner from "../../components/ui/Spinner";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { MdArrowBack, MdEdit, MdPersonAdd } from "react-icons/md";
+import { membershipService, type MembershipPlan } from "../../services/membershipService";
 
 
 const AddNewMember = () => {
@@ -15,6 +16,7 @@ const AddNewMember = () => {
     const isEditMode = !!id;
 
     const [loading, setloading] = useState(false);
+    const [plans, setPlans] = useState<MembershipPlan[]>([]);
     const [fetchingData, setfetchingData] = useState(isEditMode);
 
     const [formData, setFormData] = useState({
@@ -24,10 +26,21 @@ const AddNewMember = () => {
         phone: '',
         role: 'member',
         status: 'active',
+        planId: '',
     })
+
 
     //  Load data if in edit mode
     useEffect(() => {
+
+        // Fetch plans for the dropdown
+        const fetchPlans = async () => {
+            const data = await membershipService.getPlans();
+            setPlans(data)
+        }
+        fetchPlans();
+
+
         if (isEditMode) {
             const loadUser = async () => {
                 try {
@@ -42,7 +55,8 @@ const AddNewMember = () => {
                         email:userData.email || '',
                         phone: userData.phone || '',
                         role: userData.role || 'member',
-                        status: userData.status || 'active'
+                        status: userData.status || 'active',
+                        planId: userData || ''
                     })                    
                     console.log( "Form data populated from:",userData);
                     
@@ -90,7 +104,7 @@ const AddNewMember = () => {
     if (fetchingData) return <Spinner/>
 
     return (
-        <div className="max-w-7xl mx-auto space-y-6 pb-10">
+        <div className="max-w-6xl mx-auto space-y-6 pb-10">
 
             <div className="flex flex-col ">
                 <button
@@ -107,7 +121,7 @@ const AddNewMember = () => {
 
             <form onSubmit={handleSubmit} className="bg-warrior-grey p-6 rounded-2xl  border border-neutral-600 space-y-4">
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
                     <div className="md:col-span-2">
                         <Input
                             label="Full Name"
@@ -128,16 +142,17 @@ const AddNewMember = () => {
                         onChange={(e) => setFormData({...formData, email:e.target.value})}
                     />
 
-                    <Input
-                        label="NIC Number"
-                        type="text"
-                        placeholder="e.g. 199XXXXXXXX"
-                        required
-                        value={formData.nic}
-                        onChange={(e) => setFormData({...formData, nic:e.target.value})}
-                    />
 
-                    <div className="md:col-span-2">
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <Input
+                            label="NIC Number"
+                            type="text"
+                            placeholder="e.g. 199XXXXXXXX"
+                            required
+                            value={formData.nic}
+                            onChange={(e) => setFormData({...formData, nic:e.target.value})}
+                        />
                         <Input
                             label="Contact Number"
                             type="text"
@@ -148,33 +163,55 @@ const AddNewMember = () => {
                         />
                     </div>
 
-                    {/* Role Selection */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-xs font-black uppercase text-gray-400 tracking-widest ml-1">System Role</label>
-                        <select
+                    
+                    {!isEditMode && formData.role === 'member' && (
+                        <div className="flex flex-col gap-2 col-span-2 ">
+                            <label className="text-xs font-black uppercase text-gray-400 tracking-widest ml-1">Initial Membership Plan</label>
+                            <select
                             className="w-full bg-warrior-dark border border-neutral-700 text-gray-300 p-3 rounded-md outline-none focus:border-warrior-orange transition-all cursor-pointer"
-                            value={formData.role}
-                            onChange={(e) => setFormData({ ...formData, role: e.target.value})}
+                            value={formData.planId}
+                            onChange={(e) => setFormData({ ...formData, planId: e.target.value })}
                         >
-                            <option value="member">Member</option>
-                            <option value="coach">Coach</option>
-                            <option value="admin">Admin</option>
+                            <option value="">-- No Plan (Pay Later) --</option>
+                            {plans.map(plan => (
+                                <option key={plan._id} value={plan._id}>
+                                    {plan.name} - {plan.price} LKR
+                                </option>
+                            ))}
                         </select>
+                        </div>
+                    )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {/* Role Selection */}
+                        <div className="flex flex-col gap-2">
+                            <label className="text-xs font-black uppercase text-gray-400 tracking-widest ml-1">System Role</label>
+                            <select
+                                className="w-full bg-warrior-dark border border-neutral-700 text-gray-300 p-3 rounded-md outline-none focus:border-warrior-orange transition-all cursor-pointer"
+                                value={formData.role}
+                                onChange={(e) => setFormData({ ...formData, role: e.target.value})}
+                            >
+                                <option value="member">Member</option>
+                                <option value="coach">Coach</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+
+                        {/* Status Selection (Only show in Edit mode if you want) */}
+                        <div>
+                            <label className="text-xs font-black uppercase text-gray-400 tracking-widest ml-1">Account Status</label>
+                            <select 
+                                className="w-full bg-warrior-dark border border-neutral-700 text-gray-300 p-3 rounded-md outline-none focus:border-warrior-orange transition-all cursor-pointer"
+                                value={formData.status}
+                                onChange={(e) => setFormData({...formData, status: e.target.value as any})}
+                            >
+                                <option value="active">Active</option>
+                                <option value="pending-payment">Pending Payment</option>
+                                <option value="blocked">Blocked</option>
+                            </select>
+                        </div>
                     </div>
 
-                    {/* Status Selection (Only show in Edit mode if you want) */}
-                    <div>
-                        <label className="text-xs font-black uppercase text-gray-400 tracking-widest ml-1">Account Status</label>
-                        <select 
-                            className="w-full bg-warrior-dark border border-neutral-700 text-gray-300 p-3 rounded-md outline-none focus:border-warrior-orange transition-all cursor-pointer"
-                            value={formData.status}
-                            onChange={(e) => setFormData({...formData, status: e.target.value as any})}
-                        >
-                            <option value="active">Active</option>
-                            <option value="pending-payment">Pending Payment</option>
-                            <option value="blocked">Blocked</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div>

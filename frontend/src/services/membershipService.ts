@@ -10,6 +10,8 @@ export interface MembershipPlan {
     isActive: boolean
 }
 
+
+
 export const membershipService = {
 
     //  Fetch all plans
@@ -28,7 +30,17 @@ export const membershipService = {
     subscribeMember: async( memberId: string, planId: string ): Promise<any> => {
         const response = await api.post('/membership/subscribe', { memberId, planId });
         return response.data.data.subscription
+    },
+
+    //  Fetch all payments history
+    getAllpayments : async (page: number = 1, search: string = ''): Promise<any>=> {
+        const response = await api.get(`membership/payments/all?page=${page}&seatch=${search}`);
+        return response.data.data
+    },
+
+    //  Fetch payment history of a member
+    getMemberPayment : async (memberId: string, page: number = 1): Promise<any> => {
+        const response = await api.get(`membership/payments/member/${memberId}?page=${page}`);
+        return response.data.data.results;
     }
-
-
 }

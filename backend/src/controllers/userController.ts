@@ -6,9 +6,15 @@ import { filterObj } from '../utils/filterObj.js';
 import User from '../models/User.js';
 import * as attendanceService from '../services/attendanceService.js';
 
-export const createUser  = async ( req: Request, res: Response, next: NextFunction) => {
+export const createUser  = async ( req: CustomRequest, res: Response, next: NextFunction) => {
     try {
-        const newUser = await userServices.createManualUser(req.body);
+        const adminId = req.user?._id?.toString();
+
+        if (!adminId) {
+            return next(new AppError('Admin must logged in to perform this action', 401))
+        }
+
+        const newUser = await userServices.createManualUser(req.body, adminId);
 
         res.status(201).json({
             status: 'success',

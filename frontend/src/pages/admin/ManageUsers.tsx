@@ -69,7 +69,7 @@ const ManageUsers = ({ roleFilter } : ManageUserProps ) => {
     if (loading) return <Spinner/>
 
     return (
-        <div className='space-y-6'>
+        <div className='space-y-6 max-w-6xl mx-auto'>
             <div className='flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-2 justify-between'>
                 <h2 className='text-lg md:text-2xl font-bold italic text-gray-300'>
                     MANAGE {roleFilter === 'member' ? 'MEMBERS' : 'COACHES'}

@@ -1,10 +1,13 @@
 import bcrypt from "bcryptjs";
 import Subscription from "../models/Subscription.js";
 import User from "../models/User.js"
+import { subscribeMember } from "./membershipService.js";
+
 
 //  Manual Register new user
-export const createManualUser = async ( userData: any ) => {
-    const { email, nic, name } = userData;
+export const createManualUser = async ( userData: any , adminId: string) => {
+    const { email, nic, name, planId } = userData;
+
 
     //  Check if email or nic already exist
     const existing = await User.findOne({ $or: [{ email }, { nic }] } );
@@ -13,13 +16,19 @@ export const createManualUser = async ( userData: any ) => {
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(nic, salt)
 
-    return await User.create({
+    const newUser = await User.create({
         ...userData,
-        status: 'active',
+        status: planId ? 'active' : 'pending-payment',
         passwordHash: hashedPassword
     });
-};
 
+    // If a plan was selected during registration, create the subscription
+    if(planId && newUser.role === 'member') {
+        await subscribeMember(newUser._id.toString(), planId, adminId)
+    }
+
+    return newUser;
+};
 
 //  Update Existing USer
 export const updateUser = async ( userId: string, updateData: any ) => {

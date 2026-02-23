@@ -14,6 +14,8 @@ import { AssignCoachModel } from "../components/userDetails/AssignCoachModel";
 import { SubscriptionCard } from "../components/userDetails/SubscriptionCard";
 import { membershipService, type MembershipPlan } from "../services/membershipService";
 import { AssignPlanModal } from "../components/userDetails/AssignPlanModal";
+import { PaymentHistory } from "../components/userDetails/PaymentHistory";
+//import { PaymentHistory } from "../components/userDetails/PaymentHistory";
 
 
 
@@ -29,6 +31,7 @@ const UserDetails = () => {
     const [selectedCoach, setSelectedCoach] = useState("");
     const [allPlans, setAllPlans] = useState<MembershipPlan[]>([]);
     const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+    const [paymentsData, setPaymentsData] = useState<any>({ payments: [], pagination: {} })
 
     const fetchUser = async () => {
         if (!id) return
@@ -36,7 +39,7 @@ const UserDetails = () => {
         try {
             const userData = await userService.getUserById(id);
             setData(userData);
-            console.log(userData);
+            //console.log(userData);
         } catch (error) {
             console.log("Failed to fetch user!",error);
         } finally {
@@ -49,11 +52,33 @@ const UserDetails = () => {
         const plans = await membershipService.getPlans();
         setAllPlans(plans);
     };
-    fetchPlans();
+   
+
+    //  Fetch member's payment history
+    const fetchPaymentHistory = async (page: number) => {
+        if (!id) return;
+
+        try {
+            const data = await membershipService.getMemberPayment(id, page);
+
+            console.log(data);
+            
+            setPaymentsData({
+                payments: data.payments || [],
+                pagination: data.paginations || null,
+            });
+            
+
+        } catch (error) {
+            console.log("Error loading paymentss", error);
+            
+        }
+    }
 
     useEffect(() => {
       fetchUser();
       fetchPlans();
+      fetchPaymentHistory(1)
     }, [id])
 
     const handleAssignCoach = async () => {
@@ -95,7 +120,7 @@ const UserDetails = () => {
     //console.log(data);
 
     return (
-        <div className='max-w-5xl space-y-6 pb-10'>
+        <div className='max-w-6xl mx-auto space-y-6 pb-10'>
             {/* Header: Back button */}
             <button
                 className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors cursor-pointer mb-4"
@@ -146,7 +171,18 @@ const UserDetails = () => {
                         Coach performance statistics coming soon...
                     </div>
                 )}
+            </div>
 
+            <div>
+                {isViewinMember ? (
+                    <PaymentHistory 
+                        payments={paymentsData.payments} 
+                        pagination={paymentsData.pagination} 
+                        onPageChange={(page) => fetchPaymentHistory(page)}
+                    />
+                ): (
+                    <div></div>
+                )}
             </div>
             
             <AssignCoachModel

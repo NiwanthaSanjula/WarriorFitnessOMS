@@ -1,6 +1,7 @@
 import type { IconType } from "react-icons";
-import { MdAdd, MdDashboard, MdFitnessCenter, MdPeople, MdPerson, MdRestaurantMenu } from "react-icons/md";
+import { MdDashboard, MdFitnessCenter, MdPeople, MdPerson, MdRestaurantMenu,  MdPersonAddAlt1 } from "react-icons/md";
 import { HiMiniDocumentCurrencyDollar } from "react-icons/hi2";
+import { FaMoneyBillWave } from "react-icons/fa"
 
 export interface NavItem {
     name : string;
@@ -18,7 +19,8 @@ export const SIDEBAR_LINKS: NavItem[] = [
     { name: 'Manage Members', path: '/admin/members', icon: MdPeople, roles: ['admin']},
     { name: 'Manage Coaches', path: '/admin/coaches', icon: MdPeople, roles: ['admin']},
     { name: 'Membership Plans', path: '/admin/plans', icon:  HiMiniDocumentCurrencyDollar, roles: ['admin']},
-    { name: 'Add Member', path: '/admin/add-member', icon: MdAdd , roles: ['admin']},
+    { name: 'Add Member', path: '/admin/add-member', icon:  MdPersonAddAlt1 , roles: ['admin']},
+    { name: 'Payments History', path: '/admin/payments-history', icon: FaMoneyBillWave , roles: ['admin']},
 
 
     { name: 'My Clients', path: '/coach/my-clients', icon: MdPeople, roles: ['coach']},

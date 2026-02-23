@@ -29,7 +29,7 @@ const AdminProfile = () => {
     if (!adminData) return <div className="text-gray-400">Error loading admin profile.</div>;
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6 pb-10">
+        <div className="max-w-6xl mx-auto space-y-6 pb-10">
             {/* Header Section */}
             <div className="flex items-center gap-4 mb-2">
                 <div className="p-4 bg-warrior-orange/10 rounded-2xl border border-warrior-orange/20">
