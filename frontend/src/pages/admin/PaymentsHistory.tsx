@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react'
 import { membershipService } from '../../services/membershipService';
 import { Input } from '../../components/ui/Input';
 import Spinner from '../../components/ui/Spinner';
-import { MdAttachMoney, MdReceiptLong } from 'react-icons/md';
-import { PaymentHistory } from '../../components/userDetails/PaymentHistory';
+import { MasterLedger } from '../../components/admin/MasterLedger';
+import { PendingMembersTable } from '../../components/admin/PendingMembersTable';
 
 const PaymentsHistory = () => {
-    const [paymentsData, setPaymentsData] = useState<any>({payments: [], paginations: {}})
+
+    const [activeTab, setactiveTab] = useState<'history' | 'pending' >('history');
+    const [paymentsData, setPaymentsData] = useState<any>({payments: [], paginations: {}});
+    const [pendingData, setPendingData] = useState<any>({users: [], paginations: {}})
     const [loading, setloading] = useState(true);
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
@@ -16,13 +19,17 @@ const PaymentsHistory = () => {
     const fetchAllPayments = async () => {
         setloading(true)
         try {
-            const data = await membershipService.getAllpayments(page, search);
-            console.log(data);
-            setPaymentsData(data)
+            if (activeTab === 'history') {
+                const data = await membershipService.getAllpayments(page, search);
+                //console.log(data);
+                setPaymentsData(data)
+            } else {
+                const data = await membershipService.getPendingPayments(page);
+                setPendingData(data);
+            }
 
         } catch (error) {
-            console.log("Failed to fetch global payments",error);
-            
+            console.log("Failed to fetch global payments",error);  
         } finally {
             setloading(false)
         }
@@ -30,7 +37,7 @@ const PaymentsHistory = () => {
 
     useEffect(() => {
       fetchAllPayments();
-    }, [page, search])
+    }, [page, search, activeTab])
 
     //  Calculating page stats
     const totalAmount =  paymentsData.paginations?.totalIncome;
@@ -47,7 +54,7 @@ const PaymentsHistory = () => {
                         Payments History
                     </h2>
                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">
-                        Master Transaction History [cite: 216]
+                        Master Transaction History
                     </p>
                 </div>
 
@@ -60,36 +67,42 @@ const PaymentsHistory = () => {
                 </div>
             </div>
 
-            {/* Stat cards */}
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                <div className='bg-warrior-grey rounded-xl p-4 flex items-center gap-4 border border-neutral-600 border-l-3 border-l-blue-500'>
-                    <div className='bg-blue-500/15 text-blue-500 p-2 rounded-lg'>
-                        <MdReceiptLong size={24} />
-                    </div>
-                    <div>
-                        <p className='text-xs font-bold text-gray-300 italic uppercase tracking-widest'>Total Records</p>
-                        <p className='text-xl font-black text-white'>{totalRecords}</p>
-                    </div>
-                </div>
+            {/* Tab Switcher */}
+            <div className='flex border-b border-neutral-700'>
+                <button
+                    onClick={() => { setactiveTab('history'); setPage(1); }}
+                    className={`pb-3 px-4 w-full text-xs font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === 'history' ? 'text-warrior-orange border-b-2 ' : 'text-gray-500'}`}
+                >
+                    Master Ledger
+                </button>
 
-                <div className='bg-warrior-grey rounded-xl p-4 flex items-center gap-4 border border-neutral-600 border-l-3 border-l-green-500'>
-                    <div className='bg-green-500/15 text-green-500 p-2 rounded-lg'>
-                        <MdAttachMoney size={24} />
-                    </div> 
-                    <div>
-                        <p className='text-xs font-bold text-gray-300 italic uppercase tracking-widest'>Total Income</p>
-                        <p className='text-xl font-black text-white'>{totalAmount} LKR</p>
-                    </div> 
-
-                </div>
+                <button
+                    onClick={() => { setactiveTab('pending'); setPage(1); }}
+                    className={`pb-3 px-4 w-full text-xs font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === 'pending' ? 'text-warrior-orange border-b-2 ' : 'text-gray-500'}`}
+                >
+                    Pending Payments ({ pendingData.paginations?.total || 0 })
+                </button>
             </div>
 
+
+            
+
             {loading ? <Spinner/> : (
-                <PaymentHistory
-                    payments={paymentsData.payments}
-                    pagination={paymentsData.paginations}
-                    onPageChange={(p) => setPage(p)}
-                />
+               activeTab === 'history' ? (
+                    <MasterLedger
+                        payments={paymentsData.payments}
+                        pagination={paymentsData.paginations}
+                        onPageChange={setPage}
+                        totalIncome={paymentsData.paginations?.totalIncome}
+                        totalRecords={totalRecords}
+                    />
+                ) : (
+                    <PendingMembersTable
+                        members={pendingData.users}
+                        pagination={pendingData.paginations}
+                        onPageChange={setPage}
+                    />
+                )
             )}
         </div>
     )

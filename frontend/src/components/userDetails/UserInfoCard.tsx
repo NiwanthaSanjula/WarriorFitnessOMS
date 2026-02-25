@@ -11,6 +11,17 @@ export const UserInfoCard = ({ user }: UserInfoCardProps) => {
         ? new Date(user.createdAt).toLocaleDateString() 
         : 'N/A';
 
+    const getStatusColor = (status : string) => {
+        switch (status) {
+            case 'pending-payment':
+                return 'text-amber-500';
+            case 'blocked':
+                return 'text-red-500';
+            default:
+                return 'text-green-500'
+        }
+    };
+
     return (
         <div className="bg-warrior-grey p-6 rounded-2xl border border-neutral-600 space-y-4">
             <h3 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">Detailed Information</h3>
@@ -37,7 +48,7 @@ export const UserInfoCard = ({ user }: UserInfoCardProps) => {
 
             <div className="flex justify-between border-b border-neutral-700 pb-1">
                 <span className="text-gray-400 text-sm font-semibold">Account Status</span>
-                <span className="text-green-500 text-sm font-bold uppercase">Active</span>
+                <span className={`text-sm font-bold uppercase ${getStatusColor(user.status)}`}>{user.status}</span>
             </div>
 
             {/* Only show Coach info if the user isn't an Admin */}

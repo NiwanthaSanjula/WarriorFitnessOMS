@@ -21,7 +21,7 @@ export const SubscriptionCard = ({ planName, startDate, endDate, price }: Subscr
     const isExpired = daysLeft <= 0;
 
     return (
-        <div className="bg-warrior-grey p-6 rounded-2xl border border-neutral-600 space-y-6">
+        <div className={`p-6 rounded-2xl border ${isExpired ? 'border-red-500 bg-red-500/5' : 'border-neutral-600 bg-warrior-grey'} space-y-6`}>
             <div className="flex justify-between items-start">
                 <div>
                     <h3 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1" > Active Plan </h3>

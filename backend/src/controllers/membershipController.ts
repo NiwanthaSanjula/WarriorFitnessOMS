@@ -98,3 +98,32 @@ export const getAllPayments = async ( req: Request, res: Response, next: NextFun
         next(error)
     }
 }
+
+export const runExpirationSweep = async( req: Request, res: Response, next: NextFunction) => {
+    try {
+        const report =  await membershipService.checkAndUpdateExpiredMembers();
+        res.status(200).json({
+            status: 'success',
+            message:   `Sweep completed manually. ${ report.updatedCount} members updated.`,
+            data: report
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getPendingPayments = async ( req: Request, res: Response, next: NextFunction ) => {
+    try {
+        const page = parseInt(req.query.page as string) || 1;
+        const results = await membershipService.getPendingPaymentMembers(page, 15);
+
+        res.status(200).json({
+            status: 'success',
+            data: results
+        })
+
+    } catch (error) {
+        
+    }
+}

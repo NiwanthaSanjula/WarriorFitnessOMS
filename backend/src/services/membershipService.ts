@@ -113,3 +113,60 @@ export const getAllPayments = async (page: number = 1, limit: number = 15, searc
         }
     };
 }
+
+export const checkAndUpdateExpiredMembers = async () => {
+
+    const now = new Date();
+
+    // Find all active subscriptions where thr endDate has passed
+    const expiredSubscriptions = await Subscription.find({
+        status: 'active',
+        endDate: {$lt: now}
+    });
+
+    if (expiredSubscriptions.length === 0) return { updatedCount: 0 };
+
+    const memberIds = expiredSubscriptions.map(sub => sub.member)
+
+    //  Mark those subscriptions as 'expired'
+    await Subscription.updateMany(
+        { _id: { $in: expiredSubscriptions.map(sub => sub._id) }},
+        { status: 'expired'}
+    );
+
+    //  Update the Users to 'pending-payment'
+    //  We only update users who were 'active'
+    const result = await User.updateMany(
+        { _id: { $in: memberIds }, status: 'active' },
+        { status: 'pending-payment' }
+    );
+
+    return { updatedCount: result.modifiedCount }
+
+}
+
+export const getPendingPaymentMembers = async (page: number = 1, limit: number = 15 ) => {
+    const skip = (page - 1 ) * limit;
+
+    //  Filter only for users marked as pending-payment
+    const query = { status: 'pending-payment' };
+
+    //  Find users where status is pending-payments
+    const users = await User.find( query)
+        .select('name email phone updatedAt')
+        .sort({ updatedAt: -1 }) // Sort by most recently updated (likely the expiration date)
+        .skip(skip)
+        .limit(limit);
+
+    const total = await User.countDocuments(query);
+
+    return {
+        users,
+        paginations: {
+            total,
+            pages: Math.ceil(total/limit),
+            currentPage: page
+        }
+    }
+
+}

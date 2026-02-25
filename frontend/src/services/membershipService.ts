@@ -42,5 +42,17 @@ export const membershipService = {
     getMemberPayment : async (memberId: string, page: number = 1): Promise<any> => {
         const response = await api.get(`membership/payments/member/${memberId}?page=${page}`);
         return response.data.data.results;
+    },
+
+    //  Get pending payments
+    getPendingPayments : async (page: number = 1) : Promise<any> => {
+        const response = await api.get(`membership/pending-payments?page=${page}`);
+        return response.data.data;
+    },
+
+    //  Optional: Add the manual sweep trigger
+    runManualSweep: async (): Promise<any> => {
+        const response = await api.get('/membership/run-sweep');
+        return response.data.data;
     }
 }

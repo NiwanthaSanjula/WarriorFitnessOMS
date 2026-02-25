@@ -2,6 +2,8 @@
  import cors from 'cors';
  import cookieParser from 'cookie-parser';
  import dotenv from 'dotenv';
+import { initCronjobs } from './utils/cronJobs.js'
+
 import { globalErrorHandler } from './middleware/errorMiddleware.js';
 import authRouter from './routes/authRoutes.js';
 import userRouter from './routes/userRoutes.js';
@@ -22,6 +24,7 @@ import membershipRouter from './routes/mermbershipRoutes.js';
     origin: process.env.CLIENT_URL || 'http://localhost:5173',
     credentials : true // Allow cookies to be sent in cross-origin requests
  }));
+ initCronjobs();
 
  // Routes
  app.use('/api/v1/auth', authRouter);

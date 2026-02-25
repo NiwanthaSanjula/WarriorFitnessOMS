@@ -14,6 +14,8 @@ membershipRouter.use(protect)
 membershipRouter.post('/create-plan', restrictTo('admin'), membershipController.createPlan );
 membershipRouter.post('/subscribe', restrictTo('admin'), membershipController.subscribeMember );
 membershipRouter.get('/payments/all', restrictTo('admin'), membershipController.getAllPayments );
+membershipRouter.get('/pending-payments', restrictTo('admin'), membershipController.getPendingPayments );
 membershipRouter.get('/payments/member/:memberId', restrictTo('admin'), membershipController.getMemberPayments );
+membershipRouter.get('/run-sweep', restrictTo('admin'), membershipController.runExpirationSweep );
 
 export default membershipRouter;
