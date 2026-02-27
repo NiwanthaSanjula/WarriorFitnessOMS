@@ -5,7 +5,7 @@ interface StatCardProps {
     value: string | number;
     icon: IconType;
     trend?: string; //e.g. "+2 this month"
-    variant: 'orange' | 'red' | 'gray';
+    variant: 'orange' | 'red' | 'blue' | 'green' | 'yellow';
 }
 
 export const StatCard = ({ title, value, icon: Icon, trend, variant = 'orange' } : StatCardProps) => {
@@ -13,7 +13,10 @@ export const StatCard = ({ title, value, icon: Icon, trend, variant = 'orange' }
     const themes = {
         orange : 'border-l-warrior-orange border-neutral-700  text-warrior-orange',
         red : 'border-l-warrior-red border-neutral-700  text-warrior-red',
-        gray : 'border-l-blue-500 border-neutral-700  text-white'
+        blue : 'border-l-blue-500 border-neutral-700  text-blue-500',
+        green: 'border-l-green-500 border-neutral-700  text-green-500',
+        yellow: 'border-l-amber-500 border-neutral-700  text-amber-500',
+        
     }
 
     return (

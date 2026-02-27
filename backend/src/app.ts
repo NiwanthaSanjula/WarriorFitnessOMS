@@ -10,6 +10,7 @@ import userRouter from './routes/userRoutes.js';
 import exerciseRouter from './routes/exerciseRoutes.js';
 import attendanceRouter from './routes/attendanceRoutes.js';
 import membershipRouter from './routes/mermbershipRoutes.js';
+import statsRouter from './routes/statsRouter.js';
 
 
 
@@ -32,6 +33,7 @@ import membershipRouter from './routes/mermbershipRoutes.js';
  app.use('/api/v1/exercises', exerciseRouter);
  app.use('/api/v1/attendance', attendanceRouter);
  app.use('/api/v1/membership', membershipRouter);
+ app.use('/api/v1/dashboard', statsRouter);
 
 
 
