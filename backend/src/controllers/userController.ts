@@ -29,6 +29,25 @@ export const createUser  = async ( req: CustomRequest, res: Response, next: Next
     }
 }
 
+export const updateSpecialProfile = async ( req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+        const {role, profileData} = req.body;
+        const adminId = req.user?._id?.toString()
+
+        //  We pass the role from the frontend so the service knows which collection to hit
+        const profile = await userServices.updateSpecialProfile(req.params.id as string, role, profileData, adminId as string);
+
+        res.status(200).json({
+            status: 'success',
+            message: `${role} profile updated successfully`,
+            data: { profile }
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         
@@ -95,6 +114,7 @@ export const getAllMembers = async (req: Request, res: Response, next: NextFunct
         });
 
     } catch (error) {
+        console.log("Error here");
         next(error)
     }
 }
@@ -118,6 +138,7 @@ export const getUserbyId = async (req: Request, res: Response, next:NextFunction
             data: {
                 user: details.user,
                 subscription: details.subscription,
+                specialProfile: details.specialProfile,
                 attendanceHistory,
                 coaches
             }
@@ -196,6 +217,20 @@ export const getMyStudents = async ( req: CustomRequest, res: Response, next: Ne
             status: 'success',
             results: clients.length,
             data: { clients }
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getCoachMembers = async ( req: Request, res: Response, next: NextFunction ) => {
+    try {
+        const clients = await userServices.getMembersByCoach(req.params.id as string);
+        res.status(200).json({
+            status: 'success',
+            results: clients.length,
+            data : { clients }
         })
 
     } catch (error) {

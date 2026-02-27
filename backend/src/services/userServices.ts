@@ -2,11 +2,14 @@ import bcrypt from "bcryptjs";
 import Subscription from "../models/Subscription.js";
 import User from "../models/User.js"
 import { subscribeMember } from "./membershipService.js";
+import CoachProfile from "../models/CoachProfile.js";
+import MemberProfile from "../models/MemberProfile.js";
+import AdminProfile from "../models/AdminProfile.js";
 
 
 //  Manual Register new user
 export const createManualUser = async ( userData: any , adminId: string) => {
-    const { email, nic, name, planId } = userData;
+    const { email, nic, name, planId, role } = userData;
 
 
     //  Check if email or nic already exist
@@ -18,25 +21,56 @@ export const createManualUser = async ( userData: any , adminId: string) => {
 
     const newUser = await User.create({
         ...userData,
-        status: planId ? 'active' : 'pending-payment',
+        status: (role === 'coach' || role === 'admin' || planId ) ? 'active' : 'pending-payment',
         passwordHash: hashedPassword
+
     });
 
-    // If a plan was selected during registration, create the subscription
-    if(planId && newUser.role === 'member') {
-        await subscribeMember(newUser._id.toString(), planId, adminId)
+    //  Initialize the specific profile bucket based on role
+    if (newUser.role === 'member') {
+        await MemberProfile.create({ user: newUser._id});
+    } else if (newUser.role === 'coach') {
+        await CoachProfile.create({ user: newUser._id })
+    } else if (newUser.role === 'admin') {
+        await AdminProfile.create({ user: newUser._id })
     }
 
     return newUser;
 };
 
-//  Update Existing USer
-export const updateUser = async ( userId: string, updateData: any ) => {
-    // If updating email/NIC, Mongoose 'unique' validator will handle errors
-    return await User.findByIdAndUpdate(userId, updateData, { new: true, runValidators: true})
+//  Update basic user info
+export const updateUser = async (userId: string, updateData: any) => {
+    // { new: true } returns the updated document
+    // { runValidators: true } ensures NIC/Email format is still valid
+    return await User.findByIdAndUpdate(userId, updateData, { 
+        new: true, 
+        runValidators: true 
+    });
+};
+
+// Generic Profile Update Service
+export const updateSpecialProfile = async (userId: string, role: string, profileData: any, adminId: string) => {
+    let profile;
+    const options = { upsert: true, new: true, runValidators: true };
+
+    if ( role === 'member') {
+        await MemberProfile.findOneAndUpdate({ user: userId}, profileData, options);
+
+        if(profileData.planId) {
+            await subscribeMember(userId, profileData.planId, adminId);
+        }
+    }
+    else if (role === 'coach') {
+        profile = await CoachProfile.findOneAndUpdate({ user: userId }, profileData, options);
+    } else if (role === 'admin') {
+        profile = await AdminProfile.findOneAndUpdate({ user: userId }, profileData, options);
+    }
+
+    return profile;
+
 }
 
-// Get all users from the database wwith today's attendance status
+// Get all users from the database with today's attendance status
 export const getAllUsers = async () => {
     // Get today's date normalized to midnight
     const today = new Date();
@@ -60,14 +94,14 @@ export const getAllUsers = async () => {
                         }
                     }
                 ],
-                as: "todayAttendnce"
+                as: "todayAttendance"
             }
         },
         {
             // Add a boolean field 'isCheckedIn' based on lookup results
             $addFields: {
                 isCheckedIn: {
-                    $cond: { if: { $gt: [{ $size : "$todayAttendnce"}, 0]}, then: true, else: false}
+                    $cond: { if: { $gt: [{ $size : "$todayAttendance"}, 0]}, then: true, else: false}
                 }
             }
         },
@@ -87,6 +121,14 @@ export const getAllUsers = async () => {
 export const getUserbyId = async (userId: string) => {
     // Fetch the user by ID and exclude the passwordHash
     const user = await User.findById(userId).populate('coach', '_id name email');
+    if (!user) return { user: null };
+
+    let specialProfile = null;
+
+    //  Fetch the profile based on the user's role
+    if (user.role === 'member') specialProfile = await MemberProfile.findOne({ user: userId }) 
+    if (user.role === 'coach') specialProfile = await CoachProfile.findOne({ user: userId }) 
+    if (user.role === 'admin') specialProfile = await AdminProfile.findOne({ user: userId }) 
 
     const subscription = await Subscription.findOne({ member: userId })
         .populate('plan', 'name price durationDays')
@@ -94,7 +136,8 @@ export const getUserbyId = async (userId: string) => {
 
     return {
         user,
-        subscription
+        subscription,
+        specialProfile
     }
 }
 
@@ -111,5 +154,5 @@ export const assignCoach = async (memberId: string, coachId: string) => {
 
 export const getMembersByCoach = async ( coachId: string ) => {
     // Find all members assigned to the specified coach
-    return (await User.find({ coach: coachId}).select('name email isCheckedIn')).toSorted((a, b) => a.name.localeCompare(b.name));
+    return (await User.find({ coach: coachId, role: 'member'}).select('_id name email phone createdAt isCheckedIn')).toSorted((a, b) => a.name.localeCompare(b.name));
 }

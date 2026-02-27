@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import { MdCalendarMonth, MdChevronLeft, MdChevronRight } from "react-icons/md";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface AttendanceCalenerProps {
@@ -34,7 +34,10 @@ export const AttendanceCalener = ({ history}: AttendanceCalenerProps ) => {
             <div className="flex items-center justify-between mb-6">
                 <h3 className="text-gray-400 text-sm uppercase font-bold tracking-widest">
                     <div className="flex flex-col md:flex-row gap-0.5">
-                        <span>Attendance:</span>
+                        <div className="flex items-center gap-2">
+                            <MdCalendarMonth  className="text-warrior-orange" />
+                            <span> Attendance:</span>
+                        </div> 
                         <span className="text-warrior-orange">{monthName} {currentYear}</span>
                     </div>
                      

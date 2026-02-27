@@ -16,6 +16,15 @@ export const userService = {
         return response.data.data.user
     },
 
+    //  Update each profile
+    updateSpecialProfile: async (userId: string, role: string, profileData: any): Promise<any> => {
+        const response = await api.patch(`/users/${userId}/special-profile`, {
+            role,
+            profileData
+        });
+        return response.data.data.profile
+    },
+
     //  Fetch all users (Admin Only)
     getAllUsers: async (): Promise<User[]> => {
         const response = await api.get('/users/all-users');
@@ -44,10 +53,16 @@ export const userService = {
         return response.data;
     },
 
+    //  Get assigend members to coach portal
     getMyClients: async (): Promise<User[]> => {
         const response = await api.get('/users/my-clients');
         return response.data.data.clients
+    },
+
+    //  Get coach's assigend members to admin portal
+    getCoachClients: async (coachId: string) : Promise<any> => {
+        const response = await api.get(`users/${coachId}/assigned-members`)
+        return response.data.data
     }
-   
 
 }

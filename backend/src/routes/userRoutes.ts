@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect, restrictTo } from '../middleware/authMiddleware.js';
-import { assignCoach, createUser, getAllMembers, getMe, getMyStudents, getUserbyId, updateMe, updateUser } from '../controllers/userController.js';
+import { assignCoach, createUser, getAllMembers, getCoachMembers, getMe, getMyStudents, getUserbyId, updateMe, updateSpecialProfile, updateUser } from '../controllers/userController.js';
 
 
 
@@ -25,9 +25,13 @@ userRouter.get('/my-clients', restrictTo('coach'), getMyStudents);
 // ---------------------------------------------------------
 userRouter.use(restrictTo('admin'));
 
-userRouter.post('/create-user', createUser)
+userRouter.post('/create-user', createUser);
 userRouter.get('/all-users', getAllMembers);
 userRouter.patch('/assign-coach', assignCoach);
+
+userRouter.patch('/:id/special-profile', updateSpecialProfile);
+userRouter.get('/:id/assigned-members', getCoachMembers);
+
 
 userRouter.route('/:id')
     .get(getUserbyId)
