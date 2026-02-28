@@ -24,7 +24,7 @@ export const StatCard = ({ title, value, icon: Icon, trend, variant = 'orange' }
             <div className="flex justify-between items-center">
                 <div>
                     <p className="text-sm text-gray-400 font-medium  uppercase tracking-wider">{title}</p>
-                    <h3 className="text-3xl font-bold mt-1 text-gray-300">{value}</h3>
+                    <h3 className="text-xl md:text-2xl font-bold mt-1 text-gray-300">{value}</h3>
                     {trend && <p className="text-xs mt-2 text-green-500 font-medium">{trend}</p> }
                 </div>
                 <div className={`p-1 rounded-lg bg-neutral-800 ${themes[variant].split(' ')[1]}`}>
