@@ -32,6 +32,10 @@ export const MemberForm = ({ data, onChange, plans, isEditMode }: any) => (
         <h3 className="text-xs font-bold uppercase text-gray-600 text-center pb-2">Member Details</h3>
 
 
+        <h3 className="text-xs font-bold uppercase text-gray-600 text-center pb-2">
+            Baseline Measurements (Initial Values)
+        </h3>
+
         <div className="grid grid-cols-2 gap-4">
             <Input
                 label="Weight (KG)"
@@ -41,9 +45,9 @@ export const MemberForm = ({ data, onChange, plans, isEditMode }: any) => (
                 onChange={(e) => onChange({ ...data, weight: e.target.value })}
             />
             <Input
-                label="Height (KG)"
+                label="Height (CM)"
                 type="number"
-                placeholder="e.g: 65"
+                placeholder="e.g: 175"
                 value={data.height}
                 onChange={(e) => onChange({ ...data, height: e.target.value })}
             />

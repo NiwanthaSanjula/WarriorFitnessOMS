@@ -26,7 +26,7 @@ const MemberDashboard = () => {
             title="Current Goal"
             value="80%"
             icon={MdTrendingUp}
-            variant="gray"
+            variant="yellow"
           />
       </div>
       

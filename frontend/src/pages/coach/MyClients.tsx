@@ -5,30 +5,33 @@ import { userService } from "../../services/userService";
 import Spinner from "../../components/ui/Spinner";
 import { MdCheckCircle, MdChevronRight, MdFitnessCenter, MdRadioButtonUnchecked } from "react-icons/md";
 import { assets } from "../../assets/assets";
+import { progressService } from "../../services/progressService";
 
 
 const MyClients = () => {
 
     const [clients, setClients] = useState<User[]>([]);
-    const [loading, setloading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-      const fetchClients = async () => {
-        try {
-            const data = await userService.getMyClients();
-            setClients(data) 
-            
-        } catch (error) {
-            console.log("Failed to fetch clients", error);
-            
-        } finally {
-            setloading(false)
-        }
-      }
+        const fetchClients = async () => {
+            try {
+                const data = await progressService.getCoachMembers();
+                setClients(data);
+            } catch (error) {
+                console.log("Failed to fetch clients", error);
+            } finally {
+                setLoading(false);
+            }
+        };
       fetchClients();
 
     }, [])
+
+    const handleViewMember = (memberId: string) => {
+        navigate(`/coach/members/${memberId}`);
+    };
 
     if (loading) return <Spinner/>
 
@@ -49,7 +52,7 @@ const MyClients = () => {
                         {clients.map((client) => (
                             <div
                                 key={client._id}
-                                onClick={() => navigate(`/users/${client._id}`)}
+                                onClick={() => handleViewMember(client._id)}
                                 className="flex items-center justify-between p-4 hover:bg-neutral-800 transition-colors cursor-pointer group"
                             >
                                 <div className="flex items-center gap-4">

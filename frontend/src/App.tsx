@@ -12,6 +12,8 @@ import Home from "./pages/public/Home"
 import AddNewMember from "./pages/admin/AddNewMember"
 import Profile from "./pages/Profile"
 import PaymentsHistory from "./pages/admin/PaymentsHistory"
+import Progress from "./pages/member/Progress"
+import CoachMemberProfile from "./pages/coach/CoachMemberProfile"
 
 
 
@@ -29,10 +31,12 @@ const App = () => {
         <Route element={<PortalLayout/>}>
           <Route path="/dashboard" element={<Dashboard/>}/>
           <Route path="/profile" element={<Profile/>}/>
+          <Route path="/my-progress" element={<Progress/>}/>
 
           {/* COACH ROUTES */}
           <Route element={<ProtectedRoute allowedRoles={['coach']}/>}>
               <Route path="/coach/my-clients"  element={<MyClients/>} />
+              <Route path="/coach/members/:memberId" element={<CoachMemberProfile/>} />
           </Route>
 
           {/* ADMIN ROUTES */}
@@ -43,7 +47,7 @@ const App = () => {
             <Route path="/admin/plans" element={ <ManagePlans/> } />
             <Route path="/admin/add-member" element={ <AddNewMember/> } />
             <Route path="/admin/members/edit/:id" element={ <AddNewMember/> } />
-            <Route path="//admin/payments-history" element={ <PaymentsHistory/> } />
+            <Route path="/admin/payments-history" element={ <PaymentsHistory/> } />
 
           </Route>
         </Route>

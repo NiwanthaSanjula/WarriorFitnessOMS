@@ -11,6 +11,8 @@ import exerciseRouter from './routes/exerciseRoutes.js';
 import attendanceRouter from './routes/attendanceRoutes.js';
 import membershipRouter from './routes/mermbershipRoutes.js';
 import statsRouter from './routes/statsRouter.js';
+import progressRouter from './routes/progressRoutes.js';
+
 
 
 
@@ -34,6 +36,8 @@ import statsRouter from './routes/statsRouter.js';
  app.use('/api/v1/attendance', attendanceRouter);
  app.use('/api/v1/membership', membershipRouter);
  app.use('/api/v1/dashboard', statsRouter);
+ app.use('/api/v1/progress', progressRouter);
+
 
 
 
