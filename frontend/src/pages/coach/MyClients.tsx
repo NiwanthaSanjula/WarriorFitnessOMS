@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import type { User } from "../../types/auth"
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../components/ui/Spinner";
-import { MdCheckCircle, MdChevronRight, MdFitnessCenter, MdRadioButtonUnchecked } from "react-icons/md";
+import {  MdFitnessCenter } from "react-icons/md";
 import { assets } from "../../assets/assets";
 import { progressService } from "../../services/progressService";
 

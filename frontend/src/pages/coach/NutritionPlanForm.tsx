@@ -219,7 +219,7 @@ const NutritionPlanForm = () => {
                     } else {
                         await planService.createNutritionPlan(payload);
                     }
-                    navigate("/coach/plans");
+                    navigate("/coach/plans/nutrition");
                 } catch (e: any) {
                     setError(e.response?.data?.message || "Failed to save plan");
                 } finally {

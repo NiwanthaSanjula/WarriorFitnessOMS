@@ -1,5 +1,7 @@
 import type { IconType } from "react-icons";
-import { MdDashboard, MdFitnessCenter, MdPeople, MdPerson, MdRestaurantMenu,  MdPersonAddAlt1 } from "react-icons/md";
+import { MdDashboard,  MdPeople, MdPerson,   MdPersonAddAlt1 } from "react-icons/md";
+import { GiWeightLiftingUp } from "react-icons/gi";
+import { GiMeal } from "react-icons/gi";
 import { HiMiniDocumentCurrencyDollar } from "react-icons/hi2";
 import { GiProgression } from "react-icons/gi";
 import { FaMoneyBillWave } from "react-icons/fa"
@@ -16,7 +18,11 @@ export const SIDEBAR_LINKS: NavItem[] = [
     { name: 'Profile', path: '/profile', icon: MdPerson, roles: ['admin', 'coach', 'member']},
     { name: 'My Progress', path: '/my-progress', icon: GiProgression, roles: ['member']},
 
-    { name: 'Plans', path: '/coach/plans', icon: GiProgression, roles: ['coach']},
+
+    { name: 'Workout Plan', path: '/member/workout-plan', icon: GiWeightLiftingUp, roles: ['member'] },
+    { name: 'Nutrition Plan', path: '/member/nutrition-plan', icon: GiMeal, roles: ['member'] },
+    { name: 'Workout Plans', path: '/coach/plans/workout', icon: GiWeightLiftingUp, roles: ['coach']},
+    { name: 'Nutrition Plans', path: '/coach/plans/nutrition', icon: GiMeal, roles: ['coach']},
 
 
 

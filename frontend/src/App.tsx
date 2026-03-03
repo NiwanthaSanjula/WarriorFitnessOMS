@@ -14,9 +14,12 @@ import Profile from "./pages/Profile"
 import PaymentsHistory from "./pages/admin/PaymentsHistory"
 import Progress from "./pages/member/Progress"
 import CoachMemberProfile from "./pages/coach/CoachMemberProfile"
-import Plans from "./pages/coach/Plans"
 import WorkoutPlanForm from "./pages/coach/WorkoutPlanForm"
 import NutritionPlanForm from "./pages/coach/NutritionPlanForm"
+import WorkoutPlans from "./pages/coach/WorkoutPlans"
+import NutritionPlans from "./pages/coach/NutritionPlans"
+import MemberWorkoutPlan from "./pages/member/MemberWorkoutPlan"
+import MemberNutritionPlan from "./pages/member/MemberNutritionPlan"
 
 
 
@@ -34,18 +37,25 @@ const App = () => {
         <Route element={<PortalLayout/>}>
           <Route path="/dashboard" element={<Dashboard/>}/>
           <Route path="/profile" element={<Profile/>}/>
-          <Route path="/my-progress" element={<Progress/>}/>
+
+          {/* MEMBER ROUTES */}
+          <Route element={<ProtectedRoute allowedRoles={['member']}/>}>
+              <Route path="/my-progress" element={<Progress/>}/>
+              <Route path="/member/workout-plan" element={<MemberWorkoutPlan />} />
+              <Route path="/member/nutrition-plan" element={<MemberNutritionPlan />} />
+          </Route>
 
           {/* COACH ROUTES */}
           <Route element={<ProtectedRoute allowedRoles={['coach']}/>}>
-              <Route path="/coach/my-clients"  element={<MyClients/>} />
-              <Route path="/coach/members/:memberId" element={<CoachMemberProfile/>} />
-              <Route path="/coach/plans" element={<Plans />} />
-              <Route path="/coach/plans/workout/new" element={<WorkoutPlanForm />} />
-              <Route path="/coach/plans/workout/:planId/edit" element={<WorkoutPlanForm />} />
-              <Route path="/coach/plans/nutrition/new" element={<NutritionPlanForm />} />
-              <Route path="/coach/plans/nutrition/:planId/edit" element={<NutritionPlanForm />} />
-          </Route>
+            <Route path="/coach/my-clients"  element={<MyClients/>} />
+            <Route path="/coach/members/:memberId" element={<CoachMemberProfile/>} />
+            <Route path="/coach/plans/workout" element={<WorkoutPlans />} /> this
+            <Route path="/coach/plans/workout/new" element={<WorkoutPlanForm />} />
+            <Route path="/coach/plans/workout/:planId/edit" element={<WorkoutPlanForm />} />
+            <Route path="/coach/plans/nutrition" element={<NutritionPlans />} /> this 
+            <Route path="/coach/plans/nutrition/new" element={<NutritionPlanForm />} />
+            <Route path="/coach/plans/nutrition/:planId/edit" element={<NutritionPlanForm />} />
+        </Route>
 
           {/* ADMIN ROUTES */}
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>

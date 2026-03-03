@@ -89,21 +89,18 @@ export const assignPlanToMember = async (
     startDate?: Date,
     coachNotes?: string
 ) => {
-    // Verify member belongs to this coach
-    const member = await User.findOne({ _id: memberId, coach: coachId, role: 'member' });
-    if (!member) throw new Error("Member not found or not assigned to you");
+    const member = await User.findOne({ _id: memberId, coach: coachId });
+    if (!member) throw new Error("Member not assigned to you");
 
-    // Deactivate any existing active plan of same type for this member
-    await MemberPlan.updateMany(
-        { member: memberId, planType, status: 'active' },
-        { status: 'cancelled' }
-    );
+    // Cancel existing active plan of same type
+    await MemberPlan.updateMany({ member: memberId, planType, status: 'active' }, { status: 'cancelled' });
 
-    // Create new assignment
     return await MemberPlan.create({
         member: memberId,
         coach: coachId,
         planType,
+        // Map lowercase type to the capitalized Model Name for refPath 
+        planModel: planType === 'workout' ? 'WorkoutPlan' : 'NutritionPlan', 
         plan: planId,
         status: 'active',
         startDate: startDate || new Date(),
@@ -111,29 +108,19 @@ export const assignPlanToMember = async (
     });
 };
 
-export const getMemberActivePlans = async (memberId : string) => {
+export const getMemberActivePlans = async (memberId: string) => {
     try {
-        // Use try-catch inside the service to prevent the whole request from failing
         const workout = await MemberPlan.findOne({
-            member: memberId, 
-            planType: 'workout', 
-            status: 'active'
-        }).populate('plan').lean();
+            member: memberId, planType: 'workout', status: 'active'
+        }).populate('plan').lean(); // Mongoose now uses planModel to find the data [cite: 1621]
 
         const nutrition = await MemberPlan.findOne({
-            member: memberId, 
-            planType: 'nutrition', 
-            status: 'active'
+            member: memberId, planType: 'nutrition', status: 'active'
         }).populate('plan').lean();
 
-        // Ensure we always return an object even if values are null
-        return { 
-            workout: workout || null, 
-            nutrition: nutrition || null 
-        };
+        return { workout, nutrition };
     } catch (error) {
-        console.error("Error fetching active plans:", error);
-        // Return nulls instead of throwing so the Profile page can still load other data
+        console.error("Fetch Error:", error);
         return { workout: null, nutrition: null };
     }
 };

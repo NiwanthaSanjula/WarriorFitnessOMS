@@ -201,7 +201,7 @@ const WorkoutPlanForm = () => {
             } else {
                 await planService.createWorkoutPlan(payload);
             }
-            navigate("/coach/plans");
+            navigate("/coach/plans/workout");
         } catch (e: any) {
             setError(e.response?.data?.message || "Failed to save plan");
         } finally {

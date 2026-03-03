@@ -3,25 +3,25 @@ import { useEffect, useState } from "react";
 import { planService } from "../../services/planService";
 import { progressService } from "../../services/progressService"; 
 import { Button } from "../ui/Button";
-import { MdClose, MdPersonAdd, MdAssignment } from "react-icons/md";
+import { MdClose, MdPersonAdd} from "react-icons/md";
 
 interface Props {
-    planId?: string;          // Made optional: can select inside modal
-    planType: "workout" | "nutrition";
-    planTitle?: string;       // Made optional
-    memberId?: string;        // If pre-selected from member profile
-    memberName?: string;      // To display pre-selected member name
+    planId?: string;
+    planType: "WorkoutPlan" | "NutritionPlan";
+    planTitle?: string;
+    memberId?: string;
+    memberName?: string;
     onClose: () => void;
     onSuccess: () => void;
 }
 
 const AssignPlanModal = ({
-    planId, planType, planTitle, memberId, memberName, onClose, onSuccess
+    planId, planType, memberId, memberName, onClose, onSuccess
 }: Props) => {
     const [members, setMembers] = useState<any[]>([]);
-    const [templates, setTemplates] = useState<any[]>([]); // NEW: To hold list of templates
+    const [templates, setTemplates] = useState<any[]>([]);
     const [selectedMemberId, setSelectedMemberId] = useState(memberId || "");
-    const [selectedPlanId, setSelectedPlanId] = useState(planId || ""); // NEW: To hold selected template
+    const [selectedPlanId, setSelectedPlanId] = useState(planId || "");
     const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
     const [coachNotes, setCoachNotes] = useState("");
     const [loading, setLoading] = useState(false);
@@ -32,14 +32,15 @@ const AssignPlanModal = ({
         const loadInitialData = async () => {
             setFetchingData(true);
             try {
-                // 1. Fetch Members if not provided [cite: 125, 126]
+                // 1. Fetch Members if not provided
                 if (!memberId) {
                     const memberList = await progressService.getCoachMembersList();
                     setMembers(memberList);
                 }
                 // 2. Fetch Templates if not provided
                 if (!planId) {
-                    const planList = planType === 'workout' 
+                    const isWorkout = planType === "WorkoutPlan";
+                    const planList = isWorkout
                         ? await planService.getWorkoutPlans() 
                         : await planService.getNutritionPlans();
                     setTemplates(planList);
@@ -60,9 +61,12 @@ const AssignPlanModal = ({
         setLoading(true);
         setError(null);
         try {
+            // ✅ FIX: Convert planType to lowercase for API
+            const planTypeForApi = planType === "WorkoutPlan" ? "workout" : "nutrition";
+
             await planService.assignPlan({
                 memberId: selectedMemberId,
-                planType,
+                planType: planTypeForApi,  // ✅ Send "workout" or "nutrition"
                 planId: selectedPlanId,
                 startDate,
                 coachNotes,
@@ -85,7 +89,9 @@ const AssignPlanModal = ({
                             <MdPersonAdd className="text-warrior-orange" size={18} />
                         </div>
                         <div>
-                            <h3 className="font-bold text-white uppercase italic">Assign {planType}</h3>
+                            <h3 className="font-bold text-white uppercase italic">
+                                Assign {planType === "WorkoutPlan" ? "Workout" : "Nutrition"}
+                            </h3>
                             <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Targeting Member Evolution</p>
                         </div>
                     </div>
@@ -143,12 +149,12 @@ const AssignPlanModal = ({
                         />
                     </div>
                     <div className="flex items-end">
-                         <div className={`w-full text-center py-3 rounded-xl border text-[10px] font-black uppercase tracking-tighter ${
-                            planType === "workout"
+                        <div className={`w-full text-center py-3 rounded-xl border text-[10px] font-black uppercase tracking-tighter ${
+                            planType === "WorkoutPlan"
                                 ? "bg-orange-900/20 text-orange-400 border-orange-800/50"
                                 : "bg-green-900/20 text-green-400 border-green-800/50"
                         }`}>
-                            {planType} Mode
+                            {planType === "WorkoutPlan" ? "Workout" : "Nutrition"} Mode
                         </div>
                     </div>
                 </div>
@@ -170,7 +176,7 @@ const AssignPlanModal = ({
                         Cancel
                     </button>
                     <Button onClick={handleSubmit} loading={loading} className="flex-1">
-                        Initialize Plan
+                        Assign Plan
                     </Button>
                 </div>
             </div>

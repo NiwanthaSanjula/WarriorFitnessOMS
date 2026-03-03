@@ -61,7 +61,11 @@ const CoachMemberProfile = () => {
                 planService.getCoachMemberPlans(memberId!) // 
             ]);
             setMemberData(detail);
-            setActivePlans(plans); // [cite: 106]
+            setActivePlans({
+                workout: plans.workoutPlan,
+                nutrition: plans.nutritionPlan
+            });
+            
 
             if (chart?.labels) {
                 setChartData(chart.labels.map((label: string, i: number) => ({
@@ -154,53 +158,220 @@ const CoachMemberProfile = () => {
             </div>
 
             {/* ACTIVE PLANS SECTION [cite: 106] */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Workout Card */}
-                <div className="bg-warrior-grey border border-neutral-700 p-5 rounded-2xl flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-orange-900/20 flex items-center justify-center text-warrior-orange border border-orange-800/30">
-                            <MdAssignment size={24} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-black uppercase text-gray-500">Active Workout</p>
-                            <p className="text-sm font-bold text-white">
-                                {activePlans?.workout?.plan?.title || 'No Plan Assigned'}
-                            </p>
-                        </div>
-                    </div>
-                    {!activePlans?.workout && (
-                        <button
-                            onClick={() => setShowAssignModal({ show: true, type: 'workout' })}
-                            className="text-gray-500 hover:text-warrior-orange transition-colors"
-                        >
-                            <MdEdit size={18} />
-                        </button>
-                    )}
-                </div>
+            {/* ACTIVE PLANS SECTION */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                {/* Nutrition Card */}
-                <div className="bg-warrior-grey border border-neutral-700 p-5 rounded-2xl flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-green-900/20 flex items-center justify-center text-green-500 border border-green-800/30">
-                            <MdTimeline size={24} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-black uppercase text-gray-500">Active Nutrition</p>
-                            <p className="text-sm font-bold text-white">
-                                {activePlans?.nutrition?.plan?.title || 'No Plan Assigned'}
-                            </p>
-                        </div>
-                    </div>
-                    {!activePlans?.nutrition && (
-                        <button
-                            onClick={() => setShowAssignModal({ show: true, type: 'nutrition' })}
-                            className="text-gray-500 hover:text-green-400 transition-colors"
-                        >
-                            <MdEdit size={18} />
-                        </button>
-                    )}
+{/* Workout Card */}
+<div className="bg-warrior-grey border border-neutral-700 rounded-2xl overflow-hidden">
+    {/* Card Header */}
+    <div className="flex items-center justify-between p-4 bg-orange-900/10 border-b border-orange-800/20">
+        <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-orange-900/30 flex items-center justify-center text-warrior-orange border border-orange-800/30">
+                <MdAssignment size={20} />
+            </div>
+            <div>
+                <p className="text-[10px] font-black uppercase text-gray-500 tracking-widest">Active Workout</p>
+                <p className="text-sm font-black text-white italic">
+                    {activePlans?.workout?.plan?.title || 'No Plan Assigned'}
+                </p>
+            </div>
+        </div>
+        <div className="flex items-center gap-2">
+            {activePlans?.workout ? (
+                <span className="px-2 py-1 rounded-full bg-green-900/30 text-green-400 border border-green-800/40 text-[9px] font-black uppercase tracking-wider">
+                    Active
+                </span>
+            ) : (
+                <button
+                    onClick={() => setShowAssignModal({ show: true, type: 'workout' })}
+                    className="text-gray-500 hover:text-warrior-orange transition-colors"
+                >
+                    <MdEdit size={18} />
+                </button>
+            )}
+        </div>
+    </div>
+
+    {/* Card Body */}
+    {activePlans?.workout?.plan ? (
+        <div className="p-4 space-y-3">
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 gap-2">
+                <div className="bg-neutral-800/60 rounded-lg p-2.5">
+                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-wider">Duration</p>
+                    <p className="text-sm font-black text-white mt-0.5">
+                        {activePlans.workout.plan.durationWeeks} <span className="text-xs font-normal text-gray-500">weeks</span>
+                    </p>
+                </div>
+                <div className="bg-neutral-800/60 rounded-lg p-2.5">
+                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-wider">Frequency</p>
+                    <p className="text-sm font-black text-white mt-0.5">
+                        {activePlans.workout.plan.daysPerWeek}<span className="text-xs font-normal text-gray-500">x / week</span>
+                    </p>
+                </div>
+                <div className="bg-neutral-800/60 rounded-lg p-2.5">
+                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-wider">Difficulty</p>
+                    <p className={`text-sm font-black mt-0.5 capitalize ${
+                        activePlans.workout.plan.difficulty === 'beginner' ? 'text-green-400' :
+                        activePlans.workout.plan.difficulty === 'intermediate' ? 'text-yellow-400' :
+                        'text-red-400'
+                    }`}>
+                        {activePlans.workout.plan.difficulty}
+                    </p>
+                </div>
+                <div className="bg-neutral-800/60 rounded-lg p-2.5">
+                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-wider">Schedule</p>
+                    <p className="text-sm font-black text-white mt-0.5">
+                        {activePlans.workout.plan.schedule?.length ?? 0} <span className="text-xs font-normal text-gray-500">days</span>
+                    </p>
                 </div>
             </div>
+
+            {/* Goal Badge */}
+            <div className="flex items-center gap-2">
+                <span className="text-[9px] font-black uppercase text-gray-600 tracking-wider">Goal</span>
+                <span className="px-2 py-0.5 rounded-full bg-warrior-orange/10 text-warrior-orange border border-warrior-orange/20 text-[10px] font-black uppercase tracking-wide">
+                    {activePlans.workout.plan.goal?.replace('_', ' ')}
+                </span>
+            </div>
+
+            {/* Start Date */}
+            <div className="flex items-center justify-between pt-2 border-t border-neutral-700/50">
+                <p className="text-[10px] text-gray-600">
+                    Started <span className="text-gray-400 font-bold">
+                        {new Date(activePlans.workout.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </span>
+                </p>
+            </div>
+
+            {/* Coach Notes */}
+            {activePlans.workout.coachNotes && (
+                <div className="bg-neutral-800/40 border border-neutral-700/50 rounded-lg p-2.5">
+                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-wider mb-1">Coach Notes</p>
+                    <p className="text-xs text-gray-400 italic">"{activePlans.workout.coachNotes}"</p>
+                </div>
+            )}
+        </div>
+    ) : (
+        <div className="p-6 text-center">
+            <p className="text-gray-600 text-xs">No workout plan assigned yet</p>
+            <button
+                onClick={() => setShowAssignModal({ show: true, type: 'workout' })}
+                className="mt-2 text-warrior-orange text-xs font-black uppercase hover:underline"
+            >
+                + Assign Now
+            </button>
+        </div>
+    )}
+</div>
+
+{/* Nutrition Card */}
+<div className="bg-warrior-grey border border-neutral-700 rounded-2xl overflow-hidden">
+    {/* Card Header */}
+    <div className="flex items-center justify-between p-4 bg-green-900/10 border-b border-green-800/20">
+        <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-green-900/30 flex items-center justify-center text-green-500 border border-green-800/30">
+                <MdTimeline size={20} />
+            </div>
+            <div>
+                <p className="text-[10px] font-black uppercase text-gray-500 tracking-widest">Active Nutrition</p>
+                <p className="text-sm font-black text-white italic">
+                    {activePlans?.nutrition?.plan?.title || 'No Plan Assigned'}
+                </p>
+            </div>
+        </div>
+        <div className="flex items-center gap-2">
+            {activePlans?.nutrition ? (
+                <span className="px-2 py-1 rounded-full bg-green-900/30 text-green-400 border border-green-800/40 text-[9px] font-black uppercase tracking-wider">
+                    Active
+                </span>
+            ) : (
+                <button
+                    onClick={() => setShowAssignModal({ show: true, type: 'nutrition' })}
+                    className="text-gray-500 hover:text-green-400 transition-colors"
+                >
+                    <MdEdit size={18} />
+                </button>
+            )}
+        </div>
+    </div>
+
+    {/* Card Body */}
+    {activePlans?.nutrition?.plan ? (
+        <div className="p-4 space-y-3">
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 gap-2">
+                <div className="bg-neutral-800/60 rounded-lg p-2.5">
+                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-wider">Duration</p>
+                    <p className="text-sm font-black text-white mt-0.5">
+                        {activePlans.nutrition.plan.durationWeeks} <span className="text-xs font-normal text-gray-500">weeks</span>
+                    </p>
+                </div>
+                <div className="bg-neutral-800/60 rounded-lg p-2.5">
+                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-wider">Calories</p>
+                    <p className="text-sm font-black text-white mt-0.5">
+                        {activePlans.nutrition.plan.dailyCalorieTarget
+                            ? <>{activePlans.nutrition.plan.dailyCalorieTarget}<span className="text-xs font-normal text-gray-500"> kcal</span></>
+                            : <span className="text-xs font-normal text-gray-600">Not set</span>
+                        }
+                    </p>
+                </div>
+                <div className="bg-neutral-800/60 rounded-lg p-2.5">
+                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-wider">Schedule</p>
+                    <p className="text-sm font-black text-white mt-0.5">
+                        {activePlans.nutrition.plan.schedule?.length ?? 0} <span className="text-xs font-normal text-gray-500">days</span>
+                    </p>
+                </div>
+                <div className="bg-neutral-800/60 rounded-lg p-2.5">
+                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-wider">Goal</p>
+                    <p className="text-xs font-black text-green-400 mt-0.5 capitalize">
+                        {activePlans.nutrition.plan.goal?.replace('_', ' ')}
+                    </p>
+                </div>
+            </div>
+
+            {/* Restrictions */}
+            {activePlans.nutrition.plan.restrictions?.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                    {activePlans.nutrition.plan.restrictions.map((r: string) => (
+                        <span key={r} className="px-2 py-0.5 rounded-full bg-neutral-800 text-gray-400 border border-neutral-700 text-[9px] font-bold uppercase">
+                            {r.replace('_', ' ')}
+                        </span>
+                    ))}
+                </div>
+            )}
+
+            {/* Start Date */}
+            <div className="flex items-center justify-between pt-2 border-t border-neutral-700/50">
+                <p className="text-[10px] text-gray-600">
+                    Started <span className="text-gray-400 font-bold">
+                        {new Date(activePlans.nutrition.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </span>
+                </p>
+            </div>
+
+            {/* Coach Notes */}
+            {activePlans.nutrition.coachNotes && (
+                <div className="bg-neutral-800/40 border border-neutral-700/50 rounded-lg p-2.5">
+                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-wider mb-1">Coach Notes</p>
+                    <p className="text-xs text-gray-400 italic">"{activePlans.nutrition.coachNotes}"</p>
+                </div>
+            )}
+        </div>
+    ) : (
+        <div className="p-6 text-center">
+            <p className="text-gray-600 text-xs">No nutrition plan assigned yet</p>
+            <button
+                onClick={() => setShowAssignModal({ show: true, type: 'nutrition' })}
+                className="mt-2 text-green-400 text-xs font-black uppercase hover:underline"
+            >
+                + Assign Now
+            </button>
+        </div>
+    )}
+</div>
+
+</div>
 
 
             {/* CHARTS OVERHAUL */}
