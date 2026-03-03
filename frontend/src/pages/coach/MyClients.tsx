@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import type { User } from "../../types/auth"
 import { useNavigate } from "react-router-dom";
-import { userService } from "../../services/userService";
 import Spinner from "../../components/ui/Spinner";
 import { MdCheckCircle, MdChevronRight, MdFitnessCenter, MdRadioButtonUnchecked } from "react-icons/md";
 import { assets } from "../../assets/assets";
@@ -66,21 +65,6 @@ const MyClients = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-6">
-                                    {/* Attendance status Indicator */}
-                                    <div className='hidden md:flex flex-col items-center'>
-                                        <span className='text-[10px] text-gray-500 font-bold uppercase mb-1'>Today</span>
-                                        {client.isCheckedIn ? (
-                                            <MdCheckCircle className="text-green-500" size={20}/>
-                                        ): (
-                                            <MdRadioButtonUnchecked className="text-neutral-600" size={20} />
-                                        )}
-                                    </div>
-
-                                    <button className='p-2 rounded-lg bg-neutral-800 text-gray-400 group-hover:text-warrior-orange transition-all'>
-                                        <MdChevronRight size={24} />
-                                    </button>
-                                </div>
                             </div>
                         ))}
                     </div>

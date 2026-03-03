@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// pages/coach/CoachMemberProfile.tsx
-import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { progressService } from '../../services/progressService';
-import { MdArrowBack, MdEdit, MdClose, MdSave } from 'react-icons/md';
+import { planService } from '../../services/planService'; // [cite: 118]
+import { MdArrowBack, MdEdit, MdAssignment, MdTimeline, MdRadar } from 'react-icons/md';
 import Spinner from '../../components/ui/Spinner';
-import { Button } from '../../components/ui/Button';
 import {
-    AreaChart, Area, LineChart, Line, XAxis, YAxis,
-    CartesianGrid, Tooltip, ResponsiveContainer, Legend
+    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+    Radar, RadarChart, PolarGrid, PolarAngleAxis,
 } from 'recharts';
+import { useEffect, useState } from 'react';
+import AssignPlanModal from '../../components/coach/AssignPlanModal';
 
 const StatCard = ({ label, value, sub, color = 'orange' }: any) => {
     const colors: any = {
@@ -17,24 +19,13 @@ const StatCard = ({ label, value, sub, color = 'orange' }: any) => {
         yellow: 'text-yellow-400 border-yellow-500',
         blue: 'text-blue-400 border-blue-500',
         green: 'text-green-400 border-green-500',
+        purple: 'text-purple-400 border-purple-500', // NEW
     };
     return (
         <div className={`bg-neutral-800 p-4 rounded-xl border border-neutral-700 border-l-4 ${colors[color]}`}>
-            <p className="text-xs text-gray-500 font-bold uppercase mb-1">{label}</p>
+            <p className="text-[10px] text-gray-500 font-black uppercase mb-1 tracking-widest">{label}</p>
             <p className={`text-2xl font-bold ${colors[color].split(' ')[0]}`}>{value ?? 'N/A'}</p>
             {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
-        </div>
-    );
-};
-
-const CustomTooltip = ({ active, payload, label }: any) => {
-    if (!active || !payload?.length) return null;
-    return (
-        <div className="bg-neutral-900 border border-neutral-700 p-3 rounded-lg text-sm">
-            <p className="text-gray-400 mb-1">{label}</p>
-            {payload.map((p: any) => (
-                <p key={p.name} style={{ color: p.color }}>{p.name}: <b>{p.value}</b></p>
-            ))}
         </div>
     );
 };
@@ -45,12 +36,18 @@ const CoachMemberProfile = () => {
 
     const [loading, setLoading] = useState(true);
     const [memberData, setMemberData] = useState<any>(null);
+    const [activePlans, setActivePlans] = useState<any>(null); // NEW
     const [chartData, setChartData] = useState<any[]>([]);
-    const [activeChart, setActiveChart] = useState<'weight' | 'measurements'>('weight');
+    const [activeChart, setActiveChart] = useState<'weight' | 'balance'>('weight'); // NEW Chart Type
     const [editingId, setEditingId] = useState<string | null>(null);
     const [feedbackText, setFeedbackText] = useState('');
     const [feedbackLoading, setFeedbackLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const [showAssignModal, setShowAssignModal] = useState<{ show: boolean, type: 'workout' | 'nutrition' | null }>({
+        show: false,
+        type: null
+    });
 
     useEffect(() => { if (memberId) fetchAll(); }, [memberId]);
 
@@ -58,19 +55,24 @@ const CoachMemberProfile = () => {
         setLoading(true);
         setError(null);
         try {
-            const [detail, chart] = await Promise.all([
+            const [detail, chart, plans] = await Promise.all([
                 progressService.getCoachMemberDetail(memberId!),
-                progressService.getCoachMemberChartData(memberId!),  // new endpoint
+                progressService.getCoachMemberChartData(memberId!),
+                planService.getCoachMemberPlans(memberId!) // 
             ]);
             setMemberData(detail);
+            setActivePlans(plans); // [cite: 106]
 
             if (chart?.labels) {
                 setChartData(chart.labels.map((label: string, i: number) => ({
                     date: label,
                     Weight: chart.weight[i],
                     "Body Fat": chart.bodyFat[i],
-                    Waist: chart.waist[i],
-                    Biceps: chart.biceps[i],
+                    Chest: chart.chest?.[i] || 0,
+                    Waist: chart.waist?.[i] || 0,
+                    Hips: chart.hips?.[i] || 0,
+                    Biceps: chart.biceps?.[i] || 0,
+                    Thighs: chart.thighs?.[i] || 0,
                 })));
             }
         } catch (err: any) {
@@ -93,71 +95,134 @@ const CoachMemberProfile = () => {
     };
 
     if (loading) return <Spinner />;
-    if (error) return (
-        <div className="max-w-6xl mx-auto p-6">
-            <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-warrior-orange mb-4">
-                <MdArrowBack /> Back
-            </button>
-            <div className="bg-red-900/20 border border-red-700 p-6 rounded-2xl">
-                <p className="text-red-400">{error}</p>
-            </div>
-        </div>
-    );
     if (!memberData) return null;
 
     const { user, memberProfile, latestProgress, progressComparison, progressHistory } = memberData;
     const wChange = progressComparison?.comparison?.weight;
 
+    // Data for Radar Chart (Latest measurements)
+    const balanceData = [
+        { subject: 'Chest', A: latestProgress?.chest || 0 },
+        { subject: 'Waist', A: latestProgress?.waist || 0 },
+        { subject: 'Hips', A: latestProgress?.hips || 0 },
+        { subject: 'Biceps', A: latestProgress?.biceps || 0 },
+        { subject: 'Thighs', A: latestProgress?.thighs || 0 },
+    ];
+
     return (
         <div className="max-w-6xl mx-auto space-y-6 pb-10">
-
             {/* HEADER */}
             <div>
-                <button onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-gray-400 hover:text-gray-300 mb-4 text-sm">
+                <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-400 hover:text-gray-300 mb-4 text-sm">
                     <MdArrowBack /> Back to Members
                 </button>
                 <div className="flex items-start justify-between">
                     <div>
-                        <h1 className="text-3xl font-bold text-white">{user.name}</h1>
-                        <p className="text-gray-500">{user.email} · {user.phone}</p>
+                        <h1 className="text-3xl font-black italic uppercase text-white tracking-tighter">
+                            {user.name} <span className="text-warrior-orange">Profile</span>
+                        </h1>
+                        <p className="text-gray-500 font-bold uppercase text-xs tracking-widest">{user.email} · {user.phone}</p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize
-                        ${user.status === 'active' ? 'bg-green-900/40 text-green-400 border border-green-700'
-                        : 'bg-red-900/40 text-red-400 border border-red-700'}`}>
-                        {user.status}
-                    </span>
+
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setShowAssignModal({ show: true, type: 'workout' })}
+                            className="px-4 py-2 bg-warrior-orange/10 text-warrior-orange border border-warrior-orange/30 rounded-xl text-[10px] font-black uppercase hover:bg-warrior-orange/20 transition-all"
+                        >
+                            Assign Workout
+                        </button>
+                        <button
+                            onClick={() => setShowAssignModal({ show: true, type: 'nutrition' })}
+                            className="px-4 py-2 bg-green-900/20 text-green-500 border border-green-800/30 rounded-xl text-[10px] font-black uppercase hover:bg-green-900/30 transition-all"
+                        >
+                            Assign Nutrition
+                        </button>
+                    </div>
+
+
                 </div>
             </div>
 
-            {/* STATS GRID */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatCard label="Baseline Weight" value={memberProfile?.weight ? `${memberProfile.weight} kg` : 'N/A'} color="orange" />
+            {/* TOP STATS GRID */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <StatCard label="Current Weight" value={latestProgress?.weight ? `${latestProgress.weight} kg` : 'N/A'} color="orange"
                     sub={wChange ? `${wChange.change > 0 ? '+' : ''}${wChange.change.toFixed(1)} kg (30d)` : undefined} />
                 <StatCard label="Body Fat" value={latestProgress?.bodyFat ? `${latestProgress.bodyFat}%` : 'N/A'} color="yellow" />
+                <StatCard label="Consistency" value={`${progressHistory.length}`} sub="Total Logs" color="green" />
+                <StatCard label="Energy Avg" value={latestProgress?.energyLevel ? `${latestProgress.energyLevel}/10` : 'N/A'} color="purple" />
                 <StatCard label="Height" value={memberProfile?.height ? `${memberProfile.height} cm` : 'N/A'} color="blue" />
             </div>
 
-            {/* CHARTS */}
-            {chartData.length > 1 && (
-                <div className="bg-warrior-grey p-6 rounded-2xl border border-neutral-600">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-bold text-gray-300">Progress Charts</h2>
-                        <div className="flex gap-2">
-                            {(['weight', 'measurements'] as const).map(t => (
-                                <button key={t} onClick={() => setActiveChart(t)}
-                                    className={`px-3 py-1 rounded-full text-xs font-bold capitalize
-                                        ${activeChart === t
-                                            ? 'bg-warrior-orange text-white'
-                                            : 'bg-neutral-700 text-gray-400'}`}>
-                                    {t}
-                                </button>
-                            ))}
+            {/* ACTIVE PLANS SECTION [cite: 106] */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Workout Card */}
+                <div className="bg-warrior-grey border border-neutral-700 p-5 rounded-2xl flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-orange-900/20 flex items-center justify-center text-warrior-orange border border-orange-800/30">
+                            <MdAssignment size={24} />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase text-gray-500">Active Workout</p>
+                            <p className="text-sm font-bold text-white">
+                                {activePlans?.workout?.plan?.title || 'No Plan Assigned'}
+                            </p>
                         </div>
                     </div>
+                    {!activePlans?.workout && (
+                        <button
+                            onClick={() => setShowAssignModal({ show: true, type: 'workout' })}
+                            className="text-gray-500 hover:text-warrior-orange transition-colors"
+                        >
+                            <MdEdit size={18} />
+                        </button>
+                    )}
+                </div>
 
-                    <ResponsiveContainer width="100%" height={250}>
+                {/* Nutrition Card */}
+                <div className="bg-warrior-grey border border-neutral-700 p-5 rounded-2xl flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-green-900/20 flex items-center justify-center text-green-500 border border-green-800/30">
+                            <MdTimeline size={24} />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase text-gray-500">Active Nutrition</p>
+                            <p className="text-sm font-bold text-white">
+                                {activePlans?.nutrition?.plan?.title || 'No Plan Assigned'}
+                            </p>
+                        </div>
+                    </div>
+                    {!activePlans?.nutrition && (
+                        <button
+                            onClick={() => setShowAssignModal({ show: true, type: 'nutrition' })}
+                            className="text-gray-500 hover:text-green-400 transition-colors"
+                        >
+                            <MdEdit size={18} />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+
+            {/* CHARTS OVERHAUL */}
+            <div className="bg-warrior-grey p-6 rounded-2xl border border-neutral-600 shadow-xl">
+                <div className="flex items-center justify-between mb-8">
+                    <h2 className="text-xs font-black uppercase text-gray-400 tracking-widest flex items-center gap-2">
+                        {activeChart === 'weight' ? <MdTimeline size={18} /> : <MdRadar size={18} />}
+                        {activeChart === 'weight' ? 'Evolution Trend' : 'Body Symmetry Balance'}
+                    </h2>
+                    <div className="flex gap-1 bg-neutral-800 p-1 rounded-lg">
+                        {(['weight', 'balance'] as const).map(t => (
+                            <button key={t} onClick={() => setActiveChart(t)}
+                                className={`px-4 py-1.5 rounded-md text-[10px] font-black uppercase transition-all
+                                    ${activeChart === t ? 'bg-warrior-orange text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}>
+                                {t}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
                         {activeChart === 'weight' ? (
                             <AreaChart data={chartData}>
                                 <defs>
@@ -166,144 +231,105 @@ const CoachMemberProfile = () => {
                                         <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                                <XAxis dataKey="date" stroke="#666" tick={{ fontSize: 11 }} />
-                                <YAxis stroke="#666" tick={{ fontSize: 11 }} domain={['auto', 'auto']} />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Area type="monotone" dataKey="Weight" stroke="#f97316"
-                                    fill="url(#wg)" strokeWidth={2} dot={{ r: 3, fill: '#f97316' }} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
+                                <XAxis dataKey="date" stroke="#444" tick={{ fontSize: 10 }} />
+                                <YAxis stroke="#444" tick={{ fontSize: 10 }} domain={['auto', 'auto']} />
+                                <Tooltip contentStyle={{ backgroundColor: '#111', border: 'none', borderRadius: '10px' }} />
+                                <Area type="monotone" dataKey="Weight" stroke="#f97316" fill="url(#wg)" strokeWidth={3} dot={{ r: 4, fill: '#f97316' }} />
                             </AreaChart>
                         ) : (
-                            <LineChart data={chartData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                                <XAxis dataKey="date" stroke="#666" tick={{ fontSize: 11 }} />
-                                <YAxis stroke="#666" tick={{ fontSize: 11 }} domain={['auto', 'auto']} />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Legend wrapperStyle={{ color: '#9ca3af', fontSize: 12 }} />
-                                <Line type="monotone" dataKey="Body Fat" stroke="#eab308" strokeWidth={2} dot={{ r: 3 }} connectNulls />
-                                <Line type="monotone" dataKey="Waist" stroke="#60a5fa" strokeWidth={2} dot={{ r: 3 }} connectNulls />
-                                <Line type="monotone" dataKey="Biceps" stroke="#34d399" strokeWidth={2} dot={{ r: 3 }} connectNulls />
-                            </LineChart>
+                            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={balanceData}>
+                                <PolarGrid stroke="#333" />
+                                <PolarAngleAxis dataKey="subject" tick={{ fill: '#666', fontSize: 10 }} />
+                                <Radar name="Member" dataKey="A" stroke="#f97316" fill="#f97316" fillOpacity={0.6} />
+                                <Tooltip contentStyle={{ backgroundColor: '#111', border: 'none' }} />
+                            </RadarChart>
                         )}
                     </ResponsiveContainer>
                 </div>
-            )}
-
-            {/* 30-DAY COMPARISON */}
-            {progressComparison?.comparison && (
-                <div className="bg-warrior-grey p-5 rounded-2xl border border-neutral-600">
-                    <h2 className="text-sm font-bold text-gray-500 uppercase mb-3">30-Day Comparison</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-warrior-dark p-4 rounded-xl border-l-4 border-warrior-orange">
-                            <p className="text-xs text-gray-400">Weight</p>
-                            <p className="text-xl font-bold text-warrior-orange">
-                                {wChange?.change > 0 ? '+' : ''}{wChange?.change.toFixed(1)} kg
-                            </p>
-                            <p className="text-xs text-gray-500">{wChange?.start} → {wChange?.end} kg</p>
-                        </div>
-                        {progressComparison.comparison.bodyFat && (
-                            <div className="bg-warrior-dark p-4 rounded-xl border-l-4 border-yellow-500">
-                                <p className="text-xs text-gray-400">Body Fat</p>
-                                <p className="text-xl font-bold text-yellow-400">
-                                    {progressComparison.comparison.bodyFat.change.toFixed(1)}%
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                    {progressComparison.comparison.bodyFat.start}% → {progressComparison.comparison.bodyFat.end}%
-                                </p>
-                            </div>
-                        )}
-                        {progressComparison.comparison.waist && (
-                            <div className="bg-warrior-dark p-4 rounded-xl border-l-4 border-blue-500">
-                                <p className="text-xs text-gray-400">Waist</p>
-                                <p className="text-xl font-bold text-blue-400">
-                                    {progressComparison.comparison.waist.change > 0 ? '+' : ''}
-                                    {progressComparison.comparison.waist.change.toFixed(1)} cm
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* PROGRESS HISTORY WITH FEEDBACK */}
-            <div className="bg-warrior-grey border border-neutral-600 p-6 rounded-2xl">
-                <h2 className="text-lg font-bold text-gray-300 mb-4">Progress Entries</h2>
-
-                {!progressHistory?.length ? (
-                    <p className="text-gray-500">No entries yet.</p>
-                ) : (
-                    <div className="space-y-4">
-                        {progressHistory.map((r: any) => (
-                            <div key={r._id} className="bg-neutral-800 p-4 rounded-xl border border-neutral-700">
-                                {/* Entry header */}
-                                <div className="flex justify-between mb-2">
-                                    <p className="text-sm text-gray-400">
-                                        {new Date(r.createdAt).toLocaleDateString('en-US', {
-                                            weekday: 'short', month: 'short', day: 'numeric'
-                                        })}
-                                    </p>
-                                    <p className="text-xl font-bold text-warrior-orange">{r.weight} kg</p>
-                                </div>
-
-                                {/* Metrics row */}
-                                <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
-                                    {r.bodyFat && <span className="text-xs text-yellow-400">Body Fat: {r.bodyFat}%</span>}
-                                    {r.waist && <span className="text-xs text-blue-400">Waist: {r.waist}cm</span>}
-                                    {r.biceps && <span className="text-xs text-green-400">Biceps: {r.biceps}cm</span>}
-                                    {r.energyLevel && <span className="text-xs text-purple-400">⚡ Energy: {r.energyLevel}/10</span>}
-                                </div>
-
-                                {r.notes && (
-                                    <p className="text-xs text-gray-400 italic mb-3">Member: "{r.notes}"</p>
-                                )}
-
-                                {/* Existing coach notes */}
-                                {r.coachNotes && editingId !== r._id && (
-                                    <div className="bg-neutral-900 border border-warrior-orange/30 rounded-lg p-3 mb-3">
-                                        <p className="text-xs font-bold text-warrior-orange mb-1">Your Feedback</p>
-                                        <p className="text-xs text-gray-300">{r.coachNotes}</p>
-                                    </div>
-                                )}
-
-                                {/* Feedback form */}
-                                {editingId === r._id ? (
-                                    <div className="space-y-2 mt-2">
-                                        <textarea
-                                            className="w-full bg-neutral-900 text-white text-sm p-3 rounded-lg border border-neutral-600 outline-none focus:border-warrior-orange"
-                                            placeholder="Write your feedback for this entry..."
-                                            rows={3}
-                                            value={feedbackText}
-                                            onChange={e => setFeedbackText(e.target.value)}
-                                        />
-                                        <div className="flex gap-2">
-                                            <Button onClick={() => handleSaveFeedback(r._id)}
-                                                loading={feedbackLoading} className="flex-1">
-                                                <MdSave className="inline mr-1" /> Save Feedback
-                                            </Button>
-                                            <button onClick={() => { setEditingId(null); setFeedbackText(''); }}
-                                                className="flex-1 py-2 bg-neutral-700 text-gray-300 rounded-lg text-sm hover:bg-neutral-600">
-                                                <MdClose className="inline mr-1" /> Cancel
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <button
-                                        onClick={() => {
-                                            setEditingId(r._id);
-                                            setFeedbackText(r.coachNotes || '');
-                                        }}
-                                        className="text-xs text-warrior-orange font-bold flex items-center gap-1 hover:underline"
-                                    >
-                                        <MdEdit size={13} />
-                                        {r.coachNotes ? 'Edit Feedback' : 'Add Feedback'}
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                )}
             </div>
+
+            {/* PROGRESS HISTORY REDESIGN - Timeline Table */}
+            <div className="bg-warrior-grey border border-neutral-600 rounded-2xl overflow-hidden shadow-2xl">
+                <div className="p-6 border-b border-neutral-700 bg-neutral-800/50">
+                    <h2 className="text-xs font-black uppercase text-gray-400 tracking-widest">Chronological Log History</h2>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead className="bg-neutral-800/30 text-[10px] font-black uppercase text-gray-500 tracking-tighter">
+                            <tr>
+                                <th className="px-6 py-4">Date</th>
+                                <th className="px-6 py-4">Weight</th>
+                                <th className="px-6 py-4">Metrics</th>
+                                <th className="px-6 py-4">Status</th>
+                                <th className="px-6 py-4 text-right">Feedback</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-neutral-800">
+                            {progressHistory.map((r: any) => (
+                                <tr key={r._id} className="hover:bg-white/[0.02] transition-colors">
+                                    <td className="px-6 py-4 text-sm font-bold text-gray-400">
+                                        {new Date(r.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <p className="text-lg font-black text-white">{r.weight} <span className="text-[10px] font-normal text-gray-500 uppercase">kg</span></p>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex gap-3">
+                                            {r.bodyFat && <div className="text-center"><p className="text-[8px] text-gray-600 font-bold uppercase">Fat</p><p className="text-xs text-yellow-500 font-bold">{r.bodyFat}%</p></div>}
+                                            {r.waist && <div className="text-center"><p className="text-[8px] text-gray-600 font-bold uppercase">Waist</p><p className="text-xs text-blue-500 font-bold">{r.waist}cm</p></div>}
+                                            {r.energyLevel && <div className="text-center"><p className="text-[8px] text-gray-600 font-bold uppercase">Energy</p><p className="text-xs text-purple-500 font-bold">{r.energyLevel}/10</p></div>}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {r.notes ? <span className="px-2 py-1 rounded bg-neutral-900 text-gray-500 text-[10px] italic">Logged</span> : <span className="text-gray-700">--</span>}
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        <button onClick={() => { setEditingId(r._id); setFeedbackText(r.coachNotes || ''); }}
+                                            className="text-[10px] font-black uppercase text-warrior-orange hover:underline flex items-center gap-1 ml-auto">
+                                            <MdEdit size={12} /> {r.coachNotes ? 'Update Feedback' : 'Add Feedback'}
+                                        </button>
+                                        {editingId === r._id && (
+                                            <div className="mt-3 text-left bg-neutral-900 p-3 rounded-lg border border-neutral-700 space-y-2">
+                                                <textarea className="w-full bg-neutral-800 text-white text-xs p-2 rounded border border-neutral-600 outline-none" rows={2}
+                                                    value={feedbackText} onChange={e => setFeedbackText(e.target.value)} />
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => handleSaveFeedback(r._id)} className="flex-1 py-1 bg-warrior-orange text-white text-[10px] font-bold rounded hover:bg-orange-600">Save</button>
+                                                    <button onClick={() => setEditingId(null)} className="flex-1 py-1 bg-neutral-700 text-gray-300 text-[10px] font-bold rounded">Cancel</button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {r.coachNotes && editingId !== r._id && (
+                                            <p className="mt-1 text-[10px] text-gray-500 truncate max-w-[150px] italic ml-auto">"{r.coachNotes}"</p>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {showAssignModal.show && (
+                <AssignPlanModal
+                    planId=""
+                    // Ensure these match your Backend Model Names exactly if using refPath
+                    planType={showAssignModal.type === 'workout' ? 'WorkoutPlan' : 'NutritionPlan'}
+                    planTitle={`New ${showAssignModal.type?.toUpperCase()} Assignment`}
+                    memberId={memberId}
+                    memberName={user.name}
+                    onClose={() => setShowAssignModal({ show: false, type: null })}
+                    onSuccess={() => {
+                        setShowAssignModal({ show: false, type: null });
+                        fetchAll();
+                    }}
+                />
+            )}
         </div>
+
+
+
+
     );
 };
 

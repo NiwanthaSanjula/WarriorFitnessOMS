@@ -14,6 +14,9 @@ import Profile from "./pages/Profile"
 import PaymentsHistory from "./pages/admin/PaymentsHistory"
 import Progress from "./pages/member/Progress"
 import CoachMemberProfile from "./pages/coach/CoachMemberProfile"
+import Plans from "./pages/coach/Plans"
+import WorkoutPlanForm from "./pages/coach/WorkoutPlanForm"
+import NutritionPlanForm from "./pages/coach/NutritionPlanForm"
 
 
 
@@ -37,6 +40,11 @@ const App = () => {
           <Route element={<ProtectedRoute allowedRoles={['coach']}/>}>
               <Route path="/coach/my-clients"  element={<MyClients/>} />
               <Route path="/coach/members/:memberId" element={<CoachMemberProfile/>} />
+              <Route path="/coach/plans" element={<Plans />} />
+              <Route path="/coach/plans/workout/new" element={<WorkoutPlanForm />} />
+              <Route path="/coach/plans/workout/:planId/edit" element={<WorkoutPlanForm />} />
+              <Route path="/coach/plans/nutrition/new" element={<NutritionPlanForm />} />
+              <Route path="/coach/plans/nutrition/:planId/edit" element={<NutritionPlanForm />} />
           </Route>
 
           {/* ADMIN ROUTES */}

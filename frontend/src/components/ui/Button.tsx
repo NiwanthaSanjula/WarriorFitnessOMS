@@ -17,7 +17,7 @@ export const Button = ({ children, variant = 'primary', loading, ...props} : But
     <button
       {...props}
       disabled={loading || props.disabled}
-      className={`w-full py-3 px-4 font-bold rounded transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 ${varients[variant]}`}
+      className={`w-full flex-1 py-3 px-4 font-bold rounded transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 ${varients[variant]}`}
     >
         {loading ? <span className='animate-spin rounded-full h-5 w-5 border-b-2 border-white'></span> : children}
     </button>

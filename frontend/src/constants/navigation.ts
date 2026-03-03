@@ -14,9 +14,9 @@ export interface NavItem {
 export const SIDEBAR_LINKS: NavItem[] = [
     { name: 'Dashboard', path: '/dashboard', icon: MdDashboard, roles: ['admin', 'coach', 'member']},
     { name: 'Profile', path: '/profile', icon: MdPerson, roles: ['admin', 'coach', 'member']},
-    { name: 'Workouts', path: '/workouts', icon: MdFitnessCenter, roles: ['member', 'coach']},
-    { name: 'Nutrition', path: '/nutrition', icon: MdRestaurantMenu, roles: ['member']},
     { name: 'My Progress', path: '/my-progress', icon: GiProgression, roles: ['member']},
+
+    { name: 'Plans', path: '/coach/plans', icon: GiProgression, roles: ['coach']},
 
 
 

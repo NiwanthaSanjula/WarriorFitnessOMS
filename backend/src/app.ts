@@ -7,11 +7,11 @@ import { initCronjobs } from './utils/cronJobs.js'
 import { globalErrorHandler } from './middleware/errorMiddleware.js';
 import authRouter from './routes/authRoutes.js';
 import userRouter from './routes/userRoutes.js';
-import exerciseRouter from './routes/exerciseRoutes.js';
 import attendanceRouter from './routes/attendanceRoutes.js';
 import membershipRouter from './routes/mermbershipRoutes.js';
 import statsRouter from './routes/statsRouter.js';
 import progressRouter from './routes/progressRoutes.js';
+import planRouter from './routes/planRouter.js';
 
 
 
@@ -32,15 +32,12 @@ import progressRouter from './routes/progressRoutes.js';
  // Routes
  app.use('/api/v1/auth', authRouter);
  app.use('/api/v1/users', userRouter);
- app.use('/api/v1/exercises', exerciseRouter);
  app.use('/api/v1/attendance', attendanceRouter);
  app.use('/api/v1/membership', membershipRouter);
  app.use('/api/v1/dashboard', statsRouter);
  app.use('/api/v1/progress', progressRouter);
-
-
-
-
+ app.use('/api/v1/plans', planRouter);
+ 
  // Health Check Endpoint
  app.get('/health', (req : Request, res : Response) => {
     res.status(200).json({ status: 'success', message : 'Warrior Fiteness API is healthy'});
