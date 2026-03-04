@@ -134,7 +134,7 @@ const PlanHeader = ({ assignment }: { assignment: Assignment }) => {
                         { label: "Daily Calories", value: plan.dailyCalorieTarget ? `${plan.dailyCalorieTarget}` : "—", unit: plan.dailyCalorieTarget ? "kcal" : "", icon: <MdLocalFireDepartment size={14} /> },
                         { label: "Days in Plan", value: `${plan.schedule.length}`, unit: "days", icon: <GiMeal size={14} /> },
                     ].map(({ label, value, unit, icon }) => (
-                        <div key={label} className="bg-neutral-800/60 rounded-xl p-3">
+                        <div key={label} className="bg-neutral-800/60 rounded-xl p-3 flex flex-col justify-between">
                             <div className="flex items-center gap-1.5 mb-1">
                                 <span className="text-gray-500">{icon}</span>
                                 <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest">{label}</p>
@@ -158,7 +158,7 @@ const PlanHeader = ({ assignment }: { assignment: Assignment }) => {
                 {plan.restrictions && plan.restrictions.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                         {plan.restrictions.map((r) => (
-                            <span key={r} className="px-2 py-1 rounded-full bg-neutral-800 text-gray-400 border border-neutral-700 text-[9px] font-black uppercase tracking-wider">{r.replace("_", " ")}</span>
+                            <span key={r} className="px-2 py-1 rounded-full bg-green-400/10 text-green-400 border border-green-400/20 text-[9px] font-black uppercase tracking-wider">{r.replace("_", " ")}</span>
                         ))}
                     </div>
                 )}
@@ -203,7 +203,7 @@ const HistoryCard = ({ assignment }: { assignment: Assignment }) => {
     endDate.setDate(endDate.getDate() + (assignment.plan?.durationWeeks ?? 0) * 7);
 
     return (
-        <div className="bg-neutral-800/40 border border-neutral-700 rounded-xl overflow-hidden">
+        <div className="bg-neutral-800/40 border border-neutral-700 rounded-xl overflow-hidden border-l-3 border-l-green-400">
             {/* Header row — always visible */}
             <button
                 onClick={() => setOpen(!open)}
@@ -241,7 +241,7 @@ const HistoryCard = ({ assignment }: { assignment: Assignment }) => {
                             { label: "Goal", value: goalLabel[assignment.plan?.goal] || assignment.plan?.goal || "—", unit: "" },
                             { label: "Days", value: `${assignment.plan?.schedule?.length ?? "?"}`, unit: "in plan" },
                         ].map(({ label, value, unit }) => (
-                            <div key={label} className="bg-neutral-900/60 rounded-lg p-2.5">
+                            <div key={label} className="bg-neutral-900/60 rounded-lg p-2.5 flex flex-col justify-between">
                                 <p className="text-[9px] font-black uppercase text-gray-600 tracking-widest">{label}</p>
                                 <p className="text-sm font-black text-white mt-0.5">{value} <span className="text-xs font-normal text-gray-500">{unit}</span></p>
                             </div>

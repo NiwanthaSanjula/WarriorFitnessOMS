@@ -173,7 +173,7 @@ const HistoryCard = ({ assignment }: { assignment: Assignment }) => {
     endDate.setDate(endDate.getDate() + (assignment.plan?.durationWeeks ?? 0) * 7);
 
     return (
-        <div className="bg-neutral-800/40 border border-neutral-700 rounded-xl overflow-hidden">
+        <div className="bg-neutral-800/40 border border-neutral-700 border-l-3 border-l-warrior-orange rounded-xl overflow-hidden ">
             {/* Header row — always visible */}
             <button
                 onClick={() => setOpen(!open)}
