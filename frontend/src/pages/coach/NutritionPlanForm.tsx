@@ -231,7 +231,7 @@ const NutritionPlanForm = () => {
     return (
         <div className="max-w-4xl mx-auto space-y-6 pb-10">
             <div>
-                <button onClick={() => navigate("/coach/plans")}
+                <button onClick={() => navigate("/coach/plans/nutrition")}
                     className="flex items-center gap-2 text-gray-400 hover:text-gray-300 mb-4 text-sm">
                     <MdArrowBack /> Back to Plans
                 </button>

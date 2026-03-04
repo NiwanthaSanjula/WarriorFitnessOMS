@@ -1,6 +1,10 @@
 import Attendance from "../models/Attendance.js";
+import MemberProgress from "../models/MemberProgress.js";
 import Payment from "../models/Payment.js";
+import Subscription from "../models/Subscription.js";
 import User from "../models/User.js";
+
+
 
 export const getAdminStats = async () => {
     const today = new Date();
@@ -77,3 +81,40 @@ export const getAdminStats = async () => {
     }
 
 }
+
+export const getMemberStats = async (userId: string) => {
+    const currentYear = new Date().getFullYear();
+    const startOfYear = new Date(currentYear, 0, 1);
+    const endOfYear   = new Date(currentYear, 11, 31, 23, 59, 59);
+
+    // Full attendance history for the year (for chart + streak)
+    const attendanceHistory = await Attendance.find({
+        user: userId,
+        date: { $gte: startOfYear, $lte: endOfYear }
+    }).select('date status').sort({ date: 1 });
+
+    // Latest subscription with plan details
+    const subscription = await Subscription.findOne({ member: userId })
+        .populate('plan', 'name price durationDays')
+        .sort({ createdAt: -1 });
+
+    // Progress records (most recent first, limit 10 for chart)
+    const progressRecords = await MemberProgress.find({ user: userId })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .select('weight bodyFat createdAt');
+
+    // Recent payments (last 4)
+    const recentPayments = await Payment.find({ member: userId })
+        .populate('plan', 'name')
+        .sort({ createdAt: -1 })
+        .limit(4)
+        .select('amount plan invoinceNo createdAt method');
+
+    return {
+        attendanceHistory,
+        subscription,
+        progressRecords,
+        recentPayments,
+    };
+};
