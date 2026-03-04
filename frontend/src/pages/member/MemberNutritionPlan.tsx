@@ -108,8 +108,7 @@ const PlanHeader = ({ assignment }: { assignment: Assignment }) => {
     const maxMacro = Math.max(plan.dailyProteinTarget || 0, plan.dailyCarbTarget || 0, plan.dailyFatTarget || 0, 1);
 
     return (
-        <div className="bg-warrior-grey border border-neutral-700 rounded-2xl overflow-hidden">
-            <div className="h-1 bg-linear-to-r from-green-500 via-emerald-400 to-transparent" />
+        <div className="bg-warrior-grey border border-neutral-700 rounded-2xl overflow-hidden border-l-3 border-l-green-400">
             <div className="p-6 space-y-5">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4">

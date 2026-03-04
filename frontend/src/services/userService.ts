@@ -63,6 +63,23 @@ export const userService = {
     getCoachClients: async (coachId: string) : Promise<any> => {
         const response = await api.get(`users/${coachId}/assigned-members`)
         return response.data.data
-    }
+    },
+
+    // Update own name/phone
+    updateMe: async (updateData: { name?: string; phone?: string }): Promise<any> => {
+        const response = await api.patch('/users/updateMe', updateData);
+        return response.data.data.user;
+    },
+
+    changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<any> => {
+        const response = await api.patch('/users/change-password', data);
+        return response.data;
+    },
+
+    getMyProfile: async (): Promise<any> => {
+        const response = await api.get('/users/my-profile');
+        return response.data.data;
+    },
+    
 
 }

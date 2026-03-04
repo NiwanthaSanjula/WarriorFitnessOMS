@@ -30,7 +30,7 @@ export const AttendanceCalener = ({ history}: AttendanceCalenerProps ) => {
     };
 
     return (
-        <div className="bg-warrior-grey p-6 rounded-2xl border border-neutral-600">
+        <div className="bg-warrior-grey p-6 rounded-2xl border border-neutral-600 border-l-3 border-l-warrior-orange">
             <div className="flex items-center justify-between mb-6">
                 <h3 className="text-gray-400 text-sm uppercase font-bold tracking-widest">
                     <div className="flex flex-col md:flex-row gap-0.5">

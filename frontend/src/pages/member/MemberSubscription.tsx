@@ -57,8 +57,7 @@ const ActivePlanCard = ({ sub }: { sub: any }) => {
     const barColor = days <= 7 ? "from-red-500 to-red-400" : days <= 14 ? "from-yellow-500 to-yellow-400" : "from-green-500 to-emerald-400";
 
     return (
-        <div className="bg-warrior-grey border border-neutral-700 rounded-2xl overflow-hidden">
-            <div className="h-1 bg-linear-to-r from-warrior-orange via-orange-400 to-transparent" />
+        <div className="bg-warrior-grey border border-neutral-700 rounded-2xl overflow-hidden border-l-3 border-l-warrior-orange">
             <div className="p-6 space-y-5">
                 {/* Title row */}
                 <div className="flex items-start justify-between gap-4">

@@ -12,9 +12,14 @@ import {
 import {
     MdTrendingDown, MdTrendingUp, MdRemove,
     MdExpandMore, MdExpandLess, MdEmojiEvents, MdFlag,
-    MdCompare, MdClose, MdAdd
+    MdCompare, MdClose, MdAdd, MdVerified, MdShowChart,
+    MdBarChart, MdCalendarToday, MdCheckCircle
 } from "react-icons/md";
-import { GiProgression, GiFireBowl } from "react-icons/gi";
+import {
+    GiProgression, GiFireBowl, GiWeightScale, GiMuscleUp,
+    GiTrophy, GiLaurelCrown, GiPodiumWinner, GiRun,
+
+} from "react-icons/gi";
 import { BsFillLightningFill } from "react-icons/bs";
 
 interface ProgressRecord {
@@ -23,6 +28,21 @@ interface ProgressRecord {
     energyLevel?: number; mood?: number; notes?: string; coachNotes?: string; createdAt: string;
 }
 
+// ── Milestone icon map ─────────────────────────────────────────────────────────
+// Each milestone maps to a react-icons component instead of an emoji
+const MILESTONE_ICONS: Record<string, React.ElementType> = {
+    "First Step":     GiRun,
+    "Consistent":     MdCalendarToday,
+    "Dedicated":      MdBarChart,
+    "Warrior":        GiMuscleUp,
+    "First Drop":     GiWeightScale,
+    "5 kg Milestone": MdShowChart,
+    "10 kg Champ":    GiTrophy,
+    "On A Roll":      GiFireBowl,
+    "Goal Reached!":  GiLaurelCrown,
+};
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
 const fmt = (v: number | null | undefined, unit = "") => v != null ? `${v}${unit}` : "—";
 
 const diffColor = (change: number, inverse = false) => {
@@ -51,6 +71,20 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     );
 };
 
+// ── Milestone Badge Icon component ────────────────────────────────────────────
+const MilestoneIcon = ({ label, earned }: { label: string; earned: boolean }) => {
+    const Icon = MILESTONE_ICONS[label] ?? GiPodiumWinner;
+    return (
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-all ${
+            earned
+                ? "bg-warrior-orange/15 border-warrior-orange/40"
+                : "bg-neutral-800/60 border-neutral-700/40"
+        }`}>
+            <Icon size={20} className={earned ? "text-warrior-orange" : "text-gray-600"} />
+        </div>
+    );
+};
+
 const computeMilestones = (records: ProgressRecord[], targetWeight?: number) => {
     if (!records.length) return [];
     const sorted = [...records].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
@@ -61,16 +95,16 @@ const computeMilestones = (records: ProgressRecord[], targetWeight?: number) => 
         if (diff <= 10) { streak++; maxStreak = Math.max(maxStreak, streak); } else streak = 1;
     }
     const list = [
-        { icon: "🏁", label: "First Step",     desc: "Logged your first check-in",   earned: records.length >= 1  },
-        { icon: "📊", label: "Consistent",     desc: "5 progress entries logged",     earned: records.length >= 5  },
-        { icon: "🔥", label: "Dedicated",      desc: "10 progress entries logged",    earned: records.length >= 10 },
-        { icon: "💪", label: "Warrior",        desc: "25 progress entries logged",    earned: records.length >= 25 },
-        { icon: "⚖️", label: "First Drop",     desc: "Lost first 1 kg from baseline", earned: totalLost >= 1       },
-        { icon: "🎯", label: "5 kg Milestone", desc: "Lost 5 kg from baseline",       earned: totalLost >= 5       },
-        { icon: "🏆", label: "10 kg Champ",    desc: "Lost 10 kg from baseline",      earned: totalLost >= 10      },
-        { icon: "📅", label: "On A Roll",      desc: "3 consecutive close check-ins", earned: maxStreak >= 3       },
+        { label: "First Step",     desc: "Logged your first check-in",   earned: records.length >= 1  },
+        { label: "Consistent",     desc: "5 progress entries logged",     earned: records.length >= 5  },
+        { label: "Dedicated",      desc: "10 progress entries logged",    earned: records.length >= 10 },
+        { label: "Warrior",        desc: "25 progress entries logged",    earned: records.length >= 25 },
+        { label: "First Drop",     desc: "Lost first 1 kg from baseline", earned: totalLost >= 1       },
+        { label: "5 kg Milestone", desc: "Lost 5 kg from baseline",       earned: totalLost >= 5       },
+        { label: "10 kg Champ",    desc: "Lost 10 kg from baseline",      earned: totalLost >= 10      },
+        { label: "On A Roll",      desc: "3 consecutive close check-ins", earned: maxStreak >= 3       },
     ];
-    if (targetWeight) list.push({ icon: "🎉", label: "Goal Reached!", desc: `Hit target of ${targetWeight} kg`, earned: sorted[sorted.length - 1].weight <= targetWeight });
+    if (targetWeight) list.push({ label: "Goal Reached!", desc: `Hit target of ${targetWeight} kg`, earned: sorted[sorted.length - 1].weight <= targetWeight });
     return list;
 };
 
@@ -98,21 +132,22 @@ const computeStreak = (records: ProgressRecord[]) => {
     return streak;
 };
 
+// ── Compare Modal ──────────────────────────────────────────────────────────────
 const CompareModal = ({ records, onClose }: { records: ProgressRecord[]; onClose: () => void }) => {
     const sorted = [...records].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
     const [fromIdx, setFromIdx] = useState(0);
     const [toIdx, setToIdx] = useState(sorted.length - 1);
     const from = sorted[fromIdx], to = sorted[toIdx];
     const metrics = [
-        { label: "Weight", key: "weight", unit: " kg", inverse: true },
-        { label: "Body Fat", key: "bodyFat", unit: "%", inverse: true },
-        { label: "Chest", key: "chest", unit: " cm", inverse: false },
-        { label: "Waist", key: "waist", unit: " cm", inverse: true },
-        { label: "Hips", key: "hips", unit: " cm", inverse: true },
-        { label: "Biceps", key: "biceps", unit: " cm", inverse: false },
-        { label: "Thighs", key: "thighs", unit: " cm", inverse: true },
-        { label: "Energy", key: "energyLevel", unit: "/10", inverse: false },
-        { label: "Mood", key: "mood", unit: "/10", inverse: false },
+        { label: "Weight",   key: "weight",      unit: " kg",  inverse: true  },
+        { label: "Body Fat", key: "bodyFat",     unit: "%",    inverse: true  },
+        { label: "Chest",    key: "chest",       unit: " cm",  inverse: false },
+        { label: "Waist",    key: "waist",       unit: " cm",  inverse: true  },
+        { label: "Hips",     key: "hips",        unit: " cm",  inverse: true  },
+        { label: "Biceps",   key: "biceps",      unit: " cm",  inverse: false },
+        { label: "Thighs",   key: "thighs",      unit: " cm",  inverse: true  },
+        { label: "Energy",   key: "energyLevel", unit: "/10",  inverse: false },
+        { label: "Mood",     key: "mood",        unit: "/10",  inverse: false },
     ];
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -172,6 +207,7 @@ const CompareModal = ({ records, onClose }: { records: ProgressRecord[]; onClose
     );
 };
 
+// ── Log Form ───────────────────────────────────────────────────────────────────
 const LogForm = ({ onSuccess }: { onSuccess: () => void }) => {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -184,8 +220,8 @@ const LogForm = ({ onSuccess }: { onSuccess: () => void }) => {
         catch (err) { console.error(err); } finally { setLoading(false); }
     };
     return (
-        <div className="bg-warrior-grey border border-neutral-700 rounded-2xl overflow-hidden">
-            <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between p-5 hover:bg-neutral-700/20 transition-colors">
+        <div className="bg-warrior-grey border border-neutral-700 rounded-2xl overflow-hidden border-l-3 border-l-warrior-orange">
+            <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between p-5 hover:bg-neutral-700/20 transition-colors ">
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-warrior-orange/20 border border-warrior-orange/30 flex items-center justify-center">
                         <MdAdd className="text-warrior-orange" size={18} />
@@ -247,13 +283,17 @@ const LogForm = ({ onSuccess }: { onSuccess: () => void }) => {
     );
 };
 
+// ── History Entry ──────────────────────────────────────────────────────────────
 const HistoryEntry = ({ record, prev }: { record: ProgressRecord; prev?: ProgressRecord }) => {
     const [open, setOpen] = useState(false);
     const weightChange = prev ? parseFloat((record.weight - prev.weight).toFixed(1)) : null;
     const measurements = [
-        { label: "Chest", value: record.chest, unit: "cm" }, { label: "Waist", value: record.waist, unit: "cm" },
-        { label: "Hips", value: record.hips, unit: "cm" }, { label: "Biceps", value: record.biceps, unit: "cm" },
-        { label: "Thighs", value: record.thighs, unit: "cm" }, { label: "Body Fat", value: record.bodyFat, unit: "%" },
+        { label: "Chest",    value: record.chest,   unit: "cm" },
+        { label: "Waist",    value: record.waist,   unit: "cm" },
+        { label: "Hips",     value: record.hips,    unit: "cm" },
+        { label: "Biceps",   value: record.biceps,  unit: "cm" },
+        { label: "Thighs",   value: record.thighs,  unit: "cm" },
+        { label: "Body Fat", value: record.bodyFat, unit: "%"  },
     ].filter(m => m.value != null);
     return (
         <div className="bg-neutral-800/40 border border-neutral-700 rounded-xl overflow-hidden">
@@ -273,10 +313,10 @@ const HistoryEntry = ({ record, prev }: { record: ProgressRecord; prev?: Progres
                         )}
                     </div>
                     <div className="flex gap-3 mt-1 flex-wrap">
-                        {record.bodyFat && <span className="text-[10px] text-yellow-400 font-bold">{record.bodyFat}% fat</span>}
-                        {record.waist && <span className="text-[10px] text-blue-400 font-bold">{record.waist}cm waist</span>}
-                        {record.energyLevel && <span className="text-[10px] text-purple-400 font-bold">⚡{record.energyLevel}/10</span>}
-                        {record.mood && <span className="text-[10px] text-pink-400 font-bold">😊{record.mood}/10</span>}
+                        {record.bodyFat    && <span className="text-[10px] text-yellow-400 font-bold">{record.bodyFat}% fat</span>}
+                        {record.waist      && <span className="text-[10px] text-blue-400 font-bold">{record.waist}cm waist</span>}
+                        {record.energyLevel && <span className="text-[10px] text-purple-400 font-bold"><BsFillLightningFill className="inline mb-0.5" size={9}/>{record.energyLevel}/10</span>}
+                        {record.mood       && <span className="text-[10px] text-pink-400 font-bold"><MdCheckCircle className="inline mb-0.5" size={10}/>{record.mood}/10</span>}
                     </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -289,7 +329,7 @@ const HistoryEntry = ({ record, prev }: { record: ProgressRecord; prev?: Progres
                     {measurements.length > 0 && (
                         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
                             {measurements.map(({ label, value, unit }) => (
-                                <div key={label} className="bg-neutral-900/60 rounded-lg p-2 text-center">
+                                <div key={label} className="bg-neutral-900/60 rounded-lg p-2 text-center border border-neutral-700/50">
                                     <p className="text-[8px] font-black uppercase text-gray-600 tracking-wider">{label}</p>
                                     <p className="text-sm font-black text-white">{value}{unit}</p>
                                 </div>
@@ -309,17 +349,18 @@ const HistoryEntry = ({ record, prev }: { record: ProgressRecord; prev?: Progres
     );
 };
 
+// ── Main Page ──────────────────────────────────────────────────────────────────
 const Progress = () => {
-    const [records, setRecords] = useState<ProgressRecord[]>([]);
-    const [chartData, setChartData] = useState<any[]>([]);
-    const [summary, setSummary] = useState<any>(null);
-    const [comparison, setComparison] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+    const [records, setRecords]         = useState<ProgressRecord[]>([]);
+    const [chartData, setChartData]     = useState<any[]>([]);
+    const [summary, setSummary]         = useState<any>(null);
+    const [comparison, setComparison]   = useState<any>(null);
+    const [loading, setLoading]         = useState(true);
     const [showCompare, setShowCompare] = useState(false);
     const [activeChart, setActiveChart] = useState<"weight" | "measurements" | "weekly" | "radar">("weight");
     const [targetWeight, setTargetWeight] = useState<string>(() => localStorage.getItem("wf_target") || "");
-    const [editTarget, setEditTarget] = useState(false);
-    const [tempTarget, setTempTarget] = useState("");
+    const [editTarget, setEditTarget]     = useState(false);
+    const [tempTarget, setTempTarget]     = useState("");
 
     const fetchAll = async () => {
         try {
@@ -339,17 +380,20 @@ const Progress = () => {
 
     useEffect(() => { fetchAll(); }, []);
 
-    const streak = useMemo(() => computeStreak(records), [records]);
-    const milestones = useMemo(() => computeMilestones(records, targetWeight ? parseFloat(targetWeight) : undefined), [records, targetWeight]);
+    const streak        = useMemo(() => computeStreak(records), [records]);
+    const milestones    = useMemo(() => computeMilestones(records, targetWeight ? parseFloat(targetWeight) : undefined), [records, targetWeight]);
     const weeklySummary = useMemo(() => computeWeeklySummary(records), [records]);
-    const earnedCount = milestones.filter(m => m.earned).length;
-    const wChange = comparison?.comparison?.weight;
+    const earnedCount   = milestones.filter(m => m.earned).length;
+    const wChange       = comparison?.comparison?.weight;
+
     const radarData = useMemo(() => {
         if (!records.length) return [];
         const r = records[0];
         return [
-            { subject: "Chest", value: r.chest || 0 }, { subject: "Waist", value: r.waist || 0 },
-            { subject: "Hips", value: r.hips || 0 }, { subject: "Biceps", value: r.biceps || 0 },
+            { subject: "Chest",  value: r.chest  || 0 },
+            { subject: "Waist",  value: r.waist  || 0 },
+            { subject: "Hips",   value: r.hips   || 0 },
+            { subject: "Biceps", value: r.biceps || 0 },
             { subject: "Thighs", value: r.thighs || 0 },
         ];
     }, [records]);
@@ -359,10 +403,10 @@ const Progress = () => {
     if (loading) return <Spinner />;
 
     return (
-        <div className="max-w-6xl mx-auto space-y-6 pb-10">
+        <div className="max-w-6xl mx-auto space-y-6 pb-10 ">
 
             {/* HEADER */}
-            <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-start justify-between gap-4 flex-wrap " >
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-warrior-orange/20 border border-warrior-orange/30 flex items-center justify-center">
                         <GiProgression className="text-warrior-orange" size={24} />
@@ -385,17 +429,17 @@ const Progress = () => {
             {/* SUMMARY STATS */}
             {summary && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div className="bg-warrior-grey border border-neutral-700 border-l-4 border-l-warrior-orange rounded-2xl p-4">
+                    <div className="bg-warrior-grey border border-neutral-700 border-l-2 border-l-warrior-orange rounded-2xl p-4">
                         <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest mb-1">Current Weight</p>
                         <p className="text-2xl font-black text-warrior-orange">{summary.currentWeight}<span className="text-xs font-normal text-gray-500 ml-1">kg</span></p>
                         {wChange && <p className={`text-[10px] font-bold mt-1 ${diffColor(wChange.change, true)}`}>{wChange.change > 0 ? "+" : ""}{wChange.change.toFixed(1)} kg (30d)</p>}
                     </div>
-                    <div className="bg-warrior-grey border border-neutral-700 border-l-4 border-l-blue-500 rounded-2xl p-4">
+                    <div className="bg-warrior-grey border border-neutral-700 border-l-2 border-l-blue-500 rounded-2xl p-4">
                         <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest mb-1">BMI</p>
                         <p className="text-2xl font-black text-blue-400">{summary.bmi ?? "—"}</p>
                         {summary.bmiCategory && <p className="text-[10px] font-bold text-gray-500 mt-1">{summary.bmiCategory.label}</p>}
                     </div>
-                    <div className="bg-warrior-grey border border-neutral-700 border-l-4 border-l-yellow-500 rounded-2xl p-4">
+                    <div className="bg-warrior-grey border border-neutral-700 border-l-2 border-l-yellow-500 rounded-2xl p-4">
                         <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest mb-1">Check-in Streak</p>
                         <div className="flex items-center gap-2">
                             <GiFireBowl className="text-yellow-400" size={20} />
@@ -403,7 +447,7 @@ const Progress = () => {
                         </div>
                         <p className="text-[10px] font-bold text-gray-500 mt-1">consecutive logs</p>
                     </div>
-                    <div className="bg-warrior-grey border border-neutral-700 border-l-4 border-l-green-500 rounded-2xl p-4">
+                    <div className="bg-warrior-grey border border-neutral-700 border-l-2 border-l-green-500 rounded-2xl p-4">
                         <div className="flex items-center justify-between mb-1">
                             <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest">Target Weight</p>
                             <button onClick={() => { setTempTarget(targetWeight); setEditTarget(true); }} className="text-gray-600 hover:text-warrior-orange transition-colors"><MdFlag size={12} /></button>
@@ -429,23 +473,23 @@ const Progress = () => {
 
             {/* 30-DAY COMPARISON */}
             {wChange && (
-                <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-5">
+                <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-5 border-l-3 border-l-warrior-orange">
                     <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest mb-4">Last 30 Days</p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div className="bg-neutral-800/50 rounded-xl p-4 border-l-4 border-warrior-orange">
+                        <div className="bg-neutral-800/50 rounded-xl p-4 border border-neutral-600/50 ">
                             <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Weight Change</p>
                             <p className={`text-2xl font-black ${diffColor(wChange.change, true)}`}>{wChange.change > 0 ? "+" : ""}{wChange.change.toFixed(1)} kg</p>
                             <p className="text-[10px] text-gray-500 mt-1">{wChange.start} kg → {wChange.end} kg <TrendIcon change={wChange.change} inverse /></p>
                         </div>
                         {comparison?.comparison?.bodyFat && (
-                            <div className="bg-neutral-800/50 rounded-xl p-4 border-l-4 border-yellow-500">
+                            <div className="bg-neutral-800/50 rounded-xl p-4 border border-neutral-600/50 ">
                                 <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Body Fat</p>
                                 <p className={`text-2xl font-black ${diffColor(comparison.comparison.bodyFat.change, true)}`}>{comparison.comparison.bodyFat.change > 0 ? "+" : ""}{comparison.comparison.bodyFat.change.toFixed(1)}%</p>
                                 <p className="text-[10px] text-gray-500 mt-1">{comparison.comparison.bodyFat.start}% → {comparison.comparison.bodyFat.end}%</p>
                             </div>
                         )}
                         {comparison?.comparison?.waist && (
-                            <div className="bg-neutral-800/50 rounded-xl p-4 border-l-4 border-blue-500">
+                            <div className="bg-neutral-800/50 rounded-xl p-4 border border-neutral-600/50">
                                 <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Waist</p>
                                 <p className={`text-2xl font-black ${diffColor(comparison.comparison.waist.change, true)}`}>{comparison.comparison.waist.change > 0 ? "+" : ""}{comparison.comparison.waist.change.toFixed(1)} cm</p>
                                 <p className="text-[10px] text-gray-500 mt-1">{comparison.comparison.waist.start} cm → {comparison.comparison.waist.end} cm</p>
@@ -457,7 +501,7 @@ const Progress = () => {
 
             {/* CHARTS */}
             {chartData.length > 1 && (
-                <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-6">
+                <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-6 border-l-3 border-l-warrior-orange">
                     <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
                         <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest">Progress Charts</p>
                         <div className="flex gap-1 bg-neutral-800 p-1 rounded-xl flex-wrap">
@@ -493,8 +537,8 @@ const Progress = () => {
                                     <YAxis stroke="#444" tick={{ fontSize: 10 }} domain={["auto", "auto"]} />
                                     <Tooltip content={<CustomTooltip />} />
                                     <Legend wrapperStyle={{ color: "#9ca3af", fontSize: 11 }} />
-                                    <Area type="monotone" dataKey="Waist" stroke="#60a5fa" fill="none" strokeWidth={2} dot={{ r: 3 }} connectNulls />
-                                    <Area type="monotone" dataKey="Biceps" stroke="#34d399" fill="none" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+                                    <Area type="monotone" dataKey="Waist"    stroke="#60a5fa" fill="none" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+                                    <Area type="monotone" dataKey="Biceps"   stroke="#34d399" fill="none" strokeWidth={2} dot={{ r: 3 }} connectNulls />
                                     <Area type="monotone" dataKey="Body Fat" stroke="#eab308" fill="none" strokeWidth={2} dot={{ r: 3 }} connectNulls />
                                 </AreaChart>
                             ) : activeChart === "weekly" ? (
@@ -523,21 +567,33 @@ const Progress = () => {
             )}
 
             {/* MILESTONES */}
-            <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-5">
+            <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-5 border-l-3 border-l-warrior-orange">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <MdEmojiEvents className="text-yellow-400" size={18} />
                         <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Milestones</p>
                     </div>
-                    <span className="text-[10px] font-black text-yellow-400 bg-yellow-900/20 border border-yellow-800/40 px-2 py-1 rounded-full">{earnedCount}/{milestones.length} earned</span>
+                    <span className="text-[10px] font-black text-yellow-400 bg-yellow-900/20 border border-yellow-800/40 px-2 py-1 rounded-full">
+                        {earnedCount}/{milestones.length} earned
+                    </span>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                     {milestones.map((m, i) => (
-                        <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${m.earned ? "bg-yellow-900/10 border-yellow-800/30" : "bg-neutral-800/30 border-neutral-700/50 opacity-40"}`}>
-                            <span className="text-xl shrink-0">{m.icon}</span>
+                        <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
+                            m.earned
+                                ? "bg-warrior-orange/5 border-warrior-orange/25"
+                                : "bg-neutral-800/30 border-neutral-700/50 opacity-40"
+                        }`}>
+                            <MilestoneIcon label={m.label} earned={m.earned} />
                             <div className="min-w-0">
                                 <p className={`text-xs font-black truncate ${m.earned ? "text-white" : "text-gray-500"}`}>{m.label}</p>
                                 <p className="text-[9px] text-gray-600 truncate">{m.desc}</p>
+                                {m.earned && (
+                                    <div className="flex items-center gap-1 mt-0.5">
+                                        <MdVerified size={10} className="text-warrior-orange" />
+                                        <p className="text-[9px] text-warrior-orange font-bold">Earned</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -564,7 +620,7 @@ const Progress = () => {
                 </div>
             ) : (
                 <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-12 text-center">
-                    <BsFillLightningFill  className="text-gray-600 mx-auto mb-4" size={40} />
+                    <BsFillLightningFill className="text-gray-600 mx-auto mb-4" size={40} />
                     <p className="text-white font-black italic uppercase text-xl mb-1">No Entries Yet</p>
                     <p className="text-gray-500 text-sm">Open the form above to log your first check-in.</p>
                 </div>

@@ -207,7 +207,7 @@ const MemberAttendance = () => {
             </div>
 
             {/* ── YEARLY OVERVIEW BAR CHART ── */}
-            <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-6">
+            <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-6 border-l-3 border-l-warrior-orange">
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest">Monthly Overview</p>
@@ -265,7 +265,7 @@ const MemberAttendance = () => {
             </div>
 
             {/* ── ATTENDANCE BADGES ── */}
-            <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-5">
+            <div className="bg-warrior-grey border border-neutral-700 rounded-2xl p-5 border-l-3 border-l-warrior-orange">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <MdEmojiEvents className="text-green-400" size={18} />

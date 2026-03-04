@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect, restrictTo } from '../middleware/authMiddleware.js';
-import { assignCoach, createUser, getAllMembers, getCoachMembers, getMe, getMyStudents, getUserbyId, updateMe, updateSpecialProfile, updateUser } from '../controllers/userController.js';
+import { assignCoach, changePassword, createUser, getAllMembers, getCoachMembers, getMe, getMyProfile, getMyStudents, getUserbyId, updateMe, updateSpecialProfile, updateUser } from '../controllers/userController.js';
 
 
 
@@ -14,6 +14,8 @@ userRouter.use(protect);
 // ---------------------------------------------------------
 userRouter.get('/me', getMe);
 userRouter.patch('/updateMe', updateMe);
+userRouter.patch('/change-password', changePassword);
+userRouter.get('/my-profile', getMyProfile);
 
 // ---------------------------------------------------------
 // COACH ROUTES

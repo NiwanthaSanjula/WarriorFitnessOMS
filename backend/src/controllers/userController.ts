@@ -5,6 +5,7 @@ import { AppError } from '../utils/appError.js';
 import { filterObj } from '../utils/filterObj.js';
 import User from '../models/User.js';
 import * as attendanceService from '../services/attendanceService.js';
+import bcrypt from 'bcryptjs';
 
 export const createUser  = async ( req: CustomRequest, res: Response, next: NextFunction) => {
     try {
@@ -238,4 +239,52 @@ export const getCoachMembers = async ( req: Request, res: Response, next: NextFu
     }
 }
 
+export const changePassword = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?._id?.toString();
+        if (!userId) return next(new AppError('Login required', 401));
+
+        const { currentPassword, newPassword } = req.body;
+        if (!currentPassword || !newPassword) {
+            return next(new AppError('Please provide current and new password', 400));
+        }
+        if (newPassword.length < 6) {
+            return next(new AppError('New password must be at least 6 characters', 400));
+        }
+
+        // Fetch user WITH the password hash (it's select: false by default)
+        const user = await User.findById(userId).select('+passwordHash');
+        if (!user) return next(new AppError('User not found', 404));
+
+        // Verify current password
+        const isCorrect = await bcrypt.compare(currentPassword, user.passwordHash);
+        if (!isCorrect) return next(new AppError('Current password is incorrect', 401));
+
+        // Hash and save new password
+        const salt = await bcrypt.genSalt(12);
+        user.passwordHash = await bcrypt.hash(newPassword, salt);
+        await user.save();
+
+        res.status(200).json({ status: 'success', message: 'Password updated successfully' });
+    } catch (error) { next(error); }
+};
+
+export const getMyProfile = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?._id?.toString();
+        if (!userId) return next(new AppError('Login required', 401));
+
+        const details = await userServices.getUserbyId(userId);
+        if (!details.user) return next(new AppError('User not found', 404));
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                user: details.user,
+                subscription: details.subscription,
+                specialProfile: details.specialProfile,
+            }
+        });
+    } catch (error) { next(error); }
+};
 

@@ -93,8 +93,8 @@ const PlanHeader = ({ assignment }: { assignment: Assignment }) => {
     const currentWeek = Math.min(Math.ceil(elapsed / 7) + 1, plan.durationWeeks);
 
     return (
-        <div className="bg-warrior-grey border border-neutral-700 rounded-2xl overflow-hidden">
-            <div className="h-1 bg-linear-to-r from-warrior-orange via-orange-400 to-transparent" />
+        <div className="bg-warrior-grey border border-neutral-700 rounded-2xl overflow-hidden border-l-3 border-l-warrior-orange">
+
             <div className="p-6 space-y-5">
                 {/* Title */}
                 <div className="flex items-start justify-between gap-4">
