@@ -4,8 +4,10 @@ export interface IMembershipPlan extends Document {
     name: string;
     price:number
     durationDays: number;
+    features: string[]
     description?:string;
     isActive: boolean
+    
 }
 
 const membershipPlanSchema = new Schema<IMembershipPlan>({
@@ -24,6 +26,10 @@ const membershipPlanSchema = new Schema<IMembershipPlan>({
         required: [true, 'Duration in days in required']
     },
     description: { type: String },
+    features: {
+        type: [String],
+        default: []
+    },
     isActive: { type: Boolean, default: true}
 }, { timestamps: true })
 

@@ -25,6 +25,15 @@ export const membershipService = {
         const response = await api.post('/membership/create-plan', planData);
         return response.data.data.plan        
     },
+    
+    updatePlan: async (id: string, planData: Partial<MembershipPlan>): Promise<MembershipPlan> => {
+        const response = await api.patch(`/membership/plans/${id}`, planData);
+        return response.data.data.plan;
+    },
+    
+    deletePlan: async (id: string): Promise<void> => {
+        await api.delete(`/membership/plans/${id}`);
+    },
 
     //  Subscribe a member to a plan
     subscribeMember: async( memberId: string, planId: string ): Promise<any> => {

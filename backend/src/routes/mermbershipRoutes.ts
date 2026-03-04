@@ -13,6 +13,8 @@ membershipRouter.use(protect)
 //  Admin can CRUD plans
 membershipRouter.post('/create-plan', restrictTo('admin'), membershipController.createPlan );
 membershipRouter.post('/subscribe', restrictTo('admin'), membershipController.subscribeMember );
+membershipRouter.patch('/plans/:id', restrictTo('admin'), membershipController.updatePlan);
+membershipRouter.delete('/plans/:id', restrictTo('admin'), membershipController.deletePlan);
 membershipRouter.get('/payments/all', restrictTo('admin'), membershipController.getAllPayments );
 membershipRouter.get('/pending-payments', restrictTo('admin'), membershipController.getPendingPayments );
 membershipRouter.get('/payments/member/:memberId', restrictTo('admin'), membershipController.getMemberPayments );

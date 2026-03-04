@@ -4,6 +4,7 @@ import { AppError } from "../utils/appError.js";
 import { CustomRequest } from "../types.js";
 import Subscription from "../models/Subscription.js";
 import Payment from "../models/Payment.js";
+import MembershipPlan from "../models/MembershipPlan.js";
 
 
 //  Create a new membership Plan
@@ -36,6 +37,21 @@ export const getAllPlans = async (req: Request, res: Response, next: NextFunctio
         next(error)
     }
 }
+
+export const updatePlan = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const plan = await MembershipPlan.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!plan) return next(new AppError('Plan not found', 404));
+        res.status(200).json({ status: 'success', data: { plan } });
+    } catch (error) { next(error); }
+};
+
+export const deletePlan = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await MembershipPlan.findByIdAndDelete(req.params.id);
+        res.status(204).json({ status: 'success', data: null });
+    } catch (error) { next(error); }
+};
 
 //  Subscribe a Member to a plan
 export const subscribeMember = async (req: CustomRequest, res: Response, next: NextFunction ) => {
