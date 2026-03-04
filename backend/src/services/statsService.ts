@@ -1,8 +1,10 @@
 import Attendance from "../models/Attendance.js";
 import MemberProgress from "../models/MemberProgress.js";
+import NutritionPlan from "../models/NutritionPlan.js";
 import Payment from "../models/Payment.js";
 import Subscription from "../models/Subscription.js";
 import User from "../models/User.js";
+import WorkoutPlan from "../models/WorkoutPlan.js";
 
 
 
@@ -116,5 +118,80 @@ export const getMemberStats = async (userId: string) => {
         subscription,
         progressRecords,
         recentPayments,
+    };
+};
+
+export const getCoachStats = async (coachId: string) => {
+    const now          = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(now.getDate() - 7);
+
+    // All clients assigned to this coach
+    const clients = await User.find({ coach: coachId, role: 'member' })
+        .select('_id name email status');
+
+    const clientIds = clients.map(c => c._id);
+
+    // Active clients (with active subscription)
+    const activeSubs = await Subscription.find({
+        member: { $in: clientIds }, status: 'active'
+    }).select('member plan').populate('plan', 'name');
+
+    const activeClientIds = new Set(activeSubs.map((s: any) => s.member.toString()));
+
+    // Clients with no active plan
+    const noPlanClients = clients.filter(c => !activeClientIds.has(c._id.toString())).length;
+
+    // 7-day check-ins across all clients
+    const recentCheckIns = await Attendance.find({
+        user: { $in: clientIds },
+        date: { $gte: sevenDaysAgo }
+    }).select('user date');
+
+    // Plan counts
+    const workoutPlanCount   = await WorkoutPlan.countDocuments({ coach: coachId });
+    const nutritionPlanCount = await NutritionPlan.countDocuments({ coach: coachId });
+
+    // Per-client progress summary
+    const clientProgress = await Promise.all(clients.map(async (client) => {
+        // Latest 2 progress records for weight delta
+        const progressRecords = await MemberProgress.find({ user: client._id })
+            .sort({ createdAt: -1 }).limit(2).select('weight createdAt');
+
+        const latestWeight = progressRecords[0]?.weight ?? null;
+        const weightDelta  = progressRecords.length >= 2
+            ? parseFloat((progressRecords[0].weight - progressRecords[1].weight).toFixed(1))
+            : null;
+
+        // This month's attendance
+        const attendanceCount = await Attendance.countDocuments({
+            user: client._id, date: { $gte: startOfMonth }
+        });
+
+        // Active subscription plan name
+        const sub = activeSubs.find((s: any) => s.member.toString() === client._id.toString());
+
+        return {
+            _id:           client._id,
+            name:          client.name,
+            email:         client.email,
+            status:        client.status,
+            latestWeight,
+            weightDelta,
+            progressCount: progressRecords.length,
+            attendanceCount,
+            planName:      (sub as any)?.plan?.name ?? null,
+        };
+    }));
+
+    return {
+        totalClients:     clients.length,
+        activeClients:    activeClientIds.size,
+        noPlanClients,
+        workoutPlanCount,
+        nutritionPlanCount,
+        recentCheckIns,
+        recentClients:    clients.slice(0, 5),
+        clientProgress,
     };
 };

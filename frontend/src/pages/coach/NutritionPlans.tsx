@@ -110,7 +110,7 @@ const NutritionPlans = () => {
                     {plans.map((plan) => (
                         <div
                             key={plan._id}
-                            className="bg-warrior-grey border border-neutral-700 rounded-lg p-4 hover:border-warrior-orange transition space-y-3"
+                            className="bg-warrior-grey border border-neutral-700 rounded-lg p-4 hover:border-warrior-orange transition space-y-3 border-l-3 border-l-warrior-orange"
                         >
                             {/* Plan Title */}
                             <div className="flex justify-between items-start">

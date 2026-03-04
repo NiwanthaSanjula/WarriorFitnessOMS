@@ -29,3 +29,13 @@ export const getMemberDashboard = async (req: CustomRequest, res: Response, next
         });
     } catch (error) { next(error); }
 };
+
+export const getCoachDashboard = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+        const coachId = req.user?._id?.toString();
+        if (!coachId) return next(new AppError('Login required', 401));
+
+        const stats = await statsService.getCoachStats(coachId);
+        res.status(200).json({ status: 'success', data: stats });
+    } catch (error) { next(error); }
+};

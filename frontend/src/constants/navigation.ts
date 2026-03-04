@@ -18,8 +18,6 @@ export const SIDEBAR_LINKS: NavItem[] = [
     { name: 'Profile', path: '/profile', icon: MdPerson, roles: ['admin', 'coach', 'member']},
     { name: 'My Progress', path: '/my-progress', icon: GiProgression, roles: ['member']},
 
-
-
     { name: 'Workout Plan', path: '/member/workout-plan', icon: GiWeightLiftingUp, roles: ['member'] },
     { name: 'Nutrition Plan', path: '/member/nutrition-plan', icon: GiMeal, roles: ['member'] },
     { name: 'Membership', path: '/member/membership', icon: MdPayment, roles: ['member'] },
@@ -27,7 +25,7 @@ export const SIDEBAR_LINKS: NavItem[] = [
 
     { name: 'Workout Plans', path: '/coach/plans/workout', icon: GiWeightLiftingUp, roles: ['coach']},
     { name: 'Nutrition Plans', path: '/coach/plans/nutrition', icon: GiMeal, roles: ['coach']},
-
+    { name: 'My Clients', path: '/coach/my-clients', icon: MdPeople, roles: ['coach']},
 
 
     { name: 'Manage Members', path: '/admin/members', icon: MdPeople, roles: ['admin']},
@@ -37,7 +35,6 @@ export const SIDEBAR_LINKS: NavItem[] = [
     { name: 'Payments History', path: '/admin/payments-history', icon: FaMoneyBillWave , roles: ['admin']},
 
 
-    { name: 'My Clients', path: '/coach/my-clients', icon: MdPeople, roles: ['coach']},
 
 
 ]

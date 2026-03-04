@@ -9,6 +9,11 @@ export const statsService= {
     getMemberDashboard: async () => {
         const response = await api.get('/dashboard/member-dashboard');
         return response.data.data;
-    }
+    },
+
+    getCoachDashboard: async () => {
+        const response = await api.get('/dashboard/coach-dashboard');
+        return response.data.data;
+    },
     
 }
