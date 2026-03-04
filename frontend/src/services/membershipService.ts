@@ -54,5 +54,17 @@ export const membershipService = {
     runManualSweep: async (): Promise<any> => {
         const response = await api.get('/membership/run-sweep');
         return response.data.data;
-    }
+    },
+
+    // Member: Get own subscription
+    getMySubscription: async (): Promise<any> => {
+        const response = await api.get('/membership/my-subscription');
+        return response.data.data.subscription;
+    },
+
+    // Member: Get own payment history
+    getMyPayments: async (page: number = 1): Promise<any> => {
+        const response = await api.get(`/membership/my-payments?page=${page}`);
+        return response.data.data;
+    },
 }

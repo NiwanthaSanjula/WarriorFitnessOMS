@@ -18,4 +18,10 @@ membershipRouter.get('/pending-payments', restrictTo('admin'), membershipControl
 membershipRouter.get('/payments/member/:memberId', restrictTo('admin'), membershipController.getMemberPayments );
 membershipRouter.get('/run-sweep', restrictTo('admin'), membershipController.runExpirationSweep );
 
+// Member routes (logged in, no admin required)
+membershipRouter.get('/my-subscription', protect, membershipController.getMySubscription);
+membershipRouter.get('/my-payments', protect, membershipController.getMyPayments);
+
+
+
 export default membershipRouter;

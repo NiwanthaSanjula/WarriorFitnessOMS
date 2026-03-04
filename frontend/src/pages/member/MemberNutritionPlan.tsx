@@ -134,7 +134,7 @@ const PlanHeader = ({ assignment }: { assignment: Assignment }) => {
                         { label: "Daily Calories", value: plan.dailyCalorieTarget ? `${plan.dailyCalorieTarget}` : "—", unit: plan.dailyCalorieTarget ? "kcal" : "", icon: <MdLocalFireDepartment size={14} /> },
                         { label: "Days in Plan", value: `${plan.schedule.length}`, unit: "days", icon: <GiMeal size={14} /> },
                     ].map(({ label, value, unit, icon }) => (
-                        <div key={label} className="bg-neutral-800/60 rounded-xl p-3 flex flex-col justify-between">
+                        <div key={label} className="bg-neutral-800/60 rounded-xl p-3 flex flex-col justify-between border border-neutral-600/50 border-l-2 border-l-green-400 ">
                             <div className="flex items-center gap-1.5 mb-1">
                                 <span className="text-gray-500">{icon}</span>
                                 <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest">{label}</p>
@@ -241,7 +241,7 @@ const HistoryCard = ({ assignment }: { assignment: Assignment }) => {
                             { label: "Goal", value: goalLabel[assignment.plan?.goal] || assignment.plan?.goal || "—", unit: "" },
                             { label: "Days", value: `${assignment.plan?.schedule?.length ?? "?"}`, unit: "in plan" },
                         ].map(({ label, value, unit }) => (
-                            <div key={label} className="bg-neutral-900/60 rounded-lg p-2.5 flex flex-col justify-between">
+                            <div key={label} className="bg-neutral-900/60 rounded-lg p-2.5 flex flex-col justify-between ">
                                 <p className="text-[9px] font-black uppercase text-gray-600 tracking-widest">{label}</p>
                                 <p className="text-sm font-black text-white mt-0.5">{value} <span className="text-xs font-normal text-gray-500">{unit}</span></p>
                             </div>

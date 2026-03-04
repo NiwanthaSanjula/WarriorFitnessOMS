@@ -20,6 +20,7 @@ import WorkoutPlans from "./pages/coach/WorkoutPlans"
 import NutritionPlans from "./pages/coach/NutritionPlans"
 import MemberWorkoutPlan from "./pages/member/MemberWorkoutPlan"
 import MemberNutritionPlan from "./pages/member/MemberNutritionPlan"
+import MemberSubscription from "./pages/member/MemberSubscription"
 
 
 
@@ -43,6 +44,7 @@ const App = () => {
               <Route path="/my-progress" element={<Progress/>}/>
               <Route path="/member/workout-plan" element={<MemberWorkoutPlan />} />
               <Route path="/member/nutrition-plan" element={<MemberNutritionPlan />} />
+              <Route path="/member/membership" element={<MemberSubscription />} />
           </Route>
 
           {/* COACH ROUTES */}

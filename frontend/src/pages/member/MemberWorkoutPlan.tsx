@@ -121,7 +121,7 @@ const PlanHeader = ({ assignment }: { assignment: Assignment }) => {
                         { label: "Current Week", value: `${currentWeek}`, unit: `of ${plan.durationWeeks}`, icon: <MdTrendingUp size={14} /> },
                         { label: "Goal", value: goalLabel[plan.goal] || plan.goal, unit: "", icon: <MdInfoOutline size={14} /> },
                     ].map(({ label, value, unit, icon }) => (
-                        <div key={label} className="bg-neutral-800/60 rounded-xl p-3">
+                        <div key={label} className="bg-neutral-800/60 rounded-xl p-3 flex flex-col justify-between border border-neutral-600/50 border-l-2 border-l-warrior-orange ">
                             <div className="flex items-center gap-1.5 mb-1">
                                 <span className="text-gray-500">{icon}</span>
                                 <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest">{label}</p>

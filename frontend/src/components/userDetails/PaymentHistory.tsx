@@ -10,9 +10,10 @@ interface PaymentHistoryProps {
         total: number;
     } | null;
     onPageChange: (page: number) => void;
+    hideMember?: boolean;
 }
 
-export const PaymentHistory = ({ payments, pagination, onPageChange }: PaymentHistoryProps) => {
+export const PaymentHistory = ({ payments, pagination, onPageChange, hideMember }: PaymentHistoryProps) => {
 
     const [expandedId, setexpandedId] = useState<string | null>();
     const currentPage = pagination?.currentPage || 1;
@@ -87,13 +88,13 @@ export const PaymentHistory = ({ payments, pagination, onPageChange }: PaymentHi
                                         
                                         {/* User & Plan Info */}
                                         <div className="min-w-0 flex-1s">
-                                            <p className="text-xs font-bold uppercase italic text-white leading-none truncate">
-                                                {memberName}
-                                            </p>
+                                            {!hideMember && (
+                                                <p className="text-xs font-bold uppercase italic text-white">{memberName}</p>
+                                            )}
                                             <p className="text-[9px] text-gray-500 mt-1 lowercase truncate">
                                                 {memberEmail}
                                             </p>
-                                            <p className="text-[10px] text-gray-400 mt-1 uppercase font-semibold">
+                                            <p className={` text-gray-400 uppercase font-semibold ${!hideMember ? "mt-1 " : "text-[12px] "} `}>
                                                 {payment.plan?.name || "Custom Plan"}
                                             </p>
                                         </div>

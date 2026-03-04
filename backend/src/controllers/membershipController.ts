@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import * as membershipService from '../services/membershipService.js'
 import { AppError } from "../utils/appError.js";
 import { CustomRequest } from "../types.js";
+import Subscription from "../models/Subscription.js";
+import Payment from "../models/Payment.js";
 
 
 //  Create a new membership Plan
@@ -127,3 +129,49 @@ export const getPendingPayments = async ( req: Request, res: Response, next: Nex
         
     }
 }
+
+// Member: Get own active subscription
+export const getMySubscription = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+        const memberId = req.user?._id?.toString();
+        if (!memberId) return next(new AppError("Login required", 401));
+
+        const subscription = await Subscription.findOne({ member: memberId })
+            .populate('plan', 'name price durationDays description')
+            .sort({ createdAt: -1 }); // Most recent subscription
+
+        res.status(200).json({ status: "success", data: { subscription } });
+    } catch (error) { next(error); }
+};
+
+// Member: Get own payment history
+export const getMyPayments = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+        const memberId = req.user?._id?.toString();
+        if (!memberId) return next(new AppError("Login required", 401));
+
+        const page  = parseInt(req.query.page as string) || 1;
+        const limit = 10;
+        const skip  = (page - 1) * limit;
+
+        const payments = await Payment.find({ member: memberId })
+            .populate('plan', 'name price')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const total = await Payment.countDocuments({ member: memberId });
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                payments,
+                paginations: {
+                    total,
+                    pages: Math.ceil(total / limit),
+                    currentPage: page,
+                }
+            }
+        });
+    } catch (error) { next(error); }
+};
