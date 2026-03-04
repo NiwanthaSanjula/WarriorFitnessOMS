@@ -66,11 +66,11 @@ export const userService = {
     },
 
     // Update own name/phone
-    updateMe: async (updateData: { name?: string; phone?: string }): Promise<any> => {
-        const response = await api.patch('/users/updateMe', updateData);
-        return response.data.data.user;
+    updateMe: async (data: { name?: string; phone?: string }): Promise<any> => {
+        const response = await api.patch('/users/updateMe', data);
+        return response.data;
     },
-
+    
     changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<any> => {
         const response = await api.patch('/users/change-password', data);
         return response.data;

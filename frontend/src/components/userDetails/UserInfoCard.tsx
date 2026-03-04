@@ -23,7 +23,7 @@ export const UserInfoCard = ({ user }: UserInfoCardProps) => {
     };
 
     return (
-        <div className="bg-warrior-grey p-6 rounded-2xl border border-neutral-600 space-y-4 h-full">
+        <div className="bg-warrior-grey p-6 rounded-2xl border border-neutral-600 space-y-4 h-full border-l-3 border-l-warrior-orange">
             <h3 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">General Information</h3>
             
             <div className="flex justify-between border-b border-neutral-700 pb-1">

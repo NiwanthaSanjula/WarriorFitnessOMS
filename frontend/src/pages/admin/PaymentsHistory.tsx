@@ -6,6 +6,7 @@ import { Input } from '../../components/ui/Input';
 import Spinner from '../../components/ui/Spinner';
 import { MasterLedger } from '../../components/admin/MasterLedger';
 import { PendingMembersTable } from '../../components/admin/PendingMembersTable';
+import { GiTwoCoins } from 'react-icons/gi';
 
 const PaymentsHistory = () => {
 
@@ -49,14 +50,23 @@ const PaymentsHistory = () => {
     return (
         <div className='max-w-6xl mx-auto space-y-6 pb-10'>
             <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
-                <div>
-                    <h2  className='text-lg md:text-2xl font-bold italic text-gray-300'>
-                        Payments History
-                    </h2>
-                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">
-                        Master Transaction History
-                    </p>
+                {/* ── HEADER ── */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-warrior-orange/10 border border-warrior-orange/20 flex items-center justify-center shrink-0">
+                        <GiTwoCoins className="text-warrior-orange" size={24} />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-black italic uppercase text-white tracking-tighter leading-none">
+                            Payments <span className="text-warrior-orange">History</span>
+                        </h1>
+                        <p className="text-[10px] font-black uppercase text-gray-500 tracking-widest mt-0.5">
+                            Master Transaction Ledger
+                        </p>
+                    </div>
                 </div>
+
+            </div>
 
                 <div className='w-full md:w-72'>
                     <Input

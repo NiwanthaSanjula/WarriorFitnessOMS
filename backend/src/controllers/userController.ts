@@ -158,7 +158,7 @@ export const updateMe = async( req: CustomRequest, res: Response, next: NextFunc
         }
 
         //  Filter out unwanted fileds(ex: role)
-        const filteredBody = filterObj(req.body, 'name', 'email');
+        const filteredBody = filterObj(req.body, 'name', 'email', 'phone');
 
         //  Update user document in db
         const updatedUser = await User.findByIdAndUpdate(req.user?._id, filteredBody, { 

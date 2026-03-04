@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { userService } from "../../services/userService";
-import { authService } from "../../services/authService";
 import Spinner from "../../components/ui/Spinner";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
@@ -107,7 +106,7 @@ const ChangePasswordForm = () => {
         }
         setLoading(true);
         try {
-            await authService.changePassword({ currentPassword: form.current, newPassword: form.next });
+            await userService.changePassword({ currentPassword: form.current, newPassword: form.next });
             setForm({ current: "", next: "", confirm: "" });
             showToast("Password updated successfully!", "success");
         } catch (err: any) {

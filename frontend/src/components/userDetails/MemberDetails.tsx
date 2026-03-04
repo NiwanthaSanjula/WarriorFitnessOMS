@@ -52,12 +52,12 @@ export const MemberDetails = ({ user, userId, profile, subscription, attendance,
                 </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
                 <div className="lg:col-span-1 space-y-6">
                     <UserInfoCard user={user} />
                 </div>
 
-                <div className="bg-warrior-grey p-6 rounded-2xl border border-neutral-600 space-y-4">
+                <div className="bg-warrior-grey p-6 rounded-2xl border border-neutral-600 space-y-4 border-l-3 border-l-warrior-orange">
                     <h3 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">Emergancy Contatc</h3>
 
                     <div className="flex justify-between border-b border-neutral-700 pb-1">
@@ -77,34 +77,32 @@ export const MemberDetails = ({ user, userId, profile, subscription, attendance,
             </div>
 
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 space-y-6 lg:space-x-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 space-y-6 lg:space-x-6 ">
                 <div className="col-span-2">
                     <AttendanceCalener history={attendance || []} />
                 </div>
 
-                <div className="flex flex-col gap-6 bg-warrior-grey p-6 border border-neutral-600 rounded-2xl">
+                <div className="flex flex-col gap-6 bg-warrior-grey p-6 border border-neutral-600 rounded-2xl border-l-3 border-l-warrior-orange">
                     <div className="border-b border-neutral-700 pb-5">
                         <div className="flex items-center gap-2 mb-2">
                             <MdMedicalServices className="text-warrior-orange"/>
                             <h4 className="text-gray-400 text-xs font-bold uppercase tracking-widest">Medical Conditions</h4>
                         </div>
                         {profile?.medicalConditions?.map((condition: any, index: number) => (
-                            <div key={index} className="flex items-center gap-2 text-gray-300 text-sm font-bold">
-                                <MdArrowRight size={22} className="text-warrior-orange" />
+                            <div key={index} className="flex items-center gap-2 text-xs text-warrior-orange rounded-full border border-warrior-orange/50 font-bold bg-warrior-orange/10 px-2 p-1">
                                 <span>{condition}</span>
                             </div>
                         )) || "No records"}
                     </div>
 
 
-                    <div>
+                    <div className="">
                         <div className="flex items-center gap-2 mb-2">
                             <MdFlag className="text-warrior-orange"/>
                             <h4 className="text-gray-400 text-xs font-bold uppercase tracking-widest">Fitness Goal</h4>
                         </div>
                         {profile?.fitnessGoal?.map((goal: any, index: number) => (
-                            <div key={index} className="flex items-center gap-2 text-gray-300 text-sm font-bold">
-                                <MdArrowRight size={22} className="text-warrior-orange"/>
+                            <div key={index} className="flex items-center gap-2 text-xs  text-warrior-orange rounded-full border border-warrior-orange/50 font-bold bg-warrior-orange/10 px-2 p-1">
                                 <span>{goal}</span>
                             </div>
                         )) || "No records"}
