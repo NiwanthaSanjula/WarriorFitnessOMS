@@ -12,6 +12,7 @@ import membershipRouter from './routes/mermbershipRoutes.js';
 import statsRouter from './routes/statsRouter.js';
 import progressRouter from './routes/progressRoutes.js';
 import planRouter from './routes/planRouter.js';
+import expenseRouter from './routes/ExpenseRouter.js';
 
 
 
@@ -37,6 +38,7 @@ import planRouter from './routes/planRouter.js';
  app.use('/api/v1/dashboard', statsRouter);
  app.use('/api/v1/progress', progressRouter);
  app.use('/api/v1/plans', planRouter);
+ app.use('/api/v1/expenses', expenseRouter);
  
  // Health Check Endpoint
  app.get('/health', (req : Request, res : Response) => {

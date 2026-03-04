@@ -4,7 +4,8 @@ import { GiWeightLiftingUp } from "react-icons/gi";
 import { GiMeal } from "react-icons/gi";
 import { HiMiniDocumentCurrencyDollar } from "react-icons/hi2";
 import { GiProgression } from "react-icons/gi";
-import { FaMoneyBillWave } from "react-icons/fa"
+import { FaMoneyBillWave } from "react-icons/fa";
+import { FaMoneyBillTrendUp } from "react-icons/fa6";
 
 export interface NavItem {
     name : string;
@@ -33,6 +34,7 @@ export const SIDEBAR_LINKS: NavItem[] = [
     { name: 'Membership Plans', path: '/admin/plans', icon:  HiMiniDocumentCurrencyDollar, roles: ['admin']},
     { name: 'Add Member', path: '/admin/add-member', icon:  MdPersonAddAlt1 , roles: ['admin']},
     { name: 'Payments History', path: '/admin/payments-history', icon: FaMoneyBillWave , roles: ['admin']},
+    { name: 'Expenses', path: '/admin/expenses', icon: FaMoneyBillTrendUp , roles: ['admin']},
 
 
 

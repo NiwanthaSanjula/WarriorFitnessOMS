@@ -22,6 +22,7 @@ import MemberWorkoutPlan from "./pages/member/MemberWorkoutPlan"
 import MemberNutritionPlan from "./pages/member/MemberNutritionPlan"
 import MemberSubscription from "./pages/member/MemberSubscription"
 import MemberAttendance from "./pages/member/MemberAttendance"
+import Expenses from "./pages/admin/Expenses"
 
 
 
@@ -72,6 +73,7 @@ const App = () => {
             <Route path="/admin/add-member" element={ <AddNewMember/> } />
             <Route path="/admin/members/edit/:id" element={ <AddNewMember/> } />
             <Route path="/admin/payments-history" element={ <PaymentsHistory/> } />
+            <Route path="/admin/expenses" element={ <Expenses/> } />
 
           </Route>
         </Route>

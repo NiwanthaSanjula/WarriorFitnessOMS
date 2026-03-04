@@ -89,7 +89,7 @@ export const MemberDetails = ({ user, userId, profile, subscription, attendance,
                             <h4 className="text-gray-400 text-xs font-bold uppercase tracking-widest">Medical Conditions</h4>
                         </div>
                         {profile?.medicalConditions?.map((condition: any, index: number) => (
-                            <div key={index} className="flex items-center gap-2 text-xs text-warrior-orange rounded-full border border-warrior-orange/50 font-bold bg-warrior-orange/10 px-2 p-1">
+                            <div key={index} className="flex items-center gap-2 text-xs text-warrior-orange rounded-full border border-warrior-orange/50 font-bold bg-warrior-orange/10 px-2 p-1 mb-2">
                                 <span>{condition}</span>
                             </div>
                         )) || "No records"}
@@ -102,7 +102,7 @@ export const MemberDetails = ({ user, userId, profile, subscription, attendance,
                             <h4 className="text-gray-400 text-xs font-bold uppercase tracking-widest">Fitness Goal</h4>
                         </div>
                         {profile?.fitnessGoal?.map((goal: any, index: number) => (
-                            <div key={index} className="flex items-center gap-2 text-xs  text-warrior-orange rounded-full border border-warrior-orange/50 font-bold bg-warrior-orange/10 px-2 p-1">
+                            <div key={index} className="flex items-center gap-2 text-xs  text-warrior-orange rounded-full border border-warrior-orange/50 font-bold bg-warrior-orange/10 px-2 p-1 mb-2">
                                 <span>{goal}</span>
                             </div>
                         )) || "No records"}
