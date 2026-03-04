@@ -21,6 +21,7 @@ import NutritionPlans from "./pages/coach/NutritionPlans"
 import MemberWorkoutPlan from "./pages/member/MemberWorkoutPlan"
 import MemberNutritionPlan from "./pages/member/MemberNutritionPlan"
 import MemberSubscription from "./pages/member/MemberSubscription"
+import MemberAttendance from "./pages/member/MemberAttendance"
 
 
 
@@ -45,6 +46,7 @@ const App = () => {
               <Route path="/member/workout-plan" element={<MemberWorkoutPlan />} />
               <Route path="/member/nutrition-plan" element={<MemberNutritionPlan />} />
               <Route path="/member/membership" element={<MemberSubscription />} />
+              <Route path="/member/attendance" element={<MemberAttendance />} />
           </Route>
 
           {/* COACH ROUTES */}

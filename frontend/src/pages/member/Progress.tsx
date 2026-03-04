@@ -258,7 +258,7 @@ const HistoryEntry = ({ record, prev }: { record: ProgressRecord; prev?: Progres
     return (
         <div className="bg-neutral-800/40 border border-neutral-700 rounded-xl overflow-hidden">
             <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-4 p-4 hover:bg-neutral-700/20 transition-colors">
-                <div className="flex-shrink-0 w-12 text-center bg-neutral-700/50 rounded-lg p-2">
+                <div className="shrink-0 w-12 text-center bg-neutral-700/50 rounded-lg p-2">
                     <p className="text-[9px] font-black text-gray-500 uppercase">{new Date(record.createdAt).toLocaleDateString("en-US", { month: "short" })}</p>
                     <p className="text-xl font-black text-white leading-none">{new Date(record.createdAt).toLocaleDateString("en-US", { day: "numeric" })}</p>
                     <p className="text-[8px] text-gray-600">{new Date(record.createdAt).getFullYear()}</p>
@@ -279,7 +279,7 @@ const HistoryEntry = ({ record, prev }: { record: ProgressRecord; prev?: Progres
                         {record.mood && <span className="text-[10px] text-pink-400 font-bold">😊{record.mood}/10</span>}
                     </div>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2 shrink-0">
                     {record.coachNotes && <span className="w-2 h-2 rounded-full bg-warrior-orange" />}
                     {open ? <MdExpandLess className="text-gray-500" /> : <MdExpandMore className="text-gray-500" />}
                 </div>
@@ -469,7 +469,7 @@ const Progress = () => {
                             ))}
                         </div>
                     </div>
-                    <div className="h-[280px]">
+                    <div className="h-70">
                         <ResponsiveContainer width="100%" height="100%">
                             {activeChart === "weight" ? (
                                 <AreaChart data={chartData}>
@@ -534,7 +534,7 @@ const Progress = () => {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                     {milestones.map((m, i) => (
                         <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${m.earned ? "bg-yellow-900/10 border-yellow-800/30" : "bg-neutral-800/30 border-neutral-700/50 opacity-40"}`}>
-                            <span className="text-xl flex-shrink-0">{m.icon}</span>
+                            <span className="text-xl shrink-0">{m.icon}</span>
                             <div className="min-w-0">
                                 <p className={`text-xs font-black truncate ${m.earned ? "text-white" : "text-gray-500"}`}>{m.label}</p>
                                 <p className="text-[9px] text-gray-600 truncate">{m.desc}</p>

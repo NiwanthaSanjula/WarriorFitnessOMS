@@ -37,8 +37,8 @@ export const GlobalPaymentTable = ({ payments, pagination, onPageChange }: Globa
                                     {/* Member Column */}
                                     <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2 sm:gap-3">
-                                            <div className="bg-neutral-800 p-1 sm:p-1.5 rounded-full border border-neutral-700 text-warrior-orange flex-shrink-0">
-                                                <MdAccountCircle size={16} className="sm:size-[18px]" />
+                                            <div className="bg-neutral-800 p-1 sm:p-1.5 rounded-full border border-neutral-700 text-warrior-orange shrink-0">
+                                                <MdAccountCircle size={16} className="sm:size-4.5" />
                                             </div>
                                             <div className="min-w-0">
                                                 <p className="text-white font-bold text-xs sm:text-sm leading-tight uppercase italic truncate">
@@ -108,14 +108,14 @@ export const GlobalPaymentTable = ({ payments, pagination, onPageChange }: Globa
                             onClick={() => onPageChange(currentPage - 1)}
                             className="p-1 sm:p-1.5 bg-neutral-800 border border-neutral-700 rounded-lg text-gray-400 disabled:opacity-20 hover:text-warrior-orange transition-all cursor-pointer"
                         >
-                            <MdChevronLeft size={18} className="sm:size-[20px]" />
+                            <MdChevronLeft size={18} className="sm:size-5" />
                         </button>
                         <button
                             disabled={currentPage === totalPages}
                             onClick={() => onPageChange(currentPage + 1)}
                             className="p-1 sm:p-1.5 bg-neutral-800 border border-neutral-700 rounded-lg text-gray-400 disabled:opacity-20 hover:text-warrior-orange transition-all cursor-pointer"
                         >
-                            <MdChevronRight size={18} className="sm:size-[20px]" />
+                            <MdChevronRight size={18} className="sm:size-5" />
                         </button>
                     </div>
                 </div>

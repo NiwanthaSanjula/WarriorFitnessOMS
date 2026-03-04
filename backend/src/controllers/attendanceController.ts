@@ -29,3 +29,18 @@ export const markAttendance = async (req: CustomRequest, res: Response, next: Ne
         next(error)
     }
 }
+
+// Member: Get own attendance history for the current year
+export const getMyAttendance = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?._id?.toString();
+        if (!userId) return next(new AppError('Login required', 401));
+
+        const history = await attendanceService.getMemberAttendanceHistory(userId);
+
+        res.status(200).json({
+            status: 'success',
+            data: { history }
+        });
+    } catch (error) { next(error); }
+};
