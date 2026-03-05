@@ -1,6 +1,3 @@
-// FILE: src/controllers/planController.ts
-// Replace your existing planController completely with this code
-
 import { Request, Response, NextFunction } from "express";
 import WorkoutPlan from "../models/WorkoutPlan.js";
 import NutritionPlan from "../models/NutritionPlan.js";
@@ -9,9 +6,6 @@ import User from "../models/User.js";
 import { AppError } from "../utils/appError.js";
 import { CustomRequest } from "../types.js";
 
-// ════════════════════════════════════════════════════════════════════════════════
-// WORKOUT PLANS - COACH ENDPOINTS
-// ════════════════════════════════════════════════════════════════════════════════
 
 // Get all workout plans created by this coach
 export const getMyWorkoutPlans = async (
@@ -222,9 +216,6 @@ export const deleteWorkoutPlan = async (
     }
 };
 
-// ════════════════════════════════════════════════════════════════════════════════
-// NUTRITION PLANS - COACH ENDPOINTS
-// ════════════════════════════════════════════════════════════════════════════════
 
 // Get all nutrition plans created by this coach
 export const getMyNutritionPlans = async (
@@ -447,9 +438,6 @@ export const deleteNutritionPlan = async (
     }
 };
 
-// ════════════════════════════════════════════════════════════════════════════════
-// PLAN ASSIGNMENTS - COACH & MEMBER
-// ════════════════════════════════════════════════════════════════════════════════
 
 export const assignPlan = async (
     req: CustomRequest,
@@ -573,9 +561,6 @@ export const getCoachMemberPlans = async (req: CustomRequest, res: Response, nex
     }
 };
 
-// ════════════════════════════════════════════════════════════════════════════════
-// MEMBER ENDPOINTS
-// ════════════════════════════════════════════════════════════════════════════════
 
 // getMyActivePlans — filter uses 'WorkoutPlan'/'NutritionPlan' not 'workout'/'nutrition'
 export const getMyActivePlans = async (req: CustomRequest, res: Response, next: NextFunction) => {

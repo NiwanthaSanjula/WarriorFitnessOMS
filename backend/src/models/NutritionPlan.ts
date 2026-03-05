@@ -2,17 +2,17 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IMealItem {
     name: string;
-    quantity?: string;    // "200g", "1 cup"
+    quantity?: string;   
     calories?: number;
-    protein?: number;     // grams
+    protein?: number;     
     carbs?: number;
     fats?: number;
     notes?: string;
 }
 
 export interface IMeal {
-    mealName: string;     // "Breakfast", "Pre-Workout", "Lunch"
-    time?: string;        // "7:00 AM"
+    mealName: string;    
+    time?: string;       
     items: IMealItem[];
 }
 

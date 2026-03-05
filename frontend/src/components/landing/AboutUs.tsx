@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion'; // 1. Added type Variants
 import { MdArrowForward } from 'react-icons/md';
 import { GiMuscleUp, GiTrophy, GiWeightLiftingUp } from 'react-icons/gi';
 import { Link } from 'react-router-dom';
@@ -16,20 +16,35 @@ const stats = [
     { number: '9+',    label: 'Years Experience', icon: GiWeightLiftingUp },
 ];
 
-const containerVariants = {
-    hidden:   { opacity: 0 },
-    visible:  { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } },
+// 2. Added explicit types to all variant objects
+const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: { 
+        opacity: 1, 
+        transition: { staggerChildren: 0.15, delayChildren: 0.2 } 
+    },
 };
 
-const itemVariants = {
-    hidden:   { opacity: 0, y: 30 },
-    visible:  { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+        opacity: 1, 
+        y: 0, 
+        transition: { duration: 0.6, ease: 'easeOut' } 
+    },
 };
 
-const imageVariants = {
-    hidden:   { opacity: 0, scale: 0.85 },
-    visible:  { opacity: 1, scale: 1, transition: { duration: 0.55 } },
-    hover:    { scale: 1.04, transition: { duration: 0.3 } },
+const imageVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.85 },
+    visible: { 
+        opacity: 1, 
+        scale: 1, 
+        transition: { duration: 0.55 } 
+    },
+    hover: { 
+        scale: 1.04, 
+        transition: { duration: 0.3 } 
+    },
 };
 
 const AboutUs = () => {
@@ -39,65 +54,29 @@ const AboutUs = () => {
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
 
-                        {/* ── LEFT — TEXT & STATS ── */}
+                        {/* LEFT — TEXT & STATS */}
                         <motion.div
                             className="space-y-8"
                             initial={{ opacity: 0, x: -50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.8 }}
-                            viewport={{ once: false }}
+                            viewport={{ once: true }} // Better UX to only animate once
                         >
-                            {/* Label */}
-
-                            {/* Heading */}
                             <motion.h2
                                 className="text-4xl md:text-5xl lg:text-6xl font-BabesNeue font-black italic uppercase leading-tight tracking-wider"
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                transition={{ duration: 0.6, delay: 0.2 }}
-                                viewport={{ once: false }}
                             >
-                                Your Ultimate{' '}
-                                <span className="text-warrior-orange">Fitness</span>{' '}
-                                Destination
+                                Your Ultimate <span className="text-warrior-orange">Fitness</span> Destination
                             </motion.h2>
 
-                            {/* Orange accent bar */}
-                            <motion.div
-                                className="flex items-center gap-3"
-                                initial={{ opacity: 0, scaleX: 0 }}
-                                whileInView={{ opacity: 1, scaleX: 1 }}
-                                transition={{ duration: 0.5, delay: 0.3 }}
-                                viewport={{ once: false }}
-                                style={{ originX: 0 }}
-                            >
+                            <div className="flex items-center gap-3">
                                 <div className="h-1 w-12 bg-warrior-orange rounded-full" />
-                                <div className="h-1 w-3  bg-warrior-orange rounded-full" />
-                            </motion.div>
+                                <div className="h-1 w-3 bg-warrior-orange rounded-full" />
+                            </div>
 
-                            {/* Body text */}
-                            <motion.p
-                                className="text-gray-300 text-base leading-relaxed"
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                transition={{ duration: 0.6, delay: 0.3 }}
-                                viewport={{ once: false }}
-                            >
+                            <p className="text-gray-300 text-base leading-relaxed">
                                 Since 2015, we've been transforming lives through world-class fitness
-                                facilities, expert guidance, and a community that believes in pushing every
-                                boundary.
-                            </motion.p>
-
-                            <motion.p
-                                className="text-gray-500 text-sm leading-relaxed"
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                transition={{ duration: 0.6, delay: 0.4 }}
-                                viewport={{ once: false }}
-                            >
-                                From cutting-edge equipment to certified trainers and personalised nutrition
-                                plans — we provide everything you need to conquer your goals.
-                            </motion.p>
+                                facilities, expert guidance, and a community that believes in pushing every boundary.
+                            </p>
 
                             {/* Stats grid */}
                             <motion.div
@@ -105,7 +84,7 @@ const AboutUs = () => {
                                 variants={containerVariants}
                                 initial="hidden"
                                 whileInView="visible"
-                                viewport={{ once: false, amount: 0.2 }}
+                                viewport={{ once: true, amount: 0.2 }}
                             >
                                 {stats.map(({ number, label, icon: Icon }, i) => (
                                     <motion.div
@@ -122,29 +101,21 @@ const AboutUs = () => {
                                 ))}
                             </motion.div>
 
-                            {/* CTA */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: 0.5 }}
-                                viewport={{ once: false }}
+                            <Link
+                                to="/plans"
+                                className="inline-flex items-center gap-2 bg-warrior-orange text-white text-[11px] font-black uppercase tracking-widest px-6 py-3 rounded-xl hover:bg-orange-500 transition-all duration-200 shadow-lg shadow-warrior-orange/20"
                             >
-                                <Link
-                                    to="/plans"
-                                    className="inline-flex items-center gap-2 bg-warrior-orange text-white text-[11px] font-black uppercase tracking-widest px-6 py-3 rounded-xl hover:bg-orange-500 transition-all duration-200 shadow-lg shadow-warrior-orange/20"
-                                >
-                                    View Our Plans <MdArrowForward size={15} />
-                                </Link>
-                            </motion.div>
+                                View Our Plans <MdArrowForward size={15} />
+                            </Link>
                         </motion.div>
 
-                        {/* ── RIGHT — IMAGE GRID ── */}
+                        {/* RIGHT — IMAGE GRID */}
                         <motion.div
                             className="grid grid-cols-2 gap-3"
                             variants={containerVariants}
                             initial="hidden"
                             whileInView="visible"
-                            viewport={{ once: false, amount: 0.2 }}
+                            viewport={{ once: true, amount: 0.2 }}
                         >
                             {aboutImages.map((src, i) => (
                                 <motion.div
@@ -152,15 +123,14 @@ const AboutUs = () => {
                                     variants={imageVariants}
                                     whileHover="hover"
                                     className={`rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 ${
-                                        i === 0 ? 'row-span-1' : ''
-                                    } ${i === 1 ? 'mt-6' : ''} ${i === 3 ? '-mt-6' : ''}`}
+                                        i === 1 ? 'md:mt-6' : ''
+                                    } ${i === 3 ? 'md:-mt-6' : ''}`}
                                 >
                                     <img
                                         src={src}
                                         alt={`Warrior Gym facility ${i + 1}`}
                                         className="w-full h-48 md:h-56 object-cover"
                                     />
-                                    {/* orange bottom accent */}
                                     <div className="h-0.5 bg-warrior-orange/60" />
                                 </motion.div>
                             ))}

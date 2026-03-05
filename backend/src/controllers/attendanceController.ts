@@ -22,7 +22,7 @@ export const markAttendance = async (req: CustomRequest, res: Response, next: Ne
 
 
     } catch (error: any) {
-        // Handle Duplicate Check-in ( mongoDB error 11000)
+        // Handle Duplicate Check-in
         if (error.code === 11000) {
             return next(new AppError('Warrior is already checked in for today!', 400))
         }

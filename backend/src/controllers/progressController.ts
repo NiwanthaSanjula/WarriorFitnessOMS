@@ -1,5 +1,4 @@
 
-
 import { Request, Response, NextFunction } from "express";
 import * as progressService from "../services/progressService.js";
 import { AppError } from "../utils/appError.js";
@@ -266,7 +265,7 @@ export const getFitnessSummary = async (req: CustomRequest, res: Response, next:
 
         const profile = await MemberProfile.findOne({ user: memberId });
         const summary = await progressService.getMemberFitnessSummary(
-            memberId, profile?.height
+            memberId as string, profile?.height
         );
         res.status(200).json({ status: "success", data: summary });
     } catch (error) { next(error); }
@@ -279,7 +278,7 @@ export const getCoachMemberChartData = async (req: CustomRequest, res: Response,
         if (!coachId || req.user?.role !== 'coach')
             return next(new AppError("Coaches only", 403));
 
-        const chartData = await progressService.getProgressChartData(memberId, 20);
+        const chartData = await progressService.getProgressChartData(memberId as string, 20);
         res.status(200).json({ status: "success", data: chartData });
     } catch (error) { next(error); }
 };

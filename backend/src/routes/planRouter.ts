@@ -30,10 +30,6 @@ const planRouter = express.Router();
 // All routes require authentication
 planRouter.use(protect);
 
-// ════════════════════════════════════════════════════════════════════════════════
-// COACH: WORKOUT PLANS
-// ════════════════════════════════════════════════════════════════════════════════
-
 // Get all my workout plans
 planRouter.get(
     "/workout",
@@ -69,9 +65,7 @@ planRouter.delete(
     deleteWorkoutPlan
 );
 
-// ════════════════════════════════════════════════════════════════════════════════
-// COACH: NUTRITION PLANS
-// ════════════════════════════════════════════════════════════════════════════════
+
 
 // Get all my nutrition plans
 planRouter.get(
@@ -108,9 +102,6 @@ planRouter.delete(
     deleteNutritionPlan
 );
 
-// ════════════════════════════════════════════════════════════════════════════════
-// COACH: PLAN ASSIGNMENTS
-// ════════════════════════════════════════════════════════════════════════════════
 
 // Assign plan to member
 planRouter.post(
@@ -133,9 +124,6 @@ planRouter.get(
     getCoachMemberPlans
 );
 
-// ════════════════════════════════════════════════════════════════════════════════
-// MEMBER: VIEW ASSIGNED PLANS
-// ════════════════════════════════════════════════════════════════════════════════
 
 // Get my active plans
 planRouter.get(

@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
 import { useAuth } from "../../context/AuthContext";
 import { MdDashboard, MdLogin, MdMenu, MdClose } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
-    const { user }        = useAuth();
-    const location        = useLocation();
-    const [scrolled, setScrolled]   = useState(false);
+    const { user }          = useAuth();
+    const location          = useLocation();
+    const navigate          = useNavigate();
+    const [scrolled, setScrolled]     = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState('home');
 
     const isActivated = user && user.status === 'active';
     const isHome      = location.pathname === '/';
@@ -18,18 +20,57 @@ const Navbar = () => {
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 40);
         window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll(); // run once on mount
+        onScroll();
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
-    // On non-home pages always show solid bg
+    // ── Active section tracker (highlight nav link based on scroll position) ──
+    useEffect(() => {
+        if (!isHome) return;
+
+        const sectionIds = ['home', 'about', 'why-us', 'facilities', 'plans', 'faq'];
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setActiveSection(entry.target.id);
+                    }
+                });
+            },
+            { threshold: 0.3, rootMargin: '-80px 0px 0px 0px' }
+        );
+
+        sectionIds.forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+    }, [isHome]);
+
     const solidBg = scrolled || !isHome;
 
+    // ── Scroll to section (works from any page) ───────────────────────────────
+    const scrollTo = (sectionId: string) => {
+        setMobileOpen(false);
+        if (!isHome) {
+            navigate('/');
+            setTimeout(() => {
+                document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 120);
+        } else {
+            document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     const navLinks = [
-        { label: 'Home',     to: '/'         },
-        { label: 'About',    to: '/about'    },
-        { label: 'Plans',    to: '/plans'    },
-        { label: 'Contact',  to: '/contact'  },
+        { label: 'Home',       section: 'home'       },
+        { label: 'About',      section: 'about'      },
+        { label: 'Why Us',     section: 'why-us'     },
+        { label: 'Facilities', section: 'facilities' },
+        { label: 'Plans',      section: 'plans'      },
+        { label: 'FAQ',        section: 'faq'        },
     ];
 
     return (
@@ -47,33 +88,33 @@ const Navbar = () => {
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
 
                     {/* ── LOGO ── */}
-                    <Link to="/" className="flex items-center gap-3 cursor-pointer group">
+                    <button onClick={() => scrollTo('home')} className="flex items-center gap-3 cursor-pointer group">
                         <img src={assets.LOGO} alt="Warrior Fitness" className="w-8 md:w-10 transition-transform group-hover:scale-105 duration-300" />
                         <div className="leading-none">
-                            <p className="text-lg md:text-xl font-black italic uppercase text-warrior-orange tracking-tight">WARRIOR</p>
+                            <p className="text-lg md:text-xl font-black italic uppercase text-warrior-red tracking-tight">WARRIOR</p>
                             <p className="text-lg md:text-xl font-black italic uppercase text-white tracking-tight -mt-1">FITNESS</p>
                         </div>
-                    </Link>
+                    </button>
 
                     {/* ── DESKTOP LINKS ── */}
                     <div className="hidden md:flex items-center gap-6">
-                        {navLinks.map(link => (
-                            <Link
-                                key={link.to}
-                                to={link.to}
-                                className={`text-[11px] font-black uppercase tracking-widest transition-all duration-200 relative group ${
-                                    location.pathname === link.to
-                                        ? 'text-warrior-orange'
-                                        : 'text-gray-400 hover:text-white'
-                                }`}
-                            >
-                                {link.label}
-                                {/* underline on active */}
-                                <span className={`absolute -bottom-1 left-0 h-0.5 bg-warrior-orange transition-all duration-300 ${
-                                    location.pathname === link.to ? 'w-full' : 'w-0 group-hover:w-full'
-                                }`} />
-                            </Link>
-                        ))}
+                        {navLinks.map(({ label, section }) => {
+                            const isActive = isHome && activeSection === section;
+                            return (
+                                <button
+                                    key={section}
+                                    onClick={() => scrollTo(section)}
+                                    className={`text-[11px] font-black uppercase tracking-widest transition-all duration-200 relative group ${
+                                        isActive ? 'text-warrior-orange' : 'text-gray-400 hover:text-white'
+                                    }`}
+                                >
+                                    {label}
+                                    <span className={`absolute -bottom-1 left-0 h-0.5 bg-warrior-orange transition-all duration-300 ${
+                                        isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                                    }`} />
+                                </button>
+                            );
+                        })}
                     </div>
 
                     {/* ── RIGHT ACTIONS ── */}
@@ -86,7 +127,6 @@ const Navbar = () => {
                                 <MdDashboard size={14} /> Dashboard
                             </Link>
                         )}
-
                         {!user ? (
                             <Link
                                 to="/login"
@@ -124,30 +164,29 @@ const Navbar = () => {
                         exit={{ opacity: 0, x: '100%' }}
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                     >
-                        {/* Orange accent line */}
                         <div className="w-12 h-1 bg-warrior-orange mb-8 rounded-full" />
 
                         <div className="space-y-6 flex-1">
-                            {navLinks.map((link, i) => (
-                                <motion.div
-                                    key={link.to}
-                                    initial={{ opacity: 0, x: 30 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.07 }}
-                                >
-                                    <Link
-                                        to={link.to}
-                                        onClick={() => setMobileOpen(false)}
-                                        className={`block text-3xl font-black italic uppercase tracking-tight transition-colors ${
-                                            location.pathname === link.to
-                                                ? 'text-warrior-orange'
-                                                : 'text-gray-400 hover:text-white'
-                                        }`}
+                            {navLinks.map(({ label, section }, i) => {
+                                const isActive = isHome && activeSection === section;
+                                return (
+                                    <motion.div
+                                        key={section}
+                                        initial={{ opacity: 0, x: 30 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: i * 0.07 }}
                                     >
-                                        {link.label}
-                                    </Link>
-                                </motion.div>
-                            ))}
+                                        <button
+                                            onClick={() => scrollTo(section)}
+                                            className={`block text-3xl font-black italic uppercase tracking-tight transition-colors ${
+                                                isActive ? 'text-warrior-orange' : 'text-gray-400 hover:text-white'
+                                            }`}
+                                        >
+                                            {label}
+                                        </button>
+                                    </motion.div>
+                                );
+                            })}
                         </div>
 
                         {/* Mobile CTA */}

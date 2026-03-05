@@ -36,10 +36,10 @@ const memberProgressSchema = new Schema<IMemberProgress>(
         biceps: { type: Number, default: null },
         thighs: { type: Number, default: null },
         notes: { type: String, default: "" },
-        coachNotes: { type: String, default: "" },  // NEW
+        coachNotes: { type: String, default: "" },
         photoUrl: { type: String, default: null },
-        energyLevel: { type: Number, min: 1, max: 10, default: null },  // NEW
-        mood: { type: Number, min: 1, max: 10, default: null },         // NEW
+        energyLevel: { type: Number, min: 1, max: 10, default: null },  
+        mood: { type: Number, min: 1, max: 10, default: null },        
     },
     { timestamps: true }
 );

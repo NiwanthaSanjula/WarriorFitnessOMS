@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ICoachProfile extends Document {
-    user: mongoose.Types.ObjectId; // Links to the User record
+    user: mongoose.Types.ObjectId;
     specialties: string[];
     bio: string;
     certifications: string[];

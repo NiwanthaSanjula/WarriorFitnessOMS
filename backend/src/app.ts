@@ -1,7 +1,6 @@
- import express, { Application, Request, Response } from 'express';
- import cors from 'cors';
- import cookieParser from 'cookie-parser';
- import dotenv from 'dotenv';
+import express, { Application, Request, Response } from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { initCronjobs } from './utils/cronJobs.js'
 
 import { globalErrorHandler } from './middleware/errorMiddleware.js';
@@ -13,40 +12,38 @@ import statsRouter from './routes/statsRouter.js';
 import progressRouter from './routes/progressRoutes.js';
 import planRouter from './routes/planRouter.js';
 import expenseRouter from './routes/ExpenseRouter.js';
+import uploadRouter from './routes/uploadRouter.js';
+import contentRouter from './routes/contentRouter.js';
 
+const app: Application = express();
 
+// Middleware
+app.use(express.json()); // Parse incomming json
+app.use(cookieParser()); // Allow to read JWT from cookies
+app.use(cors({
+   origin: process.env.CLIENT_URL || 'http://localhost:5173',
+   credentials: true // Allow cookies to be sent in cross-origin requests
+}));
+initCronjobs();
 
+// Routes
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/attendance', attendanceRouter);
+app.use('/api/v1/membership', membershipRouter);
+app.use('/api/v1/dashboard', statsRouter);
+app.use('/api/v1/progress', progressRouter);
+app.use('/api/v1/plans', planRouter);
+app.use('/api/v1/expenses', expenseRouter);
+app.use('/api/v1/upload', uploadRouter);
+app.use('/api/v1/content', contentRouter);
 
- dotenv.config();
+// Health Check Endpoint
+app.get('/health', (req: Request, res: Response) => {
+   res.status(200).json({ status: 'success', message: 'Warrior Fiteness API is healthy' });
+});
 
- const app: Application = express();
+// Global error handling
+app.use(globalErrorHandler)
 
- // Middleware
- app.use(express.json()); // Parse incomming json
- app.use(cookieParser()); // Allow to read JWT from cookies
- app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
-    credentials : true // Allow cookies to be sent in cross-origin requests
- }));
- initCronjobs();
-
- // Routes
- app.use('/api/v1/auth', authRouter);
- app.use('/api/v1/users', userRouter);
- app.use('/api/v1/attendance', attendanceRouter);
- app.use('/api/v1/membership', membershipRouter);
- app.use('/api/v1/dashboard', statsRouter);
- app.use('/api/v1/progress', progressRouter);
- app.use('/api/v1/plans', planRouter);
- app.use('/api/v1/expenses', expenseRouter);
- 
- // Health Check Endpoint
- app.get('/health', (req : Request, res : Response) => {
-    res.status(200).json({ status: 'success', message : 'Warrior Fiteness API is healthy'});
- });
-
- // Global error handling
- app.use(globalErrorHandler)
-
- export default app;
- 
+export default app;

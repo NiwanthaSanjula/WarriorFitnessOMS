@@ -9,22 +9,19 @@ const userRouter = express.Router()
 // Protect all routes
 userRouter.use(protect);
 
-// ---------------------------------------------------------
+
 // MEMBER & GENERAL ROUTES
-// ---------------------------------------------------------
+
 userRouter.get('/me', getMe);
 userRouter.patch('/updateMe', updateMe);
 userRouter.patch('/change-password', changePassword);
 userRouter.get('/my-profile', getMyProfile);
 
-// ---------------------------------------------------------
 // COACH ROUTES
-// ---------------------------------------------------------
+
 userRouter.get('/my-clients', restrictTo('coach'), getMyStudents);
 
-// ---------------------------------------------------------
 // ADMIN ONLY ROUTES
-// ---------------------------------------------------------
 userRouter.use(restrictTo('admin'));
 
 userRouter.post('/create-user', createUser);

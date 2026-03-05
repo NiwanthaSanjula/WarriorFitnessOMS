@@ -112,7 +112,7 @@ export const getMemberActivePlans = async (memberId: string) => {
     try {
         const workout = await MemberPlan.findOne({
             member: memberId, planType: 'workout', status: 'active'
-        }).populate('plan').lean(); // Mongoose now uses planModel to find the data [cite: 1621]
+        }).populate('plan').lean(); // Mongoose now uses planModel to find the data
 
         const nutrition = await MemberPlan.findOne({
             member: memberId, planType: 'nutrition', status: 'active'

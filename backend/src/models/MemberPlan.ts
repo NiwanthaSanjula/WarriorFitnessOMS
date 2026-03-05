@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface IMemberPlan extends Document {
     member: mongoose.Types.ObjectId;
     coach: mongoose.Types.ObjectId;
-    planType: 'WorkoutPlan' | 'NutritionPlan'; // matches Mongoose model names
+    planType: 'WorkoutPlan' | 'NutritionPlan';
     plan: mongoose.Types.ObjectId;
     status: 'active' | 'completed' | 'cancelled';
     startDate: Date;
@@ -21,7 +21,7 @@ const memberPlanSchema = new Schema<IMemberPlan>({
     plan: { 
         type: Schema.Types.ObjectId, 
         required: true, 
-        refPath: 'planType'   // ← Mongoose reads planType value → uses it as model name
+        refPath: 'planType'
     },
     status:     { type: String, enum: ['active', 'completed', 'cancelled'], default: 'active' },
     startDate:  { type: Date, default: Date.now },

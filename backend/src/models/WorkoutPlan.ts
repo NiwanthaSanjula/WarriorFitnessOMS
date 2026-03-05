@@ -3,15 +3,15 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface IExerciseEntry {
     exerciseName: string;
     sets?: number;
-    reps?: string;       // "8-12" or "to failure"
-    duration?: string;   // "30 sec" for timed exercises
+    reps?: string;       
+    duration?: string;  
     restSeconds?: number;
     notes?: string;
 }
 
 export interface IWorkoutDay {
-    dayLabel: string;    // "Day 1", "Monday", "Push Day"
-    focus?: string;      // "Chest & Triceps", "Cardio"
+    dayLabel: string;  
+    focus?: string;      
     exercises: IExerciseEntry[];
 }
 
@@ -24,7 +24,7 @@ export interface IWorkoutPlan extends Document {
     goal: 'weight_loss' | 'muscle_gain' | 'endurance' | 'general_fitness';
     daysPerWeek: number;
     schedule: IWorkoutDay[];
-    isTemplate: boolean;   // true = reusable template, false = custom for one member
+    isTemplate: boolean;   
     createdAt: Date;
     updatedAt: Date;
 }

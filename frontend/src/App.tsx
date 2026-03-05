@@ -22,6 +22,8 @@ import MemberNutritionPlan from "./pages/member/MemberNutritionPlan"
 import MemberSubscription from "./pages/member/MemberSubscription"
 import MemberAttendance from "./pages/member/MemberAttendance"
 import FinancePage from "./pages/admin/FinancePage"
+import ContentManager from "./pages/admin/ContentManager"
+import AboutUs from "./components/landing/AboutUs"
 
 
 
@@ -72,6 +74,7 @@ const App = () => {
             <Route path="/admin/add-member" element={ <AddNewMember/> } />
             <Route path="/admin/members/edit/:id" element={ <AddNewMember/> } />
             <Route path="admin/payments" element={<FinancePage />} />
+            <Route path="admin/content-manager" element={<ContentManager />} />
 
           </Route>
         </Route>
