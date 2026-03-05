@@ -76,4 +76,16 @@ export const membershipService = {
         const response = await api.get(`/membership/my-payments?page=${page}`);
         return response.data.data;
     },
+
+    // Monthly revenue breakdown for last 12 months (for Finance report chart)
+    getRevenueHistory: async (): Promise<any> => {
+        const response = await api.get('/membership/payments/revenue-history');
+        return response.data.data; // { monthlyRevenue: [{_id: {month, year}, total}] }
+    },
+
+    // 30-day revenue total (used in Finance summary cards)
+    getRecentRevenue: async (): Promise<any> => {
+        const response = await api.get('/membership/payments/recent-revenue');
+        return response.data.data; // { recent: number }
+    },
 }

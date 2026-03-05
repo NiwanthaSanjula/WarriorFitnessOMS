@@ -191,3 +191,43 @@ export const getMyPayments = async (req: CustomRequest, res: Response, next: Nex
         });
     } catch (error) { next(error); }
 };
+
+// Returns monthly revenue totals for the last 12 months
+export const getRevenueHistory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+
+        const monthlyRevenue = await Payment.aggregate([
+            { $match: { createdAt: { $gte: start } } },
+            {
+                $group: {
+                    _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } },
+                    total: { $sum: '$amount' }
+                }
+            },
+            { $sort: { '_id.year': 1, '_id.month': 1 } }
+        ]);
+
+        res.status(200).json({ status: 'success', data: { monthlyRevenue } });
+    } catch (err) { next(err); }
+};
+
+
+// Returns total revenue for last 30 days
+export const getRecentRevenue = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const since = new Date();
+        since.setDate(since.getDate() - 29);
+
+        const result = await Payment.aggregate([
+            { $match: { createdAt: { $gte: since } } },
+            { $group: { _id: null, total: { $sum: '$amount' } } }
+        ]);
+
+        res.status(200).json({
+            status: 'success',
+            data: { recent: result[0]?.total || 0 }
+        });
+    } catch (err) { next(err); }
+};

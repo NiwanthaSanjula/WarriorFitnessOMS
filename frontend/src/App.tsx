@@ -11,7 +11,6 @@ import ManagePlans from "./pages/admin/ManagePlans"
 import Home from "./pages/public/Home"
 import AddNewMember from "./pages/admin/AddNewMember"
 import Profile from "./pages/Profile"
-import PaymentsHistory from "./pages/admin/PaymentsHistory"
 import Progress from "./pages/member/Progress"
 import CoachMemberProfile from "./pages/coach/CoachMemberProfile"
 import WorkoutPlanForm from "./pages/coach/WorkoutPlanForm"
@@ -22,7 +21,7 @@ import MemberWorkoutPlan from "./pages/member/MemberWorkoutPlan"
 import MemberNutritionPlan from "./pages/member/MemberNutritionPlan"
 import MemberSubscription from "./pages/member/MemberSubscription"
 import MemberAttendance from "./pages/member/MemberAttendance"
-import Expenses from "./pages/admin/Expenses"
+import FinancePage from "./pages/admin/FinancePage"
 
 
 
@@ -72,8 +71,7 @@ const App = () => {
             <Route path="/admin/plans" element={ <ManagePlans/> } />
             <Route path="/admin/add-member" element={ <AddNewMember/> } />
             <Route path="/admin/members/edit/:id" element={ <AddNewMember/> } />
-            <Route path="/admin/payments-history" element={ <PaymentsHistory/> } />
-            <Route path="/admin/expenses" element={ <Expenses/> } />
+            <Route path="admin/payments" element={<FinancePage />} />
 
           </Route>
         </Route>

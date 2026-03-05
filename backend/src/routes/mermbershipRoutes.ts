@@ -19,6 +19,9 @@ membershipRouter.get('/payments/all', restrictTo('admin'), membershipController.
 membershipRouter.get('/pending-payments', restrictTo('admin'), membershipController.getPendingPayments );
 membershipRouter.get('/payments/member/:memberId', restrictTo('admin'), membershipController.getMemberPayments );
 membershipRouter.get('/run-sweep', restrictTo('admin'), membershipController.runExpirationSweep );
+membershipRouter.get('/payments/revenue-history', restrictTo('admin'), membershipController.getRevenueHistory);
+membershipRouter.get('/payments/recent-revenue',  restrictTo('admin'), membershipController.getRecentRevenue);
+
 
 // Member routes (logged in, no admin required)
 membershipRouter.get('/my-subscription', protect, membershipController.getMySubscription);
