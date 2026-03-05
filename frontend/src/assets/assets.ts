@@ -8,6 +8,7 @@ import WhyUs1 from './WhyUs1.png'
 import WhyUs2 from './WhyUs2.png'
 import WhyUs3 from './WhyUs3.png'
 import WhyUs4 from './WhyUs4.png'
+import login_bg from './login_bg.jpg'
 
 export const assets = {
     LOGO,
@@ -20,4 +21,5 @@ export const assets = {
     WhyUs2,
     WhyUs3,
     WhyUs4,
+    login_bg
 }
