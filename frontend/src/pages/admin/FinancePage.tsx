@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useCallback } from 'react';
@@ -25,7 +25,7 @@ const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov
 const now    = new Date();
 
 const CATEGORIES = ['Equipment','Utilities','Salary','Maintenance','Supplies','Marketing','Other'] as const;
-type Category = typeof CATEGORIES[number];
+//type Category = typeof CATEGORIES[number];
 
 const CAT_COLOR: Record<string, string> = {
     Equipment: '#f97316', Utilities: '#3b82f6', Salary: '#a855f7',

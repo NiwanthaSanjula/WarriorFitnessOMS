@@ -5,13 +5,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { progressService } from '../../services/progressService';
 import { planService } from '../../services/planService';
 import {
-    MdArrowBack, MdEdit, MdAssignment, MdTimeline, MdRadar,
+    MdArrowBack, MdEdit, MdAssignment, MdTimeline, 
     MdExpandMore, MdExpandLess, MdVerified, MdCompare, MdClose,
     MdTrendingDown, MdTrendingUp, MdRemove, MdEmojiEvents,
     MdCheckCircle, MdShowChart, MdBarChart, MdCalendarToday
 } from 'react-icons/md';
 import {
-    GiProgression, GiFireBowl, GiWeightScale, GiMuscleUp,
+     GiFireBowl, GiWeightScale, GiMuscleUp,
     GiTrophy, GiLaurelCrown, GiPodiumWinner, GiRun
 } from 'react-icons/gi';
 import { BsFillLightningFill } from 'react-icons/bs';
@@ -19,7 +19,7 @@ import Spinner from '../../components/ui/Spinner';
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     Radar, RadarChart, PolarGrid, PolarAngleAxis, BarChart, Bar,
-    ReferenceLine, Legend
+    Legend
 } from 'recharts';
 import { useEffect, useState, useMemo } from 'react';
 import AssignPlanModal from '../../components/coach/AssignPlanModal';
@@ -69,7 +69,7 @@ const MILESTONE_ICONS: Record<string, React.ElementType> = {
 const MilestoneIcon = ({ label, earned }: { label: string; earned: boolean }) => {
     const Icon = MILESTONE_ICONS[label] ?? GiPodiumWinner;
     return (
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border transition-all ${
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-all ${
             earned ? 'bg-warrior-orange/15 border-warrior-orange/40' : 'bg-neutral-800/60 border-neutral-700/40'
         }`}>
             <Icon size={20} className={earned ? 'text-warrior-orange' : 'text-gray-600'} />

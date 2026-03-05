@@ -1,19 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react'
 import { statsService } from '../../services/statsService';
+import { expenseService } from '../../services/expenseService';
 import Spinner from '../../components/ui/Spinner';
-import { MdArrowForward, MdFitnessCenter, MdPayment, MdPeople, MdPerson, MdReceipt, MdWarning, MdTrendingUp } from 'react-icons/md';
-import { GiMuscleUp, GiTrophy, GiWeightLiftingUp } from 'react-icons/gi';
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+    MdArrowForward, MdFitnessCenter, MdPayment, MdPeople,
+    MdPerson, MdReceipt, MdWarning, MdTrendingUp,
+} from 'react-icons/md';
+import { GiMuscleUp, GiTrophy, GiWeightLiftingUp, GiPayMoney } from 'react-icons/gi';
+import {
+    Area, AreaChart, Bar, BarChart, CartesianGrid, Cell,
+    Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
+} from 'recharts';
 import { Link } from 'react-router-dom';
 
 const COLORS = ['#f97316', '#22c55e', '#ef4444', '#a855f7'];
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const CAT_COLOR: Record<string, string> = {
+    Equipment:   '#f97316',
+    Utilities:   '#3b82f6',
+    Salary:      '#a855f7',
+    Maintenance: '#eab308',
+    Supplies:    '#22c55e',
+    Marketing:   '#ec4899',
+    Other:       '#6b7280',
+};
 
 // ── KPI Card ──────────────────────────────────────────────────────────────────
-const KpiCard = ({
-    title, value, icon: Icon, accent, sub
-}: {
+const KpiCard = ({ title, value, icon: Icon, accent, sub }: {
     title: string; value: string | number; icon: any;
     accent: 'orange' | 'green' | 'blue' | 'yellow'; sub?: string;
 }) => {
@@ -39,14 +54,14 @@ const KpiCard = ({
 };
 
 // ── Section Card ──────────────────────────────────────────────────────────────
-const SectionCard = ({ title, icon, children, action }: {
-    title: string; icon: React.ReactNode;
-    children: React.ReactNode; action?: React.ReactNode;
+const SectionCard = ({ title, icon, children, action, accentColor = 'border-l-warrior-orange' }: {
+    title: string; icon: React.ReactNode; children: React.ReactNode;
+    action?: React.ReactNode; accentColor?: string;
 }) => (
-    <div className="bg-warrior-grey border border-neutral-700 border-l-4 border-l-warrior-orange rounded-2xl overflow-hidden">
+    <div className={`bg-warrior-grey border border-neutral-700 border-l-4 ${accentColor} rounded-2xl overflow-hidden`}>
         <div className="px-5 py-4 border-b border-neutral-800 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-                <span className="text-warrior-orange">{icon}</span>
+                <span className={accentColor.includes('red') ? 'text-red-400' : 'text-warrior-orange'}>{icon}</span>
                 <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">{title}</p>
             </div>
             {action}
@@ -56,21 +71,26 @@ const SectionCard = ({ title, icon, children, action }: {
 );
 
 const AdminDashboard = () => {
-    const [stats, setStats] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+    const [stats, setStats]           = useState<any>(null);
+    const [expData, setExpData]       = useState<any>(null);
+    const [loading, setLoading]       = useState(true);
 
     useEffect(() => {
-        const fetchStats = async () => {
+        const fetchAll = async () => {
             try {
-                const data = await statsService.getAdminDashboardStats();
-                setStats(data);
+                const [dashData, expenses] = await Promise.all([
+                    statsService.getAdminDashboardStats(),
+                    expenseService.getExpenses({ limit: 999 }),
+                ]);
+                setStats(dashData);
+                setExpData(expenses);
             } catch (error) {
                 console.error('Failed to fetch Dashboard:', error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchStats();
+        fetchAll();
     }, []);
 
     if (loading) return <Spinner />;
@@ -101,6 +121,11 @@ const AdminDashboard = () => {
         return { name: d.label, count: found ? found.count : 0 };
     });
 
+    // ── Expense breakdown ──
+    const categoryBreakdown: any[] = expData?.categoryBreakdown || [];
+    const totalExpenses = categoryBreakdown.reduce((s: number, c: any) => s + c.total, 0);
+    const sortedCats    = [...categoryBreakdown].sort((a, b) => b.total - a.total);
+
     const pendingCount = stats.memberStatusDistribution.find((s: any) => s._id === 'pending-payment')?.count || 0;
 
     return (
@@ -123,14 +148,15 @@ const AdminDashboard = () => {
 
             {/* ── KPI CARDS ── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <KpiCard title="Total Members"    value={stats.totalMembers}                  icon={MdPeople}       accent="orange" />
-                <KpiCard title="Active Coaches"   value={stats.coachWorklooad.length}         icon={MdFitnessCenter} accent="green" />
-                <KpiCard title="30-Day Revenue"   value={`${stats.recentRevenue.toLocaleString()} LKR`} icon={MdPayment} accent="blue" />
-                <KpiCard title="Pending Payments" value={pendingCount}                        icon={MdWarning}      accent="yellow" />
+                <KpiCard title="Total Members"    value={stats.totalMembers}                            icon={MdPeople}        accent="orange" />
+                <KpiCard title="Active Coaches"   value={stats.coachWorklooad.length}                   icon={MdFitnessCenter} accent="green"  />
+                <KpiCard title="30-Day Revenue"   value={`${stats.recentRevenue.toLocaleString()} LKR`} icon={MdPayment}       accent="blue"   />
+                <KpiCard title="Pending Payments" value={pendingCount}                                  icon={MdWarning}       accent="yellow" />
             </div>
 
-            {/* ── CHARTS ROW 1 ── */}
+            {/* ── CHARTS ROW 1: Revenue + Member Pulse ── */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
                 {/* Revenue Area Chart */}
                 <div className="lg:col-span-2 bg-warrior-grey border border-neutral-700 border-l-4 border-l-warrior-orange rounded-2xl p-5">
                     <div className="flex items-center gap-2 mb-5">
@@ -148,7 +174,7 @@ const AdminDashboard = () => {
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
                                 <XAxis dataKey="name" stroke="#555" fontSize={11} tickLine={false} axisLine={false} />
-                                <YAxis stroke="#555" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `${v / 1000}k`} />
+                                <YAxis stroke="#555" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `${v/1000}k`} />
                                 <Tooltip contentStyle={{ backgroundColor: '#171717', borderColor: '#333', color: '#fff', borderRadius: '12px', fontSize: '12px' }} />
                                 <Area type="monotone" dataKey="revenue" stroke="#f97316" strokeWidth={2.5} fillOpacity={1} fill="url(#colorRev)" dot={false} />
                             </AreaChart>
@@ -180,8 +206,9 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            {/* ── CHARTS ROW 2 ── */}
+            {/* ── CHARTS ROW 2: Attendance + Expense Breakdown ── */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
                 {/* Attendance Bar Chart */}
                 <div className="bg-warrior-grey border border-neutral-700 border-l-4 border-l-warrior-orange rounded-2xl p-5">
                     <div className="flex items-center gap-2 mb-5">
@@ -195,34 +222,68 @@ const AdminDashboard = () => {
                                 <XAxis dataKey="name" stroke="#555" fontSize={11} axisLine={false} tickLine={false} />
                                 <YAxis stroke="#555" fontSize={11} allowDecimals={false} axisLine={false} tickLine={false} />
                                 <Tooltip cursor={{ fill: '#222' }} contentStyle={{ backgroundColor: '#171717', borderColor: '#333', borderRadius: '10px', fontSize: '11px' }} />
-                                <Bar dataKey="count" fill="#f97316" radius={[6, 6, 0, 0]} barSize={28} />
+                                <Bar dataKey="count" fill="#f97316" radius={[6,6,0,0]} barSize={28} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
 
-                {/* Coach Load */}
-                <div className="bg-warrior-grey border border-neutral-700 border-l-4 border-l-warrior-orange rounded-2xl p-5">
-                    <div className="flex items-center gap-2 mb-5">
-                        <MdFitnessCenter className="text-warrior-orange" size={16} />
-                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Coach Student Load</p>
+                {/* ── Expense Category Breakdown ── */}
+                <div className="bg-warrior-grey border border-neutral-700 border-l-4 border-l-red-500 rounded-2xl overflow-hidden">
+                    <div className="px-5 py-4 border-b border-neutral-800 flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                            <GiPayMoney className="text-red-400" size={15} />
+                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Expense Breakdown</p>
+                        </div>
+                        <Link
+                            to="/admin/finance"
+                            className="flex items-center gap-1 text-[10px] font-black uppercase text-red-400 hover:underline"
+                        >
+                            Manage <MdArrowForward size={12} />
+                        </Link>
                     </div>
-                    <div className="space-y-3">
-                        {stats.coachWorklooad.map((coach: any, i: number) => {
-                            const maxCount = Math.max(...stats.coachWorklooad.map((c: any) => c.studentCount), 1);
-                            const pct = Math.round((coach.studentCount / maxCount) * 100);
-                            return (
-                                <div key={i}>
-                                    <div className="flex items-center justify-between mb-1">
-                                        <span className="text-xs font-black italic uppercase text-gray-300 truncate max-w-[60%]">{coach._id}</span>
-                                        <span className="text-[10px] font-black text-warrior-orange">{coach.studentCount} warriors</span>
-                                    </div>
-                                    <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden">
-                                        <div className="h-full bg-warrior-orange rounded-full transition-all" style={{ width: `${pct}%` }} />
-                                    </div>
+                    <div className="p-5">
+                        {sortedCats.length > 0 ? (
+                            <div className="space-y-3">
+                                {/* Total badge */}
+                                <div className="flex items-center justify-between mb-1">
+                                    <p className="text-[9px] font-black uppercase text-gray-600 tracking-widest">All Time Total</p>
+                                    <p className="text-sm font-black text-red-400">{totalExpenses.toLocaleString()} <span className="text-[9px] font-bold text-gray-600">LKR</span></p>
                                 </div>
-                            );
-                        })}
+
+                                {/* Category progress bars */}
+                                {sortedCats.map((cat: any) => {
+                                    const pct = totalExpenses > 0 ? Math.round((cat.total / totalExpenses) * 100) : 0;
+                                    const color = CAT_COLOR[cat._id] || '#6b7280';
+                                    return (
+                                        <div key={cat._id}>
+                                            <div className="flex items-center justify-between mb-1">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                                                    <span className="text-[10px] font-black uppercase text-gray-400">{cat._id}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-black text-gray-500">{cat.total.toLocaleString()} LKR</span>
+                                                    <span className="text-[9px] font-black w-7 text-right" style={{ color }}>{pct}%</span>
+                                                </div>
+                                            </div>
+                                            <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+                                                <div className="h-full rounded-full transition-all"
+                                                    style={{ width: `${pct}%`, backgroundColor: color }} />
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-8 gap-2">
+                                <GiPayMoney size={28} className="text-neutral-700" />
+                                <p className="text-[10px] font-black uppercase text-gray-600 tracking-widest">No expenses logged yet</p>
+                                <Link to="/admin/finance" className="text-[10px] font-black uppercase text-red-400 hover:underline mt-1">
+                                    + Log First Expense
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -269,7 +330,7 @@ const AdminDashboard = () => {
                     title="Recent Income"
                     icon={<MdReceipt size={15} />}
                     action={
-                        <Link to="/admin/payments-history" className="flex items-center gap-1 text-[10px] font-black uppercase text-warrior-orange hover:underline">
+                        <Link to="/admin/finance" className="flex items-center gap-1 text-[10px] font-black uppercase text-warrior-orange hover:underline">
                             Reports <MdArrowForward size={12} />
                         </Link>
                     }

@@ -73,11 +73,11 @@ export const PendingMembersTable = ({ members, pagination, onPageChange }: Props
                             <p className="text-gray-300 font-bold tracking-wider text-sm mb-2">{m.name}</p>
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-gray-400 text-xs">
-                                    <MdEmail size={16} className="text-warrior-orange flex-shrink-0" />
+                                    <MdEmail size={16} className="text-warrior-orange shrink-0" />
                                     <span className="break-all">{m.email}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-gray-400 text-xs">
-                                    <MdPhone size={16} className="text-warrior-orange flex-shrink-0" />
+                                    <MdPhone size={16} className="text-warrior-orange shrink-0" />
                                     <span>{m.phone}</span>
                                 </div>
                             </div>

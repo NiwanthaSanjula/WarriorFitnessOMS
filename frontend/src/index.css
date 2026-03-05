@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -5,4 +6,9 @@
   --color-warrior-grey: #1f1f1f;
   --color-warrior-orange: #ff4d00;
   --color-warrior-red: #e60000;
+  --font-BabesNeue : 'Bebas Neue', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
 }
