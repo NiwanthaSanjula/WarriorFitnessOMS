@@ -303,7 +303,7 @@ export const getMemberFitnessSummary = async (
         totalWeightChange,
         totalEntries,
         lastUpdated: latest.createdAt,
-        streak: totalEntries  // you could compute actual streak logic here
+        streak: totalEntries 
     };
 };
 
