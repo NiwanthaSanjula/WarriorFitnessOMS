@@ -9,6 +9,12 @@
     "server": "nodemon --exec tsx src/server.ts",
     "build": "tsc"
   },
+
+  "engines": {
+    "node": "18.x",
+    "npm": "9.x"
+  },
+  
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",

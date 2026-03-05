@@ -17,13 +17,36 @@ import contentRouter from './routes/contentRouter.js';
 
 const app: Application = express();
 
+// Get client URL from environment
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+
 // Middleware
-app.use(express.json()); // Parse incomming json
-app.use(cookieParser()); // Allow to read JWT from cookies
+app.use(express.json({ limit: '10mb' })); // Increase payload limit
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(cookieParser());
+
+// CORS Configuration for Railway
 app.use(cors({
-   origin: process.env.CLIENT_URL || 'http://localhost:5173',
-   credentials: true // Allow cookies to be sent in cross-origin requests
+   origin: function (origin, callback) {
+      const allowedOrigins = [
+         'http://localhost:5173',
+         'http://localhost:3000',
+         CLIENT_URL,
+         process.env.FRONTEND_URL || '',
+      ].filter(Boolean);
+
+      if (!origin || allowedOrigins.includes(origin)) {
+         callback(null, true);
+      } else {
+         callback(new Error('Not allowed by CORS'));
+      }
+   },
+   credentials: true,
+   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+// Initialize cron jobs
 initCronjobs();
 
 // Routes
@@ -40,10 +63,14 @@ app.use('/api/v1/content', contentRouter);
 
 // Health Check Endpoint
 app.get('/health', (req: Request, res: Response) => {
-   res.status(200).json({ status: 'success', message: 'Warrior Fiteness API is healthy' });
+   res.status(200).json({ 
+      status: 'success', 
+      message: 'Warrior Fitness API is healthy',
+      timestamp: new Date().toISOString()
+   });
 });
 
 // Global error handling
-app.use(globalErrorHandler)
+app.use(globalErrorHandler);
 
 export default app;
