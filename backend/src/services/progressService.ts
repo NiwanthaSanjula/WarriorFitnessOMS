@@ -1,5 +1,3 @@
-
-
 import MemberProgress from "../models/MemberProgress.js";
 import MemberProfile from "../models/MemberProfile.js";
 import User from "../models/User.js";
@@ -162,13 +160,18 @@ export const getCoachMembersList = async (coachId: string) => {
             const memberProfile = await MemberProfile.findOne({ user: member._id })
                 .select('weight height');
 
-            const latestProgress = await MemberProgress.findOne({ user: member._id })
+            const latestProgress = await MemberProgress.findOne({ member: member._id })
                 .sort({ createdAt: -1 })
                 .select('weight bodyFat createdAt notes');
 
             const subscription = await Subscription.findOne({ member: member._id })
                 .populate('plan', 'name')
                 .sort({ createdAt: -1 });
+
+            // Get subscription plan name safely with type casting
+            const planName = subscription && subscription.plan 
+                ? (subscription.plan as any).name 
+                : null;
 
             return {
                 _id: member._id,
@@ -181,7 +184,7 @@ export const getCoachMembersList = async (coachId: string) => {
                 currentWeight: latestProgress?.weight || null,
                 currentBodyFat: latestProgress?.bodyFat || null,
                 lastProgressDate: latestProgress?.createdAt || null,
-                subscriptionPlan: subscription?.plan?.name || null
+                subscriptionPlan: planName
             };
         })
     );
@@ -199,6 +202,8 @@ export const getCoachMemberDetail = async (memberId: string, coachId: string) =>
     }
 
     const user = await User.findById(memberId).populate('coach', '_id name email');
+    if (!user) throw new Error("User not found");
+
     const memberProfile = await MemberProfile.findOne({ user: memberId });
     const subscription = await Subscription.findOne({ member: memberId })
         .populate('plan', 'name price durationDays')
@@ -209,19 +214,33 @@ export const getCoachMemberDetail = async (memberId: string, coachId: string) =>
     const progressComparison = await getProgressComparison(memberId, 30);
     const progressHistoryResult = await getMemberProgress(memberId, 10, 1);
 
+    // Get subscription plan safely with type casting
+    const subscriptionPlan = subscription && subscription.plan 
+        ? {
+            name: (subscription.plan as any).name || 'N/A',
+            price: (subscription.plan as any).price || null,
+            durationDays: (subscription.plan as any).durationDays || null
+        }
+        : null;
+
     return {
         user: {
             id: user._id,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            nic: user.nic,
-            status: user.status,
+            name: user.name || 'N/A',
+            email: user.email || 'N/A',
+            phone: user.phone || 'N/A',
+            nic: user.nic || 'N/A',
+            status: user.status || 'inactive',
             createdAt: user.createdAt,
-            coach: user.coach
+            coach: user.coach || null
         },
-        memberProfile: memberProfile || null,
-        subscription: subscription || null,
+        memberProfile: memberProfile ? {
+            weight: memberProfile.weight || null,
+            height: memberProfile.height || null
+        } : null,
+        subscription: subscription ? {
+            plan: subscriptionPlan
+        } : null,
         latestProgress: latestProgress || null,
         progressComparison: progressComparison || null,
         progressHistory: progressHistoryResult.records
@@ -306,4 +325,3 @@ export const getMemberFitnessSummary = async (
         streak: totalEntries 
     };
 };
-

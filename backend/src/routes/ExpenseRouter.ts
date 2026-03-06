@@ -1,10 +1,6 @@
 import express from 'express';
 import { protect, restrictTo } from '../middleware/authMiddleware.js';
-import { getExpenses,
-        createExpense,
-        updateExpense,
-        deleteExpense,
-        getExpenseSummary, } from '../controllers/ExpenseController.js';
+import { createExpense, deleteExpense, getExpenses, getExpenseSummary, updateExpense } from '../controllers/expenseController.js';
 
 
 const expenseRouter = express.Router();

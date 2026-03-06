@@ -84,7 +84,7 @@ export const deleteNutritionPlan = async (planId: string, coachId: string) => {
 export const assignPlanToMember = async (
     coachId: string,
     memberId: string,
-    planType: 'workout' | 'nutrition',
+    planType: 'workout' | 'nutrition', // Received from frontend
     planId: string,
     startDate?: Date,
     coachNotes?: string
@@ -92,15 +92,20 @@ export const assignPlanToMember = async (
     const member = await User.findOne({ _id: memberId, coach: coachId });
     if (!member) throw new Error("Member not assigned to you");
 
-    // Cancel existing active plan of same type
-    await MemberPlan.updateMany({ member: memberId, planType, status: 'active' }, { status: 'cancelled' });
+    //  Map lowercase type to the capitalized Model Name required by your new Schema
+    const mappedPlanType = planType === 'workout' ? 'WorkoutPlan' : 'NutritionPlan';
 
+    // Deactivate existing active plan using the MAPPED type
+    await MemberPlan.updateMany(
+        { member: memberId, planType: mappedPlanType, status: 'active' }, 
+        { status: 'cancelled' }
+    );
+
+    // Create the new assignment
     return await MemberPlan.create({
         member: memberId,
         coach: coachId,
-        planType,
-        // Map lowercase type to the capitalized Model Name for refPath 
-        planModel: planType === 'workout' ? 'WorkoutPlan' : 'NutritionPlan', 
+        planType: mappedPlanType, // 'WorkoutPlan' or 'NutritionPlan'
         plan: planId,
         status: 'active',
         startDate: startDate || new Date(),
@@ -110,15 +115,23 @@ export const assignPlanToMember = async (
 
 export const getMemberActivePlans = async (memberId: string) => {
     try {
+     
         const workout = await MemberPlan.findOne({
-            member: memberId, planType: 'workout', status: 'active'
-        }).populate('plan').lean(); // Mongoose now uses planModel to find the data
-
-        const nutrition = await MemberPlan.findOne({
-            member: memberId, planType: 'nutrition', status: 'active'
+            member: memberId, 
+            planType: 'WorkoutPlan', 
+            status: 'active'
         }).populate('plan').lean();
 
-        return { workout, nutrition };
+        const nutrition = await MemberPlan.findOne({
+            member: memberId, 
+            planType: 'NutritionPlan', 
+            status: 'active'
+        }).populate('plan').lean();
+
+        return { 
+            workout: workout || null, 
+            nutrition: nutrition || null 
+        };
     } catch (error) {
         console.error("Fetch Error:", error);
         return { workout: null, nutrition: null };
