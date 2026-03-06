@@ -6,6 +6,7 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
+    "prod": "node dist/server.js", 
     "server": "nodemon --exec tsx src/server.ts",
     "build": "tsc"
   },
