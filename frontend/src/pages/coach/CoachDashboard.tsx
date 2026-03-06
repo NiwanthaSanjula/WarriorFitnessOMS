@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import {
     MdPeople, MdFitnessCenter, MdLocalFireDepartment,
-    MdTrendingDown, MdTrendingUp, MdRemove, MdCheckCircle,
+    MdTrendingDown, MdTrendingUp, MdRemove, 
     MdStar, MdCalendarToday, MdArrowForward
 } from "react-icons/md";
 import {

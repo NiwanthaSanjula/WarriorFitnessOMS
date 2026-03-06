@@ -60,7 +60,7 @@ const Milestones = () => {
         >
             {/* Overlays for readability */}
             <div className="absolute inset-0 bg-black/80 pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-r from-warrior-dark via-warrior-dark/60 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-r from-warrior-dark via-warrior-dark/60 to-transparent pointer-events-none" />
 
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -126,14 +126,14 @@ const Milestones = () => {
                                 className="w-full"
                             >
                                 {milestones.map((milestone) => (
-                                    <SwiperSlide key={milestone._id} className="!w-64 md:!w-80">
-                                        <div className="relative rounded-3xl overflow-hidden border-2 border-warrior-orange/30 bg-neutral-900 group shadow-2xl h-96 md:h-[450px]">
+                                    <SwiperSlide key={milestone._id} className="w-64! md:w-80!">
+                                        <div className="relative rounded-3xl overflow-hidden border-2 border-warrior-orange/30 bg-neutral-900 group shadow-2xl h-96 md:h-112.5">
                                             <img
                                                 src={milestone.image}
                                                 alt={milestone.title}
                                                 className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-700"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                                            <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
                                             
                                             {/* Content Overlay */}
                                             <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-between">

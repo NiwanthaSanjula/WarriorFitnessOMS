@@ -42,7 +42,7 @@ const computeStats = (history: AttendanceRecord[]) => {
 
     const bestMonthIdx = Object.entries(monthlyCounts).sort((a, b) => b[1] - a[1])[0];
     const bestMonth      = bestMonthIdx ? MONTHS[parseInt(bestMonthIdx[0])] : "—";
-    const bestMonthCount = bestMonthIdx ? parseInt(bestMonthIdx[1]) : 0;
+    const bestMonthCount = bestMonthIdx ? Number(bestMonthIdx[1]) : 0;
 
     const sorted = [...history].sort((a, b) =>
         new Date(b.date).getTime() - new Date(a.date).getTime()

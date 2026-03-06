@@ -14,8 +14,8 @@ const StoryImageUploader = ({ currentBefore, currentAfter, onUploaded }: Props) 
     const [after,  setAfter]        = useState(currentAfter  || '');
     const [uploading, setUploading] = useState(false);
     const [error, setError]         = useState<string | null>(null);
-    const beforeRef                 = useRef<HTMLInputElement>(null);
-    const afterRef                  = useRef<HTMLInputElement>(null);
+    const beforeRef = useRef<HTMLInputElement | null>(null);
+    const afterRef  = useRef<HTMLInputElement | null>(null);
 
     const handleFiles = async (beforeFile: File | null, afterFile: File | null) => {
         if (!beforeFile && !afterFile) return;
@@ -24,11 +24,9 @@ const StoryImageUploader = ({ currentBefore, currentAfter, onUploaded }: Props) 
         try {
             const formData = new FormData();
 
-            // If only one changed, re-send existing URL as text so backend can distinguish
             if (beforeFile) formData.append('beforeImage', beforeFile);
             if (afterFile)  formData.append('afterImage',  afterFile);
 
-            // If only one side changed, upload just that side individually
             if (beforeFile && !afterFile) {
                 const fd = new FormData();
                 fd.append('image', beforeFile);
@@ -52,7 +50,6 @@ const StoryImageUploader = ({ currentBefore, currentAfter, onUploaded }: Props) 
                 return;
             }
 
-            // Both changed — use story-images endpoint
             const res = await api.post('/upload/story-images', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
@@ -69,7 +66,7 @@ const StoryImageUploader = ({ currentBefore, currentAfter, onUploaded }: Props) 
     }: {
         label: string; url: string;
         onFile: (f: File) => void; onClear: () => void;
-        inputRef: React.RefObject<HTMLInputElement>;
+        inputRef: React.RefObject<HTMLInputElement | null>;
     }) => (
         <div className="space-y-1">
             <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">{label}</p>
@@ -87,7 +84,6 @@ const StoryImageUploader = ({ currentBefore, currentAfter, onUploaded }: Props) 
                             <MdClose size={13} />
                         </button>
                     )}
-                    {/* Label badge */}
                     <span className="absolute bottom-1.5 left-1.5 text-[8px] font-black uppercase bg-black/80 text-warrior-orange px-1.5 py-0.5 rounded">
                         {label}
                     </span>

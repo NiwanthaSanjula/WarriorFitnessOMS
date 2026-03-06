@@ -34,7 +34,7 @@ const AssignPlanModal = ({
             try {
                 // 1. Fetch Members if not provided
                 if (!memberId) {
-                    const memberList = await progressService.getCoachMembersList();
+                    const memberList = await progressService.getCoachMembers();
                     setMembers(memberList);
                 }
                 // 2. Fetch Templates if not provided

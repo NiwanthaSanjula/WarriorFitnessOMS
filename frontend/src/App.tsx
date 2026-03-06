@@ -23,7 +23,7 @@ import MemberSubscription from "./pages/member/MemberSubscription"
 import MemberAttendance from "./pages/member/MemberAttendance"
 import FinancePage from "./pages/admin/FinancePage"
 import ContentManager from "./pages/admin/ContentManager"
-import AboutUs from "./components/landing/AboutUs"
+
 
 
 
