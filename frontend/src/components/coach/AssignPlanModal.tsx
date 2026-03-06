@@ -61,12 +61,12 @@ const AssignPlanModal = ({
         setLoading(true);
         setError(null);
         try {
-            // ✅ FIX: Convert planType to lowercase for API
+   
             const planTypeForApi = planType === "WorkoutPlan" ? "workout" : "nutrition";
 
             await planService.assignPlan({
                 memberId: selectedMemberId,
-                planType: planTypeForApi,  // ✅ Send "workout" or "nutrition"
+                planType: planTypeForApi,  
                 planId: selectedPlanId,
                 startDate,
                 coachNotes,

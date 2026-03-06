@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { motion, type Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { GiLaurelCrown } from 'react-icons/gi';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation } from 'swiper/modules';
+import { Autoplay, Navigation, EffectCoverflow } from 'swiper/modules';
 
 // Styles
 import 'swiper/css';
 import 'swiper/css/navigation';
+import 'swiper/css/effect-coverflow';
 
 import { contentService } from '../../services/contentService';
 
@@ -27,7 +28,6 @@ const Milestones = () => {
         const fetchMilestones = async () => {
             try {
                 const data = await contentService.getPublicMilestones();
-                // Sort by order if not handled by API
                 setMilestones(data.sort((a: Milestone, b: Milestone) => a.order - b.order));
             } catch (error) {
                 console.error('Failed to fetch milestones:', error);
@@ -95,67 +95,99 @@ const Milestones = () => {
                         </p>
                     </motion.div>
 
-                    {/* RIGHT SECTION — CAROUSEL */}
-                    <div className="relative h-[500px] md:h-[600px]">
-                        <Swiper
-                            modules={[Autoplay, Navigation]}
-                            spaceBetween={20}
-                            slidesPerView={1}
-                            autoplay={{ delay: 5000, disableOnInteraction: false }}
-                            navigation={{
-                                nextEl: '.milestone-next',
-                                prevEl: '.milestone-prev',
-                            }}
-                            loop={milestones.length > 1}
-                            className="h-full rounded-3xl overflow-visible"
-                        >
-                            {milestones.map((milestone) => (
-                                <SwiperSlide key={milestone._id}>
-                                    <div className="relative h-full rounded-3xl overflow-hidden border-2 border-warrior-orange/30 bg-neutral-900 group">
-                                        <img
-                                            src={milestone.image}
-                                            alt={milestone.title}
-                                            className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                                        
-                                        {/* Content Overlay */}
-                                        <div className="absolute inset-0 p-8 flex flex-col justify-between">
-                                            <div className="flex justify-end">
-                                                <span className="bg-warrior-orange text-white font-black px-6 py-2 rounded-xl italic shadow-xl">
-                                                    {milestone.year}
-                                                </span>
-                                            </div>
+                    {/* RIGHT SECTION — CAROUSEL WITH 3 VISIBLE SLIDES */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8 }}
+                        viewport={{ once: true }}
+                        className="relative"
+                    >
+                        <div className="relative px-4">
+                            <Swiper
+                                modules={[Autoplay, Navigation, EffectCoverflow]}
+                                effect="coverflow"
+                                grabCursor={true}
+                                centeredSlides={true}
+                                slidesPerView="auto"
+                                coverflowEffect={{
+                                    rotate: 50,
+                                    stretch: 0,
+                                    depth: 100,
+                                    modifier: 1,
+                                    slideShadows: true,
+                                }}
+                                autoplay={{ delay: 5000, disableOnInteraction: false }}
+                                navigation={{
+                                    nextEl: '.milestone-next',
+                                    prevEl: '.milestone-prev',
+                                }}
+                                loop={milestones.length > 1}
+                                className="w-full"
+                            >
+                                {milestones.map((milestone) => (
+                                    <SwiperSlide key={milestone._id} className="!w-64 md:!w-80">
+                                        <div className="relative rounded-3xl overflow-hidden border-2 border-warrior-orange/30 bg-neutral-900 group shadow-2xl h-96 md:h-[450px]">
+                                            <img
+                                                src={milestone.image}
+                                                alt={milestone.title}
+                                                className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-700"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                                            
+                                            {/* Content Overlay */}
+                                            <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-between">
+                                                <div className="flex justify-end">
+                                                    <span className="bg-warrior-orange text-white font-black px-4 py-1 md:px-6 md:py-2 rounded-xl italic text-sm shadow-xl">
+                                                        {milestone.year}
+                                                    </span>
+                                                </div>
 
-                                            <div className="space-y-4">
-                                                <h3 className="text-3xl md:text-4xl font-BabesNeue font-black italic uppercase text-white tracking-wide">
-                                                    {milestone.title}
-                                                </h3>
-                                                <div className="h-1 w-12 bg-warrior-orange" />
-                                                <p className="text-gray-200 text-sm md:text-base line-clamp-3 leading-relaxed">
-                                                    {milestone.description}
-                                                </p>
-                                                <div className="flex items-center gap-2 pt-4">
-                                                    <GiLaurelCrown className="text-warrior-orange" size={24} />
-                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-warrior-orange">Certified Milestone</span>
+                                                <div className="space-y-3">
+                                                    <h3 className="text-2xl md:text-3xl font-BabesNeue font-black italic uppercase text-white tracking-wide line-clamp-2">
+                                                        {milestone.title}
+                                                    </h3>
+                                                    <div className="h-1 w-12 bg-warrior-orange" />
+                                                    <p className="text-gray-200 text-xs md:text-sm line-clamp-2 leading-relaxed">
+                                                        {milestone.description}
+                                                    </p>
+                                                    <div className="flex items-center gap-2 pt-2">
+                                                        <GiLaurelCrown className="text-warrior-orange" size={18} />
+                                                        <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-warrior-orange">Certified Milestone</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
-
-                        {/* Custom Navigation */}
-                        <div className="absolute -bottom-10 right-0 flex gap-4 z-30">
-                            <button className="milestone-prev w-12 h-12 rounded-full border-2 border-warrior-orange/50 flex items-center justify-center text-warrior-orange hover:bg-warrior-orange hover:text-white transition-all">
-                                ←
-                            </button>
-                            <button className="milestone-next w-12 h-12 rounded-full border-2 border-warrior-orange/50 flex items-center justify-center text-warrior-orange hover:bg-warrior-orange hover:text-white transition-all">
-                                →
-                            </button>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
                         </div>
-                    </div>
+
+                        {/* Navigation Buttons */}
+                        <div className="absolute -bottom-16 md:-bottom-20 left-1/2 -translate-x-1/2 flex gap-4 z-30">
+                            <motion.button 
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="milestone-prev w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-warrior-orange flex items-center justify-center text-warrior-orange hover:bg-warrior-orange hover:text-white transition-all shadow-lg hover:shadow-xl hover:shadow-warrior-orange/50"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </motion.button>
+                            <motion.button 
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="milestone-next w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-warrior-orange flex items-center justify-center text-warrior-orange hover:bg-warrior-orange hover:text-white transition-all shadow-lg hover:shadow-xl hover:shadow-warrior-orange/50"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </motion.button>
+                        </div>
+
+                        {/* Extra spacing for nav buttons */}
+                        <div className="h-20 md:h-24" />
+                    </motion.div>
                 </div>
             </div>
         </section>

@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 
 import { FaDumbbell } from "react-icons/fa";
 import { MdPeopleAlt, MdElectricBolt, MdAcUnit, MdShower, MdWifi, MdCardGiftcard, MdSecurityUpdateGood } from 'react-icons/md';
@@ -65,7 +63,7 @@ const Facilities = () => {
     }
   ];
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -76,7 +74,7 @@ const Facilities = () => {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,

@@ -157,7 +157,7 @@ const Footer = () => {
 
         {/* Contact Info */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12 p-6 rounded-2xl bg-gradient-to-r from-neutral-900/40 to-black/40 border border-neutral-800"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12 p-6 rounded-2xl bg-linear-to-r from-neutral-900/40 to-black/40 border border-neutral-800"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -185,7 +185,7 @@ const Footer = () => {
         </motion.div>
 
         {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-neutral-700 to-transparent mb-6" />
+        <div className="h-px bg-linear-to-r from-transparent via-neutral-700 to-transparent mb-6" />
 
         {/* Bottom Bar */}
         <motion.div

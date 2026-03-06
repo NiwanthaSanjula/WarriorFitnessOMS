@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from "../ui/Input";
-import { GiWhistle, GiTrophy, GiProgression } from "react-icons/gi";
+import { GiTrophy} from "react-icons/gi";
 import { MdStar } from "react-icons/md";
 
 const FieldLabel = ({ children }: { children: React.ReactNode }) => (

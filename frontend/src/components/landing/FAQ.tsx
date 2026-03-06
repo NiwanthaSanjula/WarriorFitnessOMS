@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { MdExpandMore } from 'react-icons/md';
 import { FaQuestion } from "react-icons/fa"
 
@@ -38,23 +38,24 @@ const FAQ = () => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.08,
+        staggerChildren: 0.1,
         delayChildren: 0.2,
       },
     },
   };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+  
+  
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" },
+      transition: { duration: 0.6, ease: 'easeOut' },
     },
   };
 
