@@ -343,6 +343,8 @@ const CoachMemberProfile = () => {
             }
         } catch (err: any) {
             setError(err.response?.data?.message || 'Failed to load member');
+            console.log(error);
+            
         } finally { setLoading(false); }
     };
 
