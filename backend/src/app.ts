@@ -29,13 +29,16 @@ app.use(cookieParser());
 app.use(cors({
    origin: function (origin, callback) {
       const allowedOrigins = [
+         process.env.FRONTEND_URL || '',
          'http://localhost:5173',
          'http://localhost:3000',
          CLIENT_URL,
-         process.env.FRONTEND_URL || '',
       ].filter(Boolean);
 
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow any vercel.app preview URL
+      const isVercel = origin && /\.vercel\.app$/.test(origin);
+
+      if (!origin || isVercel || allowedOrigins.includes(origin)) {
          callback(null, true);
       } else {
          callback(new Error('Not allowed by CORS'));
