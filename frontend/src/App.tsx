@@ -57,10 +57,10 @@ const App = () => {
           <Route element={<ProtectedRoute allowedRoles={['coach']}/>}>
             <Route path="/coach/my-clients"  element={<MyClients/>} />
             <Route path="/coach/members/:memberId" element={<CoachMemberProfile/>} />
-            <Route path="/coach/plans/workout" element={<WorkoutPlans />} /> this
+            <Route path="/coach/plans/workout" element={<WorkoutPlans />} />
             <Route path="/coach/plans/workout/new" element={<WorkoutPlanForm />} />
             <Route path="/coach/plans/workout/:planId/edit" element={<WorkoutPlanForm />} />
-            <Route path="/coach/plans/nutrition" element={<NutritionPlans />} /> this 
+            <Route path="/coach/plans/nutrition" element={<NutritionPlans />} />
             <Route path="/coach/plans/nutrition/new" element={<NutritionPlanForm />} />
             <Route path="/coach/plans/nutrition/:planId/edit" element={<NutritionPlanForm />} />
         </Route>
