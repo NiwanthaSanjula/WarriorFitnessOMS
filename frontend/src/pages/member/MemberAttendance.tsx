@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { attendanceService } from "../../services/attendanceService";
 import Spinner from "../../components/ui/Spinner";
 import { AttendanceCalener } from "../../components/userDetails/AttendanceCalendar";
+import MemberQRCard from "../../components/attendance/MemberQRCard";
 import {
     MdCalendarMonth, MdLocalFireDepartment, MdTrendingUp,
     MdEmojiEvents, MdStar, MdVerified, MdBolt, MdDateRange,
@@ -167,6 +168,9 @@ const MemberAttendance = () => {
                     </p>
                 </div>
             </div>
+
+            {/* ── QR CODE CARD ── */}
+            <MemberQRCard />
 
             {error && (
                 <div className="bg-red-900/20 border border-red-800 rounded-xl p-4">

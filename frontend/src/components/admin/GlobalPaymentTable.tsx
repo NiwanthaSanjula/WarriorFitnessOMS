@@ -60,7 +60,7 @@ export const GlobalPaymentTable = ({ payments, pagination, onPageChange }: Globa
 
                                     {/* Invoice Column (Hidden on Mobile & Tablet) */}
                                     <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 font-mono text-[10px] md:text-[11px] text-gray-500 uppercase ">
-                                        {p.invoinceNo}
+                                        {p.invoiceNo}
                                     </td>
 
                                     {/* Amount Column */}
@@ -80,7 +80,7 @@ export const GlobalPaymentTable = ({ payments, pagination, onPageChange }: Globa
                                     {/* Admin Column (Hidden on Mobile & Tablet) */}
                                     <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-right hidden md:table-cell">
                                         <span className="text-[9px] md:text-[10px] bg-neutral-900 border border-neutral-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-gray-500 uppercase font-bold inline-block">
-                                            {p.recoredBy?.name?.split(' ')[0] || "System"}
+                                            {p.recordedBy?.name?.split(' ')[0] || "System"}
                                         </span>
                                     </td>
                                 </tr>

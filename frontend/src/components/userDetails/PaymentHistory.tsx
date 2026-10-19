@@ -120,12 +120,12 @@ export const PaymentHistory = ({ payments, pagination, onPageChange, hideMember 
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-2 text-[10px] text-gray-400 uppercase font-semibold">
                                                 <MdReceipt size={14} className="text-warrior-orange shrink-0"/>
-                                                <span>Invoice ID: <span className="text-gray-200 font-mono">{payment.invoinceNo}</span></span>
+                                                <span>Invoice ID: <span className="text-gray-200 font-mono">{payment.invoiceNo}</span></span>
                                             </div>
 
                                             <div className="flex items-center gap-2 text-[10px] text-gray-400 uppercase font-semibold">
                                                 <MdPerson size={14} className="text-warrior-orange shrink-0"/>
-                                                <span>Recorded By: <span className="text-gray-200 font-mono">{payment.recoredBy?.name || 'System'}</span></span>
+                                                <span>Recorded By: <span className="text-gray-200 font-mono">{payment.recordedBy?.name || 'System'}</span></span>
                                             </div>
                                         </div>
 

@@ -6,16 +6,19 @@ export interface IMemberProgress extends Document {
     coach?: mongoose.Types.ObjectId;
     weight: number;
     bodyFat?: number;
+    muscleMass?: number;
+    waterPercentage?: number;
     chest?: number;
     waist?: number;
     hips?: number;
     biceps?: number;
     thighs?: number;
     notes?: string;
-    coachNotes?: string;       
+    coachNotes?: string;
     photoUrl?: string;
-    energyLevel?: number;      
-    mood?: number;              
+    energyLevel?: number;
+    sleepHours?: number;
+    mood?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -30,6 +33,8 @@ const memberProgressSchema = new Schema<IMemberProgress>(
             max: [300, "Weight cannot exceed 300 KG"]
         },
         bodyFat: { type: Number, min: 0, max: 100, default: null },
+        muscleMass: { type: Number, default: null },
+        waterPercentage: { type: Number, min: 0, max: 100, default: null },
         chest: { type: Number, default: null },
         waist: { type: Number, default: null },
         hips: { type: Number, default: null },
@@ -38,8 +43,9 @@ const memberProgressSchema = new Schema<IMemberProgress>(
         notes: { type: String, default: "" },
         coachNotes: { type: String, default: "" },
         photoUrl: { type: String, default: null },
-        energyLevel: { type: Number, min: 1, max: 10, default: null },  
-        mood: { type: Number, min: 1, max: 10, default: null },        
+        energyLevel: { type: Number, min: 1, max: 10, default: null },
+        sleepHours: { type: Number, min: 0, max: 24, default: null },
+        mood: { type: Number, min: 1, max: 10, default: null },
     },
     { timestamps: true }
 );

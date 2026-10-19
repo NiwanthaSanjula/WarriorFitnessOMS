@@ -76,7 +76,7 @@ export const getAdminStats = async () => {
         totalMembers: await User.countDocuments({ role: 'member' }),
         memberStatusDistribution: statusStats,
         revenueHistory : monthlyRevenue,
-        coachWorklooad : coachStats,
+        coachWorkload : coachStats,
         attendanceTrends,
         recentUsers,
         recentPayments
@@ -101,7 +101,7 @@ export const getMemberStats = async (userId: string) => {
         .sort({ createdAt: -1 });
 
     // Progress records (most recent first, limit 10 for chart)
-    const progressRecords = await MemberProgress.find({ user: userId })
+    const progressRecords = await MemberProgress.find({ member: userId })
         .sort({ createdAt: -1 })
         .limit(10)
         .select('weight bodyFat createdAt');
@@ -111,7 +111,7 @@ export const getMemberStats = async (userId: string) => {
         .populate('plan', 'name')
         .sort({ createdAt: -1 })
         .limit(4)
-        .select('amount plan invoinceNo createdAt method');
+        .select('amount plan invoiceNo createdAt method');
 
     return {
         attendanceHistory,
@@ -155,7 +155,7 @@ export const getCoachStats = async (coachId: string) => {
     // Per-client progress summary
     const clientProgress = await Promise.all(clients.map(async (client) => {
         // Latest 2 progress records for weight delta
-        const progressRecords = await MemberProgress.find({ user: client._id })
+        const progressRecords = await MemberProgress.find({ member: client._id })
             .sort({ createdAt: -1 }).limit(2).select('weight createdAt');
 
         const latestWeight = progressRecords[0]?.weight ?? null;

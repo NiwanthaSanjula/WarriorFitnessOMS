@@ -74,6 +74,7 @@ const AdminDashboard = () => {
     const [stats, setStats]           = useState<any>(null);
     const [expData, setExpData]       = useState<any>(null);
     const [loading, setLoading]       = useState(true);
+    const [error, setError]           = useState(false);
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -84,8 +85,9 @@ const AdminDashboard = () => {
                 ]);
                 setStats(dashData);
                 setExpData(expenses);
-            } catch (error) {
-                console.error('Failed to fetch Dashboard:', error);
+            } catch (err) {
+                console.error('Failed to fetch Dashboard:', err);
+                setError(true);
             } finally {
                 setLoading(false);
             }
@@ -95,6 +97,21 @@ const AdminDashboard = () => {
 
     if (loading) return <Spinner />;
 
+    if (error || !stats) return (
+        <div className="flex flex-col items-center justify-center h-64 gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-red-900/20 border border-red-800/30 flex items-center justify-center">
+                <MdWarning className="text-red-400" size={28} />
+            </div>
+            <p className="text-sm font-black italic uppercase text-red-400">Failed to load dashboard</p>
+            <p className="text-xs text-gray-500">Check your connection and refresh the page</p>
+            <button onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-warrior-orange hover:bg-orange-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors">
+                Retry
+            </button>
+        </div>
+    );
+
+
     // ── Revenue chart data ──
     const currentMonth = new Date().getMonth();
     const last12Months = Array.from({ length: 12 }, (_, i) => {
@@ -103,7 +120,7 @@ const AdminDashboard = () => {
         return { monthNum: d.getMonth() + 1, year: d.getFullYear(), name: MONTHS[d.getMonth()] };
     });
     const chartData = last12Months.map(m => {
-        const found = stats.revenueHistory.find((item: any) => item._id.month === m.monthNum && item._id.year === m.year);
+        const found = (stats?.revenueHistory ?? []).find((item: any) => item._id.month === m.monthNum && item._id.year === m.year);
         return { name: m.name, revenue: found ? found.total : 0 };
     });
 
@@ -117,7 +134,7 @@ const AdminDashboard = () => {
         };
     });
     const attendanceChartData = last7days.map(d => {
-        const found = stats.attendanceTrends.find((item: any) => item._id === d.fullDate);
+        const found = (stats?.attendanceTrends ?? []).find((item: any) => item._id === d.fullDate);
         return { name: d.label, count: found ? found.count : 0 };
     });
 
@@ -126,7 +143,7 @@ const AdminDashboard = () => {
     const totalExpenses = categoryBreakdown.reduce((s: number, c: any) => s + c.total, 0);
     const sortedCats    = [...categoryBreakdown].sort((a, b) => b.total - a.total);
 
-    const pendingCount = stats.memberStatusDistribution.find((s: any) => s._id === 'pending-payment')?.count || 0;
+    const pendingCount = (stats?.memberStatusDistribution ?? []).find((s: any) => s._id === 'pending-payment')?.count || 0;
 
     return (
         <div className="space-y-6 max-w-6xl mx-auto pb-10">
@@ -148,10 +165,10 @@ const AdminDashboard = () => {
 
             {/* ── KPI CARDS ── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <KpiCard title="Total Members"    value={stats.totalMembers}                            icon={MdPeople}        accent="orange" />
-                <KpiCard title="Active Coaches"   value={stats.coachWorklooad.length}                   icon={MdFitnessCenter} accent="green"  />
-                <KpiCard title="30-Day Revenue"   value={`${stats.recentRevenue.toLocaleString()} LKR`} icon={MdPayment}       accent="blue"   />
-                <KpiCard title="Pending Payments" value={pendingCount}                                  icon={MdWarning}       accent="yellow" />
+                <KpiCard title="Total Members"    value={stats?.totalMembers ?? 0}                                                    icon={MdPeople}        accent="orange" />
+                <KpiCard title="Active Coaches"   value={(stats?.coachWorkload ?? stats?.coachWorklooad ?? []).length}               icon={MdFitnessCenter} accent="green"  />
+                <KpiCard title="30-Day Revenue"   value={`${(stats?.recentRevenue ?? 0).toLocaleString()} LKR`}                     icon={MdPayment}       accent="blue"   />
+                <KpiCard title="Pending Payments" value={pendingCount}                                                                icon={MdWarning}       accent="yellow" />
             </div>
 
             {/* ── CHARTS ROW 1: Revenue + Member Pulse ── */}
@@ -236,7 +253,7 @@ const AdminDashboard = () => {
                             <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Expense Breakdown</p>
                         </div>
                         <Link
-                            to="/admin/finance"
+                            to="/admin/payments"
                             className="flex items-center gap-1 text-[10px] font-black uppercase text-red-400 hover:underline"
                         >
                             Manage <MdArrowForward size={12} />
@@ -279,7 +296,7 @@ const AdminDashboard = () => {
                             <div className="flex flex-col items-center justify-center py-8 gap-2">
                                 <GiPayMoney size={28} className="text-neutral-700" />
                                 <p className="text-[10px] font-black uppercase text-gray-600 tracking-widest">No expenses logged yet</p>
-                                <Link to="/admin/finance" className="text-[10px] font-black uppercase text-red-400 hover:underline mt-1">
+                                <Link to="/admin/payments" className="text-[10px] font-black uppercase text-red-400 hover:underline mt-1">
                                     + Log First Expense
                                 </Link>
                             </div>
@@ -302,7 +319,7 @@ const AdminDashboard = () => {
                     }
                 >
                     <div className="space-y-1">
-                        {stats.recentUsers.map((u: any) => (
+                        {(stats?.recentUsers ?? []).map((u: any) => (
                             <div key={u._id} className="flex items-center justify-between py-2.5 border-b border-neutral-800 last:border-0">
                                 <div className="flex items-center gap-3 min-w-0">
                                     <div className="w-8 h-8 rounded-xl bg-warrior-orange/10 border border-warrior-orange/20 flex items-center justify-center text-warrior-orange font-black text-xs shrink-0 uppercase">
@@ -330,13 +347,13 @@ const AdminDashboard = () => {
                     title="Recent Income"
                     icon={<MdReceipt size={15} />}
                     action={
-                        <Link to="/admin/finance" className="flex items-center gap-1 text-[10px] font-black uppercase text-warrior-orange hover:underline">
+                        <Link to="/admin/payments" className="flex items-center gap-1 text-[10px] font-black uppercase text-warrior-orange hover:underline">
                             Reports <MdArrowForward size={12} />
                         </Link>
                     }
                 >
                     <div className="space-y-1">
-                        {stats.recentPayments.map((p: any) => (
+                        {(stats?.recentPayments ?? []).map((p: any) => (
                             <div key={p._id} className="flex items-center justify-between py-2.5 border-b border-neutral-800 last:border-0">
                                 <div className="flex items-center gap-3 min-w-0">
                                     <div className="w-8 h-8 rounded-xl bg-neutral-800 border border-neutral-700 flex items-center justify-center text-warrior-orange font-black text-xs shrink-0 uppercase">
@@ -344,7 +361,7 @@ const AdminDashboard = () => {
                                     </div>
                                     <div className="min-w-0">
                                         <p className="text-xs font-black italic uppercase text-gray-200 truncate">{p.member?.name || 'Member'}</p>
-                                        <p className="text-[10px] text-gray-500 font-mono">{p.invoinceNo}</p>
+                                        <p className="text-[10px] text-gray-500 font-mono">{p.invoiceNo}</p>
                                     </div>
                                 </div>
                                 <div className="text-right shrink-0 ml-2">

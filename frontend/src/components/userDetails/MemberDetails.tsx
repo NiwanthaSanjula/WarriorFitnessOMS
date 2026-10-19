@@ -33,12 +33,13 @@ export const MemberDetails = ({ user, userId, profile, subscription, attendance,
 
         <div className="space-y-6">
 
-            {subscription ? (
+            {subscription?.plan ? (
                 <SubscriptionCard
                     planName={subscription.plan.name}
                     startDate={subscription.startDate}
                     endDate={subscription.endDate}
                     price={subscription.plan.price}
+                    onRenew={isAdmin ? onOpenPlanModal : undefined}
                 />
             ) : isAdmin && (
                 <div className="bg-warrior-grey p-6 border border-neutral-600 rounded-2xl flex flex-col items-center justify-center text-gray-400">

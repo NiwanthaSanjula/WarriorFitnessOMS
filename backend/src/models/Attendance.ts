@@ -12,7 +12,7 @@ const attendanceSchema = new mongoose.Schema<IAttendance>({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required: [true, 'Attendance must belong to a user1']
+        required: [true, 'Attendance must belong to a user']
     },
     date: {
         type: Date,

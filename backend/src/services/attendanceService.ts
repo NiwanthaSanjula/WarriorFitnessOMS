@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import Attendance, { IAttendance } from "../models/Attendance.js";
 
 export const createAttendanceRecord =  async ( userId: string): Promise<IAttendance> =>  {
@@ -29,3 +30,42 @@ export const getMemberAttendanceHistory = async (userId: string) => {
         date: { $gte : startOfYear, $lte: endOfYear  } 
     }).select('date status').sort({ date : 1 });
 }
+
+// ── QR Code Functions ────────────────────────────────────────────────────────
+
+/**
+ * Generates a short-lived JWT (5 minutes) for a member to use as their QR code.
+ * The token encodes { userId, purpose: 'qr-attendance' }.
+ */
+export const generateQRToken = (userId: string): string => {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) throw new Error('JWT_SECRET not configured');
+    return jwt.sign(
+        { userId, purpose: 'qr-attendance' },
+        secret,
+        { expiresIn: '5m' }
+    );
+};
+
+/**
+ * Verifies a QR token, extracts the userId, and records attendance.
+ * Throws if the token is invalid/expired or if already checked in today.
+ */
+export const verifyQRAndCheckIn = async (token: string): Promise<{ attendance: IAttendance; userId: string }> => {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) throw new Error('JWT_SECRET not configured');
+
+    let payload: any;
+    try {
+        payload = jwt.verify(token, secret);
+    } catch {
+        throw new Error('QR code is invalid or has expired. Please refresh your QR code.');
+    }
+
+    if (payload.purpose !== 'qr-attendance') {
+        throw new Error('Invalid QR code type.');
+    }
+
+    const attendance = await createAttendanceRecord(payload.userId);
+    return { attendance, userId: payload.userId };
+};

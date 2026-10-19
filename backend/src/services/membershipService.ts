@@ -45,8 +45,8 @@ export const subscribeMember = async (memberId: string, planId: string, adminId:
         plan: planId,
         amount: plan.price,
         method: 'cash', // Default to cash as per plan
-        invoinceNo: `INV-${Date.now()}`,
-        recoredBy: adminId
+        invoiceNo: `INV-${Date.now()}`,
+        recordedBy: adminId
     });
 
     // Update user status
@@ -63,7 +63,7 @@ export const getPaymentByMember = async (memberId: string, page: number = 1, lim
     const payments = await Payment.find({ member: memberId})
         .populate('member', 'name email nic')
         .populate('plan', 'name')
-        .populate('recoredBy', 'name')
+        .populate('recordedBy', 'name')
         .sort({ createdAt: -1})
         .skip(skip)
         .limit(limit)
@@ -83,13 +83,13 @@ export const getPaymentByMember = async (memberId: string, page: number = 1, lim
 export const getAllPayments = async (page: number = 1, limit: number = 15, search: string = '') => {
     const skip = (page - 1) * limit;
 
-    //  Search logic: If search exists, look for it in invoinceNo
-    const query = search ? { invoinceNo: { $regex: search, $options: 'i'}} : {}
+    //  Search logic: If search exists, look for it in invoiceNo
+    const query = search ? { invoiceNo: { $regex: search, $options: 'i'}} : {}
 
     const payments = await Payment.find(query)
         .populate('member', 'name email nic')
         .populate('plan', 'name price')
-        .populate('recoredBy', 'name')
+        .populate('recordedBy', 'name')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
@@ -110,7 +110,7 @@ export const getAllPayments = async (page: number = 1, limit: number = 15, searc
         paginations: {
             total,
             totalIncome,
-            page: Math.ceil(total / limit),
+            pages: Math.ceil(total / limit),
             currentPage: page
         }
     };

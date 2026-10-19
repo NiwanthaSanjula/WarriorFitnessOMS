@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 // Define an Enum for Roles to prevent types
-export enum USerRole {
+export enum UserRole {
     ADMIN = 'admin',
     COACH = 'coach',
     MEMBER = 'member',
@@ -14,7 +14,7 @@ export interface IUser extends Document {
     nic : string;
     passwordHash : string;
     phone: string;
-    role : USerRole;
+    role : UserRole;
     status : 'active' | 'blocked' | 'pending-payment';
     coach : mongoose.Types.ObjectId | IUser | null;
     createdAt : Date;
@@ -54,8 +54,8 @@ const userSchema = new Schema<IUser>(
         },
         role: {
             type: String,
-            enum: Object.values(USerRole),
-            default: USerRole.MEMBER
+            enum: Object.values(UserRole),
+            default: UserRole.MEMBER
         },
         status: {
             type: String,

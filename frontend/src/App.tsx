@@ -23,6 +23,7 @@ import MemberSubscription from "./pages/member/MemberSubscription"
 import MemberAttendance from "./pages/member/MemberAttendance"
 import FinancePage from "./pages/admin/FinancePage"
 import ContentManager from "./pages/admin/ContentManager"
+import QRScannerPage from "./pages/admin/QRScannerPage"
 
 
 
@@ -73,8 +74,9 @@ const App = () => {
             <Route path="/admin/plans" element={ <ManagePlans/> } />
             <Route path="/admin/add-member" element={ <AddNewMember/> } />
             <Route path="/admin/members/edit/:id" element={ <AddNewMember/> } />
-            <Route path="admin/payments" element={<FinancePage />} />
-            <Route path="admin/content-manager" element={<ContentManager />} />
+            <Route path="/admin/payments" element={<FinancePage />} />
+            <Route path="/admin/content-manager" element={<ContentManager />} />
+            <Route path="/admin/attendance" element={<QRScannerPage />} />
 
           </Route>
         </Route>

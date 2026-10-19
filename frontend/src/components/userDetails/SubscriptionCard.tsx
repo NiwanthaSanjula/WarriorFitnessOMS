@@ -1,13 +1,14 @@
 import { MdEventAvailable, MdHistory } from "react-icons/md";
 
 interface SubscriptionProps {
-    planName : string;
+    planName: string;
     startDate: string;
     endDate: string;
-    price: number
+    price: number;
+    onRenew?: () => void;
 }
 
-export const SubscriptionCard = ({ planName, startDate, endDate, price }: SubscriptionProps) => {
+export const SubscriptionCard = ({ planName, startDate, endDate, price, onRenew }: SubscriptionProps) => {
     const start = new Date(startDate).getTime();
     const end = new Date(endDate).getTime();
     const now = new Date().getTime();
@@ -15,7 +16,7 @@ export const SubscriptionCard = ({ planName, startDate, endDate, price }: Subscr
     //  Calculate progress percentage
     const total = end - start;
     const elapsed = now - start;
-    const progress = Math.min(Math.max((elapsed / total) * 100, 0), 100 );
+    const progress = Math.min(Math.max((elapsed / total) * 100, 0), 100);
 
     const daysLeft = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
     const isExpired = daysLeft <= 0;
@@ -34,7 +35,7 @@ export const SubscriptionCard = ({ planName, startDate, endDate, price }: Subscr
                 </div>
             </div>
 
-            { /* Progress bar */ }
+            { /* Progress bar */}
             <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold uppercase text-gray-500">
                     <span>Progress</span>
@@ -42,8 +43,8 @@ export const SubscriptionCard = ({ planName, startDate, endDate, price }: Subscr
                 </div>
 
                 <div className="w-full h-3 bg-neutral-700 rounded-full overflow-hidden border border-neutral-500">
-                    <div 
-                        className={`h-full transition-all duration-1000 ${isExpired ? 'bg-red-500': 'bg-warrior-orange'}`}
+                    <div
+                        className={`h-full transition-all duration-1000 ${isExpired ? 'bg-red-500' : 'bg-warrior-orange'}`}
                         style={{ width: `${progress}%` }}
                     ></div>
                 </div>
@@ -67,16 +68,17 @@ export const SubscriptionCard = ({ planName, startDate, endDate, price }: Subscr
                 </div>
             </div>
 
-            { isExpired && (
+            {isExpired && (
                 <button
+                    onClick={onRenew}
                     className="w-full py-2 bg-warrior-orange text-white font-bold uppercase text-xs rounded-xl hover:bg-warrior-orange/80 hover:scale-105 transition-all duration-200 cursor-pointer"
                 >
                     Renew Membership
                 </button>
-            ) }
+            )}
 
         </div>
     )
 
-    
+
 }

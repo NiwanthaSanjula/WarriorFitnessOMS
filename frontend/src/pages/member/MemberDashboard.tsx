@@ -402,7 +402,7 @@ const MemberDashboard = () => {
                                 <div key={p._id} className="flex items-center justify-between py-2 border-b border-neutral-800 last:border-0">
                                     <div>
                                         <p className="text-xs font-bold text-white">{p.plan?.name || "Plan"}</p>
-                                        <p className="text-[9px] text-gray-600 mt-0.5 font-mono">{p.invoinceNo}</p>
+                                        <p className="text-[9px] text-gray-600 mt-0.5 font-mono">{p.invoiceNo}</p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-sm font-black text-warrior-orange">{p.amount?.toLocaleString()} LKR</p>

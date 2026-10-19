@@ -72,7 +72,6 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
         })
 
     } catch (error) {
-        console.log(error);
         next(error)
         
     }
@@ -115,7 +114,6 @@ export const getAllMembers = async (req: Request, res: Response, next: NextFunct
         });
 
     } catch (error) {
-        console.log("Error here");
         next(error)
     }
 }

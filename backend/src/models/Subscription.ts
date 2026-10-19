@@ -1,6 +1,6 @@
-import mongoose, { Document, Mongoose, Schema, Types } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
-export interface ISubsciption extends Document {
+export interface ISubscription extends Document {
     member: Types.ObjectId;
     plan:Types.ObjectId;
     startDate: Date;
@@ -34,4 +34,4 @@ const subscriptionSchema = new Schema<ISubsciption>({
     }
 }, { timestamps: true });
 
-export default mongoose.model<ISubsciption>('Subscription', subscriptionSchema);
+export default mongoose.model<ISubscription>('Subscription', subscriptionSchema);

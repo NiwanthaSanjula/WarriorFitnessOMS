@@ -63,8 +63,6 @@ export const subscribeMember = async (req: CustomRequest, res: Response, next: N
             return next(new AppError('Admin must logged in to perform this action', 401))
         }
 
-        console.log(adminId);
-        
         if (!memberId || !planId) {
             return next(new AppError('Please provide both memberId and planId', 400));    
         }
@@ -142,7 +140,7 @@ export const getPendingPayments = async ( req: Request, res: Response, next: Nex
         })
 
     } catch (error) {
-        
+        next(error);
     }
 }
 
@@ -152,9 +150,11 @@ export const getMySubscription = async (req: CustomRequest, res: Response, next:
         const memberId = req.user?._id?.toString();
         if (!memberId) return next(new AppError("Login required", 401));
 
-        const subscription = await Subscription.findOne({ member: memberId })
+        const subscription = await Subscription.find({ member: memberId })
             .populate('plan', 'name price durationDays description')
-            .sort({ createdAt: -1 }); // Most recent subscription
+            .sort({ createdAt: -1 })
+            .limit(1)
+            .then(results => results[0] || null);
 
         res.status(200).json({ status: "success", data: { subscription } });
     } catch (error) { next(error); }

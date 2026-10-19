@@ -1,5 +1,5 @@
 import type { IconType } from "react-icons";
-import { MdDashboard,  MdPayment,  MdPeople, MdPerson,   MdPersonAddAlt1,  MdCalendarMonth } from "react-icons/md";
+import { MdDashboard, MdPayment, MdPeople, MdPerson, MdPersonAddAlt1, MdCalendarMonth, MdQrCodeScanner } from "react-icons/md";
 import { GiWeightLiftingUp } from "react-icons/gi";
 import { GiMeal } from "react-icons/gi";
 import { HiMiniDocumentCurrencyDollar } from "react-icons/hi2";
@@ -35,6 +35,7 @@ export const SIDEBAR_LINKS: NavItem[] = [
     { name: 'Membership Plans', path: '/admin/plans', icon:  HiMiniDocumentCurrencyDollar, roles: ['admin']},
     { name: 'Add Member', path: '/admin/add-member', icon:  MdPersonAddAlt1 , roles: ['admin']},
     { name: 'Finance', path: '/admin/payments', icon: FaMoneyBillWave , roles: ['admin']},
+    { name: 'QR Check-In', path: '/admin/attendance', icon: MdQrCodeScanner , roles: ['admin', 'coach']},
     { name: 'Content Manage', path: '/admin/content-manager', icon: BiSolidBookContent , roles: ['admin']},
 
 

@@ -12,3 +12,25 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* ── QR Scanner beam animation ─────────────────────────────────── */
+@keyframes scan-line {
+  0%   { top: 0%; opacity: 1; }
+  49%  { opacity: 1; }
+  50%  { top: 100%; opacity: 0; }
+  51%  { top: 0%;   opacity: 0; }
+  52%  { opacity: 1; }
+  100% { top: 100%; opacity: 1; }
+}
+
+.animate-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ff4d00, #ff4d00cc, #ff4d00, transparent);
+  box-shadow: 0 0 8px 2px #ff4d0088;
+  animation: scan-line 2.5s linear infinite;
+  border-radius: 9999px;
+}
+
